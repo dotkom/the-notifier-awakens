@@ -1,14 +1,37 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto|Righteous');
+
+html {
+  background-color: #000;
+}
+
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  color: #ccc;
+  overflow-x: hidden;
+  min-height: 100vh;
+  font-size: 1.5rem;
+  font-family: 'Roboto', 'Open Sans', 'lucida grande', 'Segoe UI', arial,
+    verdana, 'lucida sans unicode', tahoma, sans-serif;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+.content {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: #000040;
+}
+
+h1 {
+  color: #fff;
+  font-weight: normal;
+}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #eee;
+  font-weight: normal;
 }
