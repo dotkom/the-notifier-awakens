@@ -53,7 +53,8 @@ export default class APIService {
   tick(time = 0) {
     console.log(time);
     Object.keys(this.apis).forEach(apiName => {
-      if (time % this.apis[apiName].interval === 0) {
+      const { interval, delay = 0 } = this.apis[apiName];
+      if ((time - delay) % interval === 0) {
         this.callback(apiName);
       }
     });
