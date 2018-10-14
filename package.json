@@ -1,7 +1,13 @@
 {
-  "name": "notifier-v2",
-  "version": "0.1.0",
+  "name": "notifier",
+  "version": "2.0.0",
   "private": true,
+  "devDependencies": {
+    "date-fns": "^1.29.0",
+    "object-path": "^0.11.4",
+    "object-merge": "^2.5.1",
+    "style-it": "^2.0.0"
+  },
   "dependencies": {
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
