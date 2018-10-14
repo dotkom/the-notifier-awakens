@@ -1,11 +1,11 @@
 /**
- * The API controller schedules API requests and passes the
+ * The API service schedules API requests and passes the
  * data from the requests to a callback function.
  *
  * @param {object} APIProvider API request handler.
  * @param {function} callback Function that recieves data from the API calls.
  */
-export default class APIController {
+export default class APIService {
   constructor(APIProvider) {
     this.apis = [];
     this.elapsedClockTime = 0;
@@ -57,9 +57,13 @@ export default class APIController {
   /**
    * Applies changes in the APIs and starts a new schedule
    * with the changes in the API.
+   *
+   * @param {array} apis List of APIs.
+   * @param {boolean} restart Make it possible to not restart the service.
    */
-  update() {
+  update(apis, restart = true) {
     const stopTime = this.stop();
+    this.apis = apis;
     this.start(stopTime);
   }
 }

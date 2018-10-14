@@ -1,25 +1,25 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import { APIController } from './controllers';
+import { APIService } from './services';
 import { API } from './utils';
 
 class App extends Component {
   constructor() {
     super();
-    this.APIController = new APIController(API);
+    this.APIService = new APIService(API);
 
     this.startAPIs();
   }
 
   startAPIs() {
-    this.APIController.start();
+    this.APIService.start();
   }
   stopAPIs() {
-    this.APIController.stop();
+    this.APIService.stop();
   }
   updateAPIs() {
-    this.APIController.update();
+    this.APIService.update();
   }
 
   render() {
