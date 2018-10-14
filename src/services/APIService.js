@@ -6,8 +6,9 @@
  * @param {function} callback Function that recieves data from the API calls.
  */
 export default class APIService {
-  constructor(APIProvider) {
-    this.apis = [];
+  constructor(APIProvider, apis, callback) {
+    this.apis = apis;
+    this.callback = callback;
     this.elapsedClockTime = 0;
     this.oldClockTime = 0;
     this.time = 0;
@@ -30,8 +31,7 @@ export default class APIService {
       if (this.elapsedClockTime >= 1000) {
         this.oldClockTime = newClockTime;
         this.elapsedClockTime = 0;
-        this.time++;
-        this.tick(this.time);
+        this.tick(this.time++);
       }
     }, 100);
   }
@@ -52,6 +52,11 @@ export default class APIService {
    */
   tick(time = 0) {
     console.log(time);
+    Object.keys(this.apis).forEach(apiName => {
+      if (time % this.apis[apiName].interval === 0) {
+        this.callback(apiName);
+      }
+    });
   }
 
   /**
@@ -62,8 +67,11 @@ export default class APIService {
    * @param {boolean} restart Make it possible to not restart the service.
    */
   update(apis, restart = true) {
-    const stopTime = this.stop();
+    let stopTime = 0;
+    if (restart) stopTime = this.stop();
+
     this.apis = apis;
-    this.start(stopTime);
+
+    if (restart) this.start(stopTime);
   }
 }
