@@ -21,3 +21,6 @@ yarn start # Start development
 yarn build # Build for production
 yarn test # Unit tests
 ```
+
+![NotiStar](https://i.imgur.com/i78hOG1.png)
+![Storytime](https://i.imgur.com/ZXXFkQM.png)
