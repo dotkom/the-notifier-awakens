@@ -5,6 +5,9 @@ import { APIService } from './services';
 import { API } from './utils';
 import { defaultApis } from './defaults';
 
+import { Clock } from './components/Clock';
+import { Office } from './components/Office';
+
 class App extends Component {
   constructor() {
     super();
@@ -24,7 +27,14 @@ class App extends Component {
   }
 
   render() {
-    return <div className="App" />;
+    return (
+      <div className="App">
+        <div className="component-container">
+          <Clock />
+          <Office />
+        </div>
+      </div>
+    );
   }
 }
 
