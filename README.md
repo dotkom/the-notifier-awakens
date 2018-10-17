@@ -7,7 +7,7 @@ The previous Notifier major version
 was controlled by Dart jQuery and
 Vanilla JavaScript. In an attempt
 to rescue Notifier, a few of
-dotKom's people went together
+dotkom's people went together
 and created a React App. This app
 was fused with Notifier, giving
 it strength and power one could
