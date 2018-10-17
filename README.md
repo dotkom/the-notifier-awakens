@@ -22,5 +22,5 @@ yarn build # Build for production
 yarn test # Unit tests
 ```
 
-![](https://imgur.com/a/0bBdEVH)
-![](https://www.photobox.co.uk/my/photo/full?photo_id=501165801776)
+![NotiStar](https://i.imgur.com/i78hOG1.png)
+![Storytime](https://i.imgur.com/d4j2D2I.jpg)
