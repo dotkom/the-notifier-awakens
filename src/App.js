@@ -2,16 +2,17 @@ import React, { Component } from 'react';
 import './App.css';
 
 import { APIService } from './services';
+import { ComponentController } from './controllers';
 import { API } from './utils';
-import { defaultApis } from './defaults';
-
-import { Clock } from './components/Clock';
-import { Office } from './components/Office';
+import { defaultApis, defaultAffiliationSettings } from './defaults';
 
 class App extends Component {
   constructor() {
     super();
     this.APIService = new APIService(API, defaultApis, console.log);
+    this.ComponentController = new ComponentController(
+      defaultAffiliationSettings.components,
+    );
 
     this.startAPIs();
   }
@@ -29,10 +30,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <div className="component-container">
-          <Clock />
-          <Office />
-        </div>
+        <div className="component-container" />
       </div>
     );
   }
