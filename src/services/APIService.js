@@ -58,8 +58,8 @@ export default class APIService {
       const api = this.apis[apiName];
       const { url, interval, delay = 0, offline = false } = api;
       if (!offline && (time - delay) % interval === 0) {
-        const urls = this.generateURLs(api, apiName);
-        console.log(urls);
+        const urls = APIService.generateURLs(api, apiName);
+        this.callback(urls);
       }
     });
   }
@@ -130,6 +130,15 @@ generateURLs(api, 'bus') =>
     }, {});
 
     return urls;
+  }
+
+  /**
+   * Generate all urls from all APIs.
+   */
+  generateURLs() {
+    return Object.entries(this.apis).reduce((acc, [apiName, api]) => {
+      return Object.assign({}, acc, APIService.generateURLs(api, apiName));
+    }, {});
   }
 
   /**
