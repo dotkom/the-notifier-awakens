@@ -1,3 +1,6 @@
+import { getStringParams, findObjectPaths } from '../utils';
+import { get } from 'object-path';
+
 /**
  * The API service schedules API requests and passes the
  * data from the requests to a callback function.
@@ -51,13 +54,73 @@ export default class APIService {
    * @param {number} time Time (in seconds) of the tick.
    */
   tick(time = 0) {
-    console.log(time);
     Object.keys(this.apis).forEach(apiName => {
-      const { interval, delay = 0, offline = false } = this.apis[apiName];
+      const api = this.apis[apiName];
+      const { url, interval, delay = 0, offline = false } = api;
       if (!offline && (time - delay) % interval === 0) {
-        this.callback(apiName);
+        const urls = this.generateURLs(api, apiName);
+        console.log(urls);
       }
     });
+  }
+
+  /**
+   * Generate URLs from a URL with multiple parameters.
+   * ```
+api = {
+  url: 'http://.../{id.*}/{from,to}',
+  id: {
+    online: '23',
+    abakus: '20',
+    delta: '10'
+  },
+  from: 0,
+  to: 1
+}
+
+generateURLs(api, 'bus') =>
+[
+  'http://.../23/0',
+  'http://.../23/1',
+  'http://.../20/0',
+  'http://.../20/1',
+  'http://.../10/0',
+  'http://.../10/1'
+]
+```
+   *
+   * @param {object} api An API object.
+   * @param {string} apiName Pointer to which API object.
+   *
+   * @returns {array} Array with URLs packed with context data.
+   */
+  static generateURLs(api, apiName) {
+    const { url } = api;
+    const firstSliceIndex = url.indexOf('{{');
+    const params = getStringParams(url);
+    const fragments = url.split(/{{[^}]+}}/g);
+    const urls = fragments.slice(1).reduce(
+      (acc, fragment, i) => {
+        const newUrls = [];
+        const nextParam = params[i] || '';
+        const apiObjPaths = findObjectPaths(api, nextParam);
+        acc.urls.forEach(oldURL => {
+          apiObjPaths.forEach(path => {
+            const value = get(api, path, '');
+            newUrls.push(oldURL + value + fragment);
+          });
+        });
+
+        return {
+          urls: newUrls,
+        };
+      },
+      {
+        urls: [fragments[0]],
+      },
+    );
+
+    return urls;
   }
 
   /**
