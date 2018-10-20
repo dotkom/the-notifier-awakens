@@ -5,9 +5,9 @@ import { get, has } from 'object-path';
 
 /**
  * List all matching object paths by using a simple string.
- * 
+ *
  * Examples:
- * 
+ *
  * object = {
  *   a: {
  *     b: {
@@ -18,18 +18,17 @@ import { get, has } from 'object-path';
  *     }
  *   }
  * }
- * 
+ *
  * findObjectPaths(object, 'a.b.c') => [ 'a.b.c' ]
  * findObjectPaths(object, 'a.*.c') => [ 'a.b.c', 'a.c.c' ]
  * findObjectPaths(object, 'a.b,c|a.c.*') => [ 'a.b', 'a.c', 'a.c.c' ]
- * 
+ *
  * @param {object} object Object to search through
  * @param {string} schema Filter to select what to return from object
- * 
+ *
  * @returns {array} Array of matching paths
  */
 export const findObjectPaths = (object, schema = '') => {
-
   // Check if a "|" is in the schema. If found, then split by "|"
   // and run findObjectPaths function over them again and avoid
   // duplicates.
@@ -88,16 +87,16 @@ export const findObjectPaths = (object, schema = '') => {
 
 /**
  * Return all matches found in a string encapsulated by substrings.
- * 
+ *
  * Examples:
  * getStringParams('test{{one}}') => [ 'one' ]
  * getStringParams('{{two}}test') => [ 'two' ]
  * getStringParams('{{three}}test{{four}}') => [ 'three', 'four' ]
- * 
+ *
  * @param {string} string The String to search through
  * @param {string} start Start of match
  * @param {string} end End of match
- * 
+ *
  * @returns {array} Array of matches
  */
 export const getStringParams = (string, start = '{{', end = '}}') => {
@@ -115,8 +114,12 @@ export const getStringParams = (string, start = '{{', end = '}}') => {
       break;
     }
 
-    result.push(string.slice(index + offsetStart, index + offsetStart + indexEnd));
-    indexStart = string.slice(index + offsetStart + indexEnd + offsetEnd).indexOf(start);
+    result.push(
+      string.slice(index + offsetStart, index + offsetStart + indexEnd),
+    );
+    indexStart = string
+      .slice(index + offsetStart + indexEnd + offsetEnd)
+      .indexOf(start);
     index += indexEnd + offsetEnd + indexStart + offsetStart;
   }
 
@@ -125,16 +128,16 @@ export const getStringParams = (string, start = '{{', end = '}}') => {
 
 /**
  * Inject values from object into string at marked locations.
- * 
+ *
  * Examples:
- * 
+ *
  * const obj = {
  *   one: 1,
  *   two: 2,
  *   three: 3,
  *   four: 4,
  * };
- * 
+ *
  * injectValuesIntoString('test{{one}}', obj) => 'test1'
  * injectValuesIntoString('{{one}}test', obj) => '1test'
  * injectValuesIntoString('test{{one}}test', obj) => 'test1test'
@@ -142,16 +145,22 @@ export const getStringParams = (string, start = '{{', end = '}}') => {
  * injectValuesIntoString('{{three}}test{{four}}', obj) => '3test4'
  * injectValuesIntoString('{{three}}test{{five}}', obj) => '3test{{five}}'
  * injectValuesIntoString('{{three}}test{{five}}', obj, '0') => '3test0'
- * 
+ *
  * @param {string} string The String to search through
  * @param {string} values An object with all values that can fit the keys
  * @param {string} fallbackValue Default value if no keys in values matches
  * @param {string} start Start of match
  * @param {string} end End of match
- * 
+ *
  * @returns {string} Generated string
  */
-export const injectValuesIntoString = (string, values, fallbackValue = null, start = '{{', end = '}}') => {
+export const injectValuesIntoString = (
+  string,
+  values,
+  fallbackValue = null,
+  start = '{{',
+  end = '}}',
+) => {
   const params = getStringParams(string, start, end);
 
   if (!params.length) {
@@ -179,7 +188,11 @@ export const injectValuesIntoString = (string, values, fallbackValue = null, sta
 
     const formattedParam = start + param + end;
     const position = string.indexOf(formattedParam, prevPosition + 1);
-    result += string.slice((prevPosition === -1 ? 0 : prevPosition) + prevFormattedParam.length, position) + value;
+    result +=
+      string.slice(
+        (prevPosition === -1 ? 0 : prevPosition) + prevFormattedParam.length,
+        position,
+      ) + value;
     prevPosition = position;
     prevFormattedParam = formattedParam;
   }
