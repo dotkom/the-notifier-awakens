@@ -56,7 +56,7 @@ export default class APIService {
   tick(time = 0) {
     Object.keys(this.apis).forEach(apiName => {
       const api = this.apis[apiName];
-      const { url, interval, delay = 0, offline = false } = api;
+      const { interval, delay = 0, offline = false } = api;
       if (!offline && (time - delay) % interval === 0) {
         const urls = APIService.generateURLs(api, apiName);
         this.callback(urls);
