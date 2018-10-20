@@ -79,14 +79,14 @@ api = {
 }
 
 generateURLs(api, 'bus') =>
-[
-  'http://.../23/0',
-  'http://.../23/1',
-  'http://.../20/0',
-  'http://.../20/1',
-  'http://.../10/0',
-  'http://.../10/1'
-]
+{
+  'bus.id.online.from': 'http://.../23/0',
+  'bus.id.online.to': 'http://.../23/1',
+  'bus.id.abakus.from': 'http://.../20/0',
+  'bus.id.abakus.to': 'http://.../20/1',
+  'bus.id.delta.from': 'http://.../10/0',
+  'bus.id.delta.to': 'http://.../10/1'
+}
 ```
    *
    * @param {object} api An API object.
@@ -96,29 +96,38 @@ generateURLs(api, 'bus') =>
    */
   static generateURLs(api, apiName) {
     const { url } = api;
-    const firstSliceIndex = url.indexOf('{{');
     const params = getStringParams(url);
     const fragments = url.split(/{{[^}]+}}/g);
-    const urls = fragments.slice(1).reduce(
+    const zip = fragments.slice(1).reduce(
       (acc, fragment, i) => {
         const newUrls = [];
+        const newKeys = [];
         const nextParam = params[i] || '';
         const apiObjPaths = findObjectPaths(api, nextParam);
-        acc.urls.forEach(oldURL => {
+        acc.urls.forEach((oldURL, j) => {
           apiObjPaths.forEach(path => {
             const value = get(api, path, '');
             newUrls.push(oldURL + value + fragment);
+            newKeys.push(acc.keys[j] + '.' + path);
           });
         });
 
         return {
           urls: newUrls,
+          keys: newKeys,
         };
       },
       {
         urls: [fragments[0]],
+        keys: [apiName],
       },
     );
+
+    const urls = zip.urls.reduce((acc, url, i) => {
+      return Object.assign({}, acc, {
+        [zip.keys[i]]: url,
+      });
+    }, {});
 
     return urls;
   }

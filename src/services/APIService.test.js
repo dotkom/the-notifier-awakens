@@ -13,13 +13,12 @@ it('Generates URLs', () => {
   };
 
   const result = APIService.generateURLs(api, 'bus');
-  expect(result.urls).toEqual([
-    'http://.../23/0',
-    'http://.../23/1',
-    'http://.../20/0',
-    'http://.../20/1',
-    'http://.../10/0',
-    'http://.../10/1',
-  ]);
-  expect(result.urls.length).toBe(6);
+  expect(result).toEqual({
+    'bus.id.online.from': 'http://.../23/0',
+    'bus.id.online.to': 'http://.../23/1',
+    'bus.id.abakus.from': 'http://.../20/0',
+    'bus.id.abakus.to': 'http://.../20/1',
+    'bus.id.delta.from': 'http://.../10/0',
+    'bus.id.delta.to': 'http://.../10/1',
+  });
 });
