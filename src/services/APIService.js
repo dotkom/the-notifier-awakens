@@ -1,21 +1,27 @@
-import { getStringParams, findObjectPaths } from '../utils';
+import { API, getStringParams, findObjectPaths } from '../utils';
 import { get } from 'object-path';
 
 /**
  * The API service schedules API requests and passes the
  * data from the requests to a callback function.
  *
- * @param {object} APIProvider API request handler.
+ * @param {array} apis List of APIs.
  * @param {function} callback Function that recieves data from the API calls.
+ * @param {array} components List of components to check what APIs should be used.
  */
 export default class APIService {
-  constructor(APIProvider, apis, callback) {
+  constructor(apis, callback, components = []) {
     this.apis = apis;
     this.callback = callback;
     this.elapsedClockTime = 0;
     this.oldClockTime = 0;
     this.time = 0;
     this.interval = null;
+    this.usedApis = {};
+
+    if (components.length) {
+      this.updateUsedApis(components);
+    }
   }
 
   /**
@@ -24,19 +30,22 @@ export default class APIService {
    * @param {number} time Start time (in seconds) of the scheduler.
    */
   start(time = 0) {
-    this.oldClockTime = new Date().getTime();
     this.time = 0;
+    const timeNow = new Date().getTime();
 
-    this.interval = setInterval(() => {
-      const newClockTime = new Date().getTime();
-      this.elapsedClockTime = newClockTime - this.oldClockTime;
+    setTimeout(() => {
+      this.oldClockTime = new Date().getTime();
+      this.interval = setInterval(() => {
+        const newClockTime = new Date().getTime();
+        this.elapsedClockTime = newClockTime - this.oldClockTime;
 
-      if (this.elapsedClockTime >= 1000) {
-        this.oldClockTime = newClockTime;
-        this.elapsedClockTime = 0;
-        this.tick(this.time++);
-      }
-    }, 100);
+        if (this.elapsedClockTime >= 1000) {
+          this.oldClockTime = newClockTime;
+          this.elapsedClockTime = 0;
+          this.tick(this.time++);
+        }
+      }, 100);
+    }, (timeNow - Math.floor(timeNow / 1000) * 1000 + 50) % 1000);
   }
 
   /**
@@ -59,9 +68,46 @@ export default class APIService {
       const { interval, delay = 0, offline = false } = api;
       if (!offline && (time - delay) % interval === 0) {
         const urls = APIService.generateURLs(api, apiName);
-        this.callback(urls);
+        Object.entries(urls).forEach(([key, url]) => {
+          if (key in this.usedApis && this.usedApis[key]) {
+            API.getRequest(url, data => {
+              this.callback(key, data);
+            });
+          }
+        });
       }
     });
+  }
+
+  /**
+   * Get which APIs that are in use given the current components.
+   *
+   * @param {array} components List of components in view.
+   */
+  getUsedApis(components) {
+    const apis = this.generateURLs();
+    return Object.keys(apis).reduce((acc, key) => {
+      let isUsed = components.some(component => {
+        if ('apis' in component) {
+          return Object.values(component.apis).some(value => {
+            if (!~value.indexOf(':')) return false;
+            return value.split(':')[0] === key;
+          });
+        }
+        return false;
+      }, false);
+      return Object.assign({}, acc, {
+        [key]: isUsed,
+      });
+    }, {});
+  }
+
+  updateUsedApis(components = []) {
+    this.usedApis = this.getUsedApis(components);
+  }
+
+  getApis() {
+    return this.apis;
   }
 
   /**
