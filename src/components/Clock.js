@@ -6,9 +6,10 @@ export default class Clock extends Component {
   render() {
     return (
       <div {...this.props}>
-        Hello
+        <h3>Coffee clock</h3>
+        <p>Pots</p>
         {(this.props.pots || []).map((p, i) => (
-          <div key={i}>{format(p, 'ddd D. MMM YYYY (HH:mm:ss)\n')}</div>
+          <div key={i}>{format(p, 'ddd D. MMM YYYY (HH:mm)\n')}</div>
         ))}
       </div>
     );
