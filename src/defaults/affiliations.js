@@ -5,7 +5,7 @@ export const defaultAffiliationSettings = {
       {
         template: 'Clock',
         apis: {
-          pots: 'coffeePots:pots',
+          pots: 'coffeePots.org.online:pots',
           message: 'affiliation.org.online:servant.message',
           responsible: 'affiliation.org.online:servant.responsible',
           servants: 'affiliation.org.online:servant.servants',

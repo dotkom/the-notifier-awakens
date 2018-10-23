@@ -2,7 +2,7 @@ import { API_URL } from '../constants';
 
 export const defaultApis = {
   affiliation: {
-    interval: 100,
+    interval: 60,
     delay: 100,
     url: `${API_URL}/affiliation/{{org.*}}`,
     org: {
@@ -13,8 +13,14 @@ export const defaultApis = {
     },
   },
   coffeePots: {
-    interval: 100,
-    url: `${API_URL}/coffee/DEBUG`,
+    interval: 10,
+    url: `${API_URL}/coffee/{{org.*}}`,
+    org: {
+      debug: 'DEBUG',
+      online: 'online',
+      abakus: 'abakus',
+      delta: 'delta',
+    },
   },
   tarbus: {
     interval: 100,
