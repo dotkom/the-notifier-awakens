@@ -7,22 +7,22 @@ import { get, has } from 'object-path';
  * List all matching object paths by using a simple string.
  *
  * Examples:
- *
- * object = {
- *   a: {
- *     b: {
- *       c: 'first'
- *     },
- *     c: {
- *       c: 'second'
- *     }
- *   }
- * }
- *
- * findObjectPaths(object, 'a.b.c') => [ 'a.b.c' ]
- * findObjectPaths(object, 'a.*.c') => [ 'a.b.c', 'a.c.c' ]
- * findObjectPaths(object, 'a.b,c|a.c.*') => [ 'a.b', 'a.c', 'a.c.c' ]
- *
+ * ```
+object = {
+  a: {
+    b: {
+      c: 'first'
+    },
+    c: {
+      c: 'second'
+    }
+  }
+}
+
+findObjectPaths(object, 'a.b.c') => [ 'a.b.c' ]
+findObjectPaths(object, 'a.*.c') => [ 'a.b.c', 'a.c.c' ]
+findObjectPaths(object, 'a.b,c|a.c.*') => [ 'a.b', 'a.c', 'a.c.c' ]
+ * ```
  * @param {object} object Object to search through
  * @param {string} schema Filter to select what to return from object
  *
@@ -89,10 +89,11 @@ export const findObjectPaths = (object, schema = '') => {
  * Return all matches found in a string encapsulated by substrings.
  *
  * Examples:
- * getStringParams('test{{one}}') => [ 'one' ]
- * getStringParams('{{two}}test') => [ 'two' ]
- * getStringParams('{{three}}test{{four}}') => [ 'three', 'four' ]
- *
+ * ```
+getStringParams('test{{one}}') => [ 'one' ]
+getStringParams('{{two}}test') => [ 'two' ]
+getStringParams('{{three}}test{{four}}') => [ 'three', 'four' ]
+ * ```
  * @param {string} string The String to search through
  * @param {string} start Start of match
  * @param {string} end End of match
@@ -130,22 +131,22 @@ export const getStringParams = (string, start = '{{', end = '}}') => {
  * Inject values from object into string at marked locations.
  *
  * Examples:
- *
- * const obj = {
- *   one: 1,
- *   two: 2,
- *   three: 3,
- *   four: 4,
- * };
- *
- * injectValuesIntoString('test{{one}}', obj) => 'test1'
- * injectValuesIntoString('{{one}}test', obj) => '1test'
- * injectValuesIntoString('test{{one}}test', obj) => 'test1test'
- * injectValuesIntoString('{{two}}test{{two}}', obj) => '2test2'
- * injectValuesIntoString('{{three}}test{{four}}', obj) => '3test4'
- * injectValuesIntoString('{{three}}test{{five}}', obj) => '3test{{five}}'
- * injectValuesIntoString('{{three}}test{{five}}', obj, '0') => '3test0'
- *
+ * ```
+const obj = {
+  one: 1,
+  two: 2,
+  three: 3,
+  four: 4,
+};
+
+injectValuesIntoString('test{{one}}', obj) => 'test1'
+injectValuesIntoString('{{one}}test', obj) => '1test'
+injectValuesIntoString('test{{one}}test', obj) => 'test1test'
+injectValuesIntoString('{{two}}test{{two}}', obj) => '2test2'
+injectValuesIntoString('{{three}}test{{four}}', obj) => '3test4'
+injectValuesIntoString('{{three}}test{{five}}', obj) => '3test{{five}}'
+injectValuesIntoString('{{three}}test{{five}}', obj, '0') => '3test0'
+ * ```
  * @param {string} string The String to search through
  * @param {string} values An object with all values that can fit the keys
  * @param {string} fallbackValue Default value if no keys in values matches
