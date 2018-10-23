@@ -41,6 +41,10 @@ it('Find object paths', () => {
     'a.b.c',
     'a.c.c',
   ]);
+  expect(findObjectPaths(obj, '*')).toEqual(['a', 'b']);
+  expect(findObjectPaths(obj, '*.b')).toEqual(['a.b', 'b.b']);
+  expect(findObjectPaths(obj, '*.b.*')).toEqual(['a.b.c']);
+  expect(findObjectPaths(obj, '*.*.*')).toEqual(['a.b.c', 'a.c.c']);
 });
 
 it('Get string params', () => {
