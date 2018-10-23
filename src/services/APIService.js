@@ -18,6 +18,8 @@ export default class APIService {
     this.time = 0;
     this.interval = null;
     this.usedApis = {};
+    this.attemptsUntilFail = 3;
+    this.failedApis = {};
 
     if (components.length) {
       this.updateUsedApis(components);
@@ -69,14 +71,45 @@ export default class APIService {
       if (!offline && (time - delay) % interval === 0) {
         const urls = APIService.generateURLs(api, apiName);
         Object.entries(urls).forEach(([key, url]) => {
-          if (key in this.usedApis && this.usedApis[key]) {
-            API.getRequest(url, data => {
-              this.callback(key, data);
-            });
+          if (
+            key in this.usedApis &&
+            this.usedApis[key] &&
+            this.hasNotFailed(key)
+          ) {
+            API.getRequest(
+              url,
+              data => {
+                if ('error' in data) {
+                  this.handleFail(key, apiName);
+                } else {
+                  this.callback(key, data);
+                }
+              },
+              () => {
+                this.handleFail(key, apiName);
+              },
+            );
           }
         });
       }
     });
+  }
+
+  hasNotFailed(key) {
+    return (
+      !(key in this.failedApis) ||
+      (key in this.failedApis && this.failedApis[key] < this.attemptsUntilFail)
+    );
+  }
+
+  handleFail(key, apiName) {
+    const { delay = 0 } = this.apis[apiName];
+    this.apis[apiName].delay = delay + 1;
+    if (key in this.failedApis) {
+      this.failedApis[key]++;
+    } else {
+      this.failedApis[key] = 1;
+    }
   }
 
   /**
