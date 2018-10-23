@@ -1,4 +1,9 @@
-import { API, getStringParams, findObjectPaths } from '../utils';
+import {
+  API,
+  getStringParams,
+  findObjectPaths,
+  injectValuesIntoString,
+} from '../utils';
 import { get } from 'object-path';
 
 /**
@@ -10,9 +15,10 @@ import { get } from 'object-path';
  * @param {array} components List of components to check what APIs should be used.
  */
 export default class APIService {
-  constructor(apis, callback, components = []) {
+  constructor(apis, callback, settings = {}, components = []) {
     this.apis = apis;
     this.callback = callback;
+    this.settings = settings;
     this.elapsedClockTime = 0;
     this.oldClockTime = 0;
     this.time = 0;
@@ -123,8 +129,9 @@ export default class APIService {
       let isUsed = components.some(component => {
         if ('apis' in component) {
           return Object.values(component.apis).some(value => {
-            if (!~value.indexOf(':')) return false;
-            return value.split(':')[0] === key;
+            const settingValue = this.injectSettings(value);
+            if (!~settingValue.indexOf(':')) return settingValue === key;
+            return settingValue.split(':')[0] === key;
           });
         }
         return false;
@@ -135,12 +142,20 @@ export default class APIService {
     }, {});
   }
 
+  injectSettings(value) {
+    return injectValuesIntoString(value, this.settings, '', '${', '}');
+  }
+
   updateUsedApis(components = []) {
     this.usedApis = this.getUsedApis(components);
   }
 
   getApis() {
     return this.apis;
+  }
+
+  updateSettings(settings) {
+    this.settings = settings;
   }
 
   /**

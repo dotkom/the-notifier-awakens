@@ -2,6 +2,7 @@ import React from 'react';
 
 import * as Components from '../components';
 import { get } from 'object-path';
+import { injectValuesIntoString } from '../utils';
 
 /**
  * The component controller passes data into components and
@@ -11,8 +12,17 @@ import { get } from 'object-path';
  * @param {array} components List of components that should be rendered.
  */
 export default class ComponentController {
-  constructor(components) {
+  constructor(components, settings = {}) {
     this.components = components;
+    this.settings = settings;
+  }
+
+  updateSettings(settings) {
+    this.settings = settings;
+  }
+
+  injectSettings(value) {
+    return injectValuesIntoString(value, this.settings, '', '${', '}');
   }
 
   update(key, data) {}
@@ -27,8 +37,9 @@ export default class ComponentController {
       const dataProps = Object.entries(component.apis).reduce(
         (acc, [key, path]) => {
           const [apiPath, pathInRequest] = path.split(':');
-          if (apiPath in data) {
-            const dataFromApi = data[apiPath];
+          const apiPathParsed = this.injectSettings(apiPath);
+          if (apiPathParsed in data) {
+            const dataFromApi = data[apiPathParsed];
             const dataToKey = pathInRequest
               ? get(dataFromApi, pathInRequest, '')
               : dataFromApi;

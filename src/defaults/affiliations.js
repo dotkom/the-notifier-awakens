@@ -1,6 +1,5 @@
 export const defaultAffiliationSettings = {
   online: {
-    settings: ['bus', 'bus2', 'coffee', 'events', 'officestatus'],
     components: [
       {
         template: 'Clock',
@@ -14,8 +13,8 @@ export const defaultAffiliationSettings = {
       {
         template: 'Bus',
         apis: {
-          fromCity: 'tarbus.stops.samf.fromCity:departures',
-          toCity: 'tarbus.stops.samf.toCity:departures',
+          fromCity: 'tarbus.stops.${bus}.fromCity:departures',
+          toCity: 'tarbus.stops.${bus}.toCity:departures',
         },
       },
     ],

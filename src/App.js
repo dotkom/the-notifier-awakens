@@ -17,11 +17,20 @@ class App extends Component {
 
     this.updateData = this.updateData.bind(this);
 
-    this.APIService = new APIService(defaultApis, this.updateData, components);
-    this.ComponentController = new ComponentController(components);
+    this.APIService = new APIService(
+      defaultApis,
+      this.updateData,
+      defaultSettings,
+      components,
+    );
+    this.ComponentController = new ComponentController(
+      components,
+      defaultSettings,
+    );
 
     this.state = {
       data: {},
+      settings: defaultSettings,
     };
 
     this.startAPIs();
@@ -35,6 +44,16 @@ class App extends Component {
     this.setState(
       Object.assign({}, this.state, {
         data: newData,
+      }),
+    );
+  }
+
+  updateSettings(settings) {
+    this.APIService.updateSettings(settings);
+    this.ComponentController.updateSettings(settings);
+    this.setState(
+      Object.assign({}, this.state, {
+        settings,
       }),
     );
   }
