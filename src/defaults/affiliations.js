@@ -10,7 +10,13 @@ export const defaultAffiliationSettings = {
           responsible: 'affiliation.org.online:servant.responsible',
           servants: 'affiliation.org.online:servant.servants',
         },
-        props: {},
+      },
+      {
+        template: 'Bus',
+        apis: {
+          fromCity: 'tarbus.stops.samf.fromCity:departures',
+          toCity: 'tarbus.stops.samf.toCity:departures',
+        },
       },
     ],
   },

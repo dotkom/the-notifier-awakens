@@ -13,7 +13,7 @@ export const defaultApis = {
     },
   },
   coffeePots: {
-    interval: 10,
+    interval: 60,
     url: `${API_URL}/coffee/{{org.*}}`,
     org: {
       debug: 'DEBUG',
@@ -23,8 +23,7 @@ export const defaultApis = {
     },
   },
   tarbus: {
-    interval: 100,
-    offline: true,
+    interval: 10,
     url: 'https://atbapi.tar.io/api/v1/departures/{{stops.*.fromCity,toCity}}',
     stops: {
       glossyd: { fromCity: '16010265', toCity: '16011265' },
