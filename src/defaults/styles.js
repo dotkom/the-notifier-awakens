@@ -1,4 +1,4 @@
-const Online = `
+const online = `
   , {
     background-color: #001533;
   }
@@ -119,7 +119,7 @@ const Online = `
   }
 `;
 
-const SmartMirror = `
+const smartMirror = `
 , {
   /*background-color: #121280;*/
 }
@@ -129,4 +129,4 @@ const SmartMirror = `
 }
 `;
 
-export { Online, SmartMirror };
+export { online, smartMirror };
