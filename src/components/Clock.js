@@ -3,14 +3,34 @@ import { format } from 'date-fns';
 import './Clock.css';
 
 export default class Clock extends Component {
+  constructor() {
+    super();
+    this.state = {
+      time: new Date(),
+    };
+  }
+  componentDidMount() {
+    setInterval(() => {
+      this.setState({ time: new Date() });
+    }, 10000);
+  }
   render() {
+    let time = format(new Date(), 'HH:mm');
     return (
-      <div {...this.props}>
-        <h3>Coffee clock</h3>
-        <p>Pots</p>
-        {(this.props.pots || []).map((p, i) => (
-          <div key={i}>{format(p, 'ddd D. MMM YYYY (HH:mm)\n')}</div>
-        ))}
+      <div>
+        <svg width="100" height="100">
+          <circle cx="50" cy="50" r="50" fill="#70186f" />
+          <text
+            x="50%"
+            y="50%"
+            alignmentBaseline="middle"
+            textAnchor="middle"
+            fill="white"
+            fontFamily="Righteous"
+          >
+            {time}
+          </text>
+        </svg>
       </div>
     );
   }
