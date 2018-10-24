@@ -3,7 +3,6 @@ import { API_URL } from '../constants';
 export const defaultApis = {
   affiliation: {
     interval: 60,
-    delay: 100,
     url: `${API_URL}/affiliation/{{org.*}}`,
     org: {
       debug: 'DEBUG',

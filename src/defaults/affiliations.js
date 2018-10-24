@@ -17,6 +17,14 @@ export const defaultAffiliationSettings = {
           toCity: 'tarbus.stops.${bus}.toCity:departures',
         },
       },
+      {
+        template: 'Office',
+        apis: {
+          servants: 'affiliation.org.debug:servant.servants',
+          message: 'affiliation.org.debug:servant.message',
+          status: 'affiliation.org.debug:meeting.message',
+        },
+      },
     ],
   },
 };
