@@ -1,0 +1,24 @@
+.kontor-liste,
+.kontor-heading {
+  color: rgb(136, 136, 136);
+}
+
+.kontor-liste {
+  position: relative;
+  min-height: 100px;
+  justify-content: center;
+  display: flex;
+  flex-flow: column;
+}
+
+.kontor-liste::before {
+  position: absolute;
+  bottom: 0;
+  height: 100%;
+  left: 0;
+  right: 0;
+  content: '';
+  z-index: 1;
+  box-shadow: inset -0px -60px 50px -50px #001533,
+    inset 0 60px 50px -50px #001533;
+}
