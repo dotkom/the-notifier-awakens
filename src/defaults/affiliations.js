@@ -20,9 +20,9 @@ export const defaultAffiliationSettings = {
       {
         template: 'Office',
         apis: {
-          servants: 'affiliation.org.debug:servant.servants',
-          message: 'affiliation.org.debug:servant.message',
-          status: 'affiliation.org.debug:meeting.message',
+          servants: 'affiliation.org.${affiliation}:servant.servants',
+          message: 'affiliation.org.${affiliation}:servant.message',
+          status: 'affiliation.org.${affiliation}:meeting.message',
         },
       },
     ],
