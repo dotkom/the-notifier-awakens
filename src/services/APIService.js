@@ -1,18 +1,35 @@
+import {
+  API,
+  getStringParams,
+  findObjectPaths,
+  injectValuesIntoString,
+} from '../utils';
+import { get } from 'object-path';
+
 /**
  * The API service schedules API requests and passes the
  * data from the requests to a callback function.
  *
- * @param {object} APIProvider API request handler.
+ * @param {array} apis List of APIs.
  * @param {function} callback Function that recieves data from the API calls.
+ * @param {array} components List of components to check what APIs should be used.
  */
 export default class APIService {
-  constructor(APIProvider, apis, callback) {
+  constructor(apis, callback, settings = {}, components = []) {
     this.apis = apis;
     this.callback = callback;
+    this.settings = settings;
     this.elapsedClockTime = 0;
     this.oldClockTime = 0;
     this.time = 0;
     this.interval = null;
+    this.usedApis = {};
+    this.attemptsUntilFail = 3;
+    this.failedApis = {};
+
+    if (components.length) {
+      this.updateUsedApis(components);
+    }
   }
 
   /**
@@ -21,8 +38,8 @@ export default class APIService {
    * @param {number} time Start time (in seconds) of the scheduler.
    */
   start(time = 0) {
-    this.oldClockTime = new Date().getTime();
     this.time = 0;
+    this.oldClockTime = new Date().getTime();
 
     this.interval = setInterval(() => {
       const newClockTime = new Date().getTime();
@@ -51,13 +68,168 @@ export default class APIService {
    * @param {number} time Time (in seconds) of the tick.
    */
   tick(time = 0) {
-    console.log(time);
     Object.keys(this.apis).forEach(apiName => {
-      const { interval, delay = 0, offline = false } = this.apis[apiName];
+      const api = this.apis[apiName];
+      const { interval, delay = 0, offline = false } = api;
       if (!offline && (time - delay) % interval === 0) {
-        this.callback(apiName);
+        const urls = APIService.generateURLs(api, apiName);
+        Object.entries(urls).forEach(([key, url]) => {
+          if (
+            key in this.usedApis &&
+            this.usedApis[key] &&
+            this.hasNotFailed(key)
+          ) {
+            API.getRequest(
+              url,
+              data => {
+                if ('error' in data) {
+                  this.handleFail(key, apiName);
+                } else {
+                  this.callback(key, data);
+                }
+              },
+              () => {
+                this.handleFail(key, apiName);
+              },
+            );
+          }
+        });
       }
     });
+  }
+
+  hasNotFailed(key) {
+    return (
+      !(key in this.failedApis) ||
+      (key in this.failedApis && this.failedApis[key] < this.attemptsUntilFail)
+    );
+  }
+
+  handleFail(key, apiName) {
+    const { delay = 0 } = this.apis[apiName];
+    this.apis[apiName].delay = delay + 1;
+    if (key in this.failedApis) {
+      this.failedApis[key]++;
+    } else {
+      this.failedApis[key] = 1;
+    }
+  }
+
+  /**
+   * Get which APIs that are in use given the current components.
+   *
+   * @param {array} components List of components in view.
+   */
+  getUsedApis(components) {
+    const apis = this.generateURLs();
+    return Object.keys(apis).reduce((acc, key) => {
+      let isUsed = components.some(component => {
+        if ('apis' in component) {
+          return Object.values(component.apis).some(value => {
+            const settingValue = this.injectSettings(value);
+            if (!~settingValue.indexOf(':')) return settingValue === key;
+            return settingValue.split(':')[0] === key;
+          });
+        }
+        return false;
+      }, false);
+      return Object.assign({}, acc, {
+        [key]: isUsed,
+      });
+    }, {});
+  }
+
+  injectSettings(value) {
+    return injectValuesIntoString(value, this.settings, '', '${', '}');
+  }
+
+  updateUsedApis(components = []) {
+    this.usedApis = this.getUsedApis(components);
+  }
+
+  getApis() {
+    return this.apis;
+  }
+
+  updateSettings(settings) {
+    this.settings = settings;
+  }
+
+  /**
+   * Generate URLs from a URL with multiple parameters.
+   * ```
+api = {
+  url: 'http://.../{id.*}/{from,to}',
+  id: {
+    online: '23',
+    abakus: '20',
+    delta: '10'
+  },
+  from: 0,
+  to: 1
+}
+
+generateURLs(api, 'bus') =>
+{
+  'bus.id.online.from': 'http://.../23/0',
+  'bus.id.online.to': 'http://.../23/1',
+  'bus.id.abakus.from': 'http://.../20/0',
+  'bus.id.abakus.to': 'http://.../20/1',
+  'bus.id.delta.from': 'http://.../10/0',
+  'bus.id.delta.to': 'http://.../10/1'
+}
+```
+   *
+   * @param {object} api An API object.
+   * @param {string} apiName Pointer to which API object.
+   *
+   * @returns {array} Array with URLs packed with context data.
+   */
+  static generateURLs(api, apiName) {
+    const { url } = api;
+    const params = getStringParams(url);
+    const fragments = url.split(/{{[^}]+}}/g);
+    const zip = fragments.slice(1).reduce(
+      (acc, fragment, i) => {
+        const newUrls = [];
+        const newKeys = [];
+        const nextParam = params[i] || '';
+        const apiObjPaths = findObjectPaths(api, nextParam);
+        acc.urls.forEach((oldURL, j) => {
+          apiObjPaths.forEach(path => {
+            const value = get(api, path, '');
+            newUrls.push(oldURL + value + fragment);
+            newKeys.push(acc.keys[j] + '.' + path);
+          });
+        });
+
+        return {
+          urls: newUrls,
+          keys: newKeys,
+        };
+      },
+      {
+        urls: [fragments[0]],
+        keys: [apiName],
+      },
+    );
+
+    const urls = zip.urls.reduce((acc, url, i) => {
+      return Object.assign({}, acc, {
+        [zip.keys[i]]: url,
+      });
+    }, {});
+
+    return urls;
+  }
+
+  /**
+   * Generate all urls from all APIs.
+   */
+  generateURLs() {
+    return Object.entries(this.apis).reduce((acc, [apiName, api]) => {
+      return Object.assign({}, acc, APIService.generateURLs(api, apiName));
+    }, {});
   }
 
   /**

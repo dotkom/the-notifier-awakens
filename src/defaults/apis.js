@@ -2,21 +2,28 @@ import { API_URL } from '../constants';
 
 export const defaultApis = {
   affiliation: {
-    interval: 10,
-    delay: 2,
+    interval: 60,
+    delay: 100,
     url: `${API_URL}/affiliation/{{org.*}}`,
     org: {
-      online: 'DEBUG',
+      debug: 'DEBUG',
+      online: 'online',
       abakus: 'abakus',
       delta: 'delta',
     },
   },
   coffeePots: {
     interval: 60,
-    url: `${API_URL}/coffee/DEBUG`,
+    url: `${API_URL}/coffee/{{org.*}}`,
+    org: {
+      debug: 'DEBUG',
+      online: 'online',
+      abakus: 'abakus',
+      delta: 'delta',
+    },
   },
   tarbus: {
-    interval: 100,
+    interval: 10,
     url: 'https://atbapi.tar.io/api/v1/departures/{{stops.*.fromCity,toCity}}',
     stops: {
       glossyd: { fromCity: '16010265', toCity: '16011265' },
@@ -25,6 +32,7 @@ export const defaultApis = {
   },
   bartebuss: {
     interval: 100,
+    offline: true,
     url: 'https://bartebuss.no/api/unified/{{stops.*.fromCity,toCity}}',
     stops: {
       glossyd: { fromCity: '16010265', toCity: '16011265' },
@@ -33,6 +41,7 @@ export const defaultApis = {
   },
   enturbus: {
     interval: 100,
+    offline: true,
     method: 'POST',
     req: {
       headers: {
