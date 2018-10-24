@@ -39,21 +39,18 @@ export default class APIService {
    */
   start(time = 0) {
     this.time = 0;
-    const timeNow = new Date().getTime();
+    this.oldClockTime = new Date().getTime();
 
-    setTimeout(() => {
-      this.oldClockTime = new Date().getTime();
-      this.interval = setInterval(() => {
-        const newClockTime = new Date().getTime();
-        this.elapsedClockTime = newClockTime - this.oldClockTime;
+    this.interval = setInterval(() => {
+      const newClockTime = new Date().getTime();
+      this.elapsedClockTime = newClockTime - this.oldClockTime;
 
-        if (this.elapsedClockTime >= 1000) {
-          this.oldClockTime = newClockTime;
-          this.elapsedClockTime = 0;
-          this.tick(this.time++);
-        }
-      }, 100);
-    }, (timeNow - Math.floor(timeNow / 1000) * 1000 + 50) % 1000);
+      if (this.elapsedClockTime >= 1000) {
+        this.oldClockTime = newClockTime;
+        this.elapsedClockTime = 0;
+        this.tick(this.time++);
+      }
+    }, 100);
   }
 
   /**
