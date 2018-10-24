@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Style from 'style-it';
+
 import './App.css';
 
 import { APIService } from './services';
@@ -7,6 +9,8 @@ import {
   defaultApis,
   defaultAffiliationSettings,
   defaultSettings,
+  defaultTranslations,
+  styles,
 } from './defaults';
 
 class App extends Component {
@@ -26,6 +30,7 @@ class App extends Component {
     this.ComponentController = new ComponentController(
       components,
       defaultSettings,
+      defaultTranslations,
     );
 
     this.state = {
@@ -73,10 +78,18 @@ class App extends Component {
       this.state.data,
     );
 
+    let globalCSS = ' ';
+    if (this.state.settings.affiliation in styles) {
+      globalCSS = styles[this.state.settings.affiliation];
+    }
+
     return (
-      <div className="App">
-        <div className="component-container">{componentsRendered}</div>
-      </div>
+      <Style>
+        {globalCSS}
+        <div className="App">
+          <div className="component-container">{componentsRendered}</div>
+        </div>
+      </Style>
     );
   }
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import Style from 'style-it';
 
 import * as Components from '../components';
 import { get } from 'object-path';
@@ -12,13 +13,26 @@ import { injectValuesIntoString } from '../utils';
  * @param {array} components List of components that should be rendered.
  */
 export default class ComponentController {
-  constructor(components, settings = {}) {
+  constructor(components, settings = {}, translations = {}) {
     this.components = components;
     this.settings = settings;
+    this.translations = translations;
   }
 
   updateSettings(settings) {
     this.settings = settings;
+  }
+
+  updateTranslations(translations) {
+    this.translations = translations;
+  }
+
+  translate(word) {
+    if (word in this.translations) {
+      return this.translations[word];
+    }
+
+    return word;
   }
 
   injectSettings(value) {
@@ -33,6 +47,14 @@ export default class ComponentController {
 
   renderComponents(data = {}) {
     return this.components.map((component, i) => {
+      const props = Object.entries(component).reduce((acc, [key, val]) => {
+        if (typeof val === 'string') {
+          return Object.assign({}, acc, {
+            [key]: this.injectSettings(val),
+          });
+        }
+        return acc;
+      }, component);
       const Component = Components[component.template];
       const dataProps = Object.entries(component.apis).reduce(
         (acc, [key, path]) => {
@@ -49,10 +71,26 @@ export default class ComponentController {
           }
           return acc;
         },
-        {},
+        props,
       );
 
-      return <Component key={i} {...dataProps} />;
+      let modularCSS = ' ';
+      if ('css' in dataProps) {
+        modularCSS = dataProps.css;
+      }
+
+      return (
+        <Style>
+          {modularCSS}
+          <div>
+            <Component
+              key={i}
+              translate={e => this.translate(e)}
+              {...dataProps}
+            />
+          </div>
+        </Style>
+      );
     });
   }
 }
