@@ -80,14 +80,10 @@ export default class ComponentController {
       }
 
       return (
-        <Style>
+        <Style key={i}>
           {modularCSS}
           <div>
-            <Component
-              key={i}
-              translate={e => this.translate(e)}
-              {...dataProps}
-            />
+            <Component translate={e => this.translate(e)} {...dataProps} />
           </div>
         </Style>
       );
