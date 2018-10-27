@@ -32,13 +32,12 @@ export default class Office extends Component {
       );
     }
 
-    console.log(this.props);
     return (
       <>
         <h1>Onlinekontoret</h1>
-        <div class="kontor">
-          <h2 class="kontor-heading">Kontoransvarlig</h2>
-          <div class="kontor-liste">{list}</div>
+        <div className="kontor">
+          <h2 className="kontor-heading">Kontoransvarlig</h2>
+          <div className="kontor-liste">{list}</div>
           {this.props.status}
         </div>
       </>
