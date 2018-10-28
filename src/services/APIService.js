@@ -140,7 +140,7 @@ export default class APIService {
   }
 
   injectSettings(value) {
-    return injectValuesIntoString(value, this.settings, '', '${', '}');
+    return injectValuesIntoString(value, this.settings, '', '{{', '}}');
   }
 
   updateUsedApis(components = []) {

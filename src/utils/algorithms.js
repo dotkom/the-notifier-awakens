@@ -146,6 +146,10 @@ injectValuesIntoString('{{two}}test{{two}}', obj) => '2test2'
 injectValuesIntoString('{{three}}test{{four}}', obj) => '3test4'
 injectValuesIntoString('{{three}}test{{five}}', obj) => '3test{{five}}'
 injectValuesIntoString('{{three}}test{{five}}', obj, '0') => '3test0'
+injectValuesIntoString('{{five:default}} test', obj, '', '{{', '}}') => 'default test'
+injectValuesIntoString('{{five:def}}test{{five:ault}}', obj, '', '{{', '}}') => 'deftestault'
+injectValuesIntoString('{{five:def}}test{{six:ault}}', obj, '', '{{', '}}') => 'deftestault'
+injectValuesIntoString('{{five:def}}test{{four:ault}}', obj, '', '{{', '}}') => 'deftest4'
  * ```
  * @param {string} string The String to search through
  * @param {string} values An object with all values that can fit the keys
@@ -177,6 +181,13 @@ export const injectValuesIntoString = (
 
     if (param in values) {
       value = values[param];
+    } else if (~param.indexOf(':')) {
+      const [extractedParam, defaultVal] = param.split(':');
+      if (extractedParam in values) {
+        value = values[extractedParam];
+      } else {
+        value = defaultVal;
+      }
     } else if (fallbackValue !== null) {
       value = fallbackValue;
     } else {

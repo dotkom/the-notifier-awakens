@@ -98,4 +98,16 @@ it('Inject values into placeholders in string', () => {
     '0test0',
   );
   expect(injectValuesIntoString('{{five}}', obj)).toEqual('{{five}}');
+  expect(injectValuesIntoString('{{five:default}} test', obj, '')).toEqual(
+    'default test',
+  );
+  expect(
+    injectValuesIntoString('{{five:def}}test{{five:ault}}', obj, ''),
+  ).toEqual('deftestault');
+  expect(
+    injectValuesIntoString('{{five:def}}test{{six:ault}}', obj, ''),
+  ).toEqual('deftestault');
+  expect(
+    injectValuesIntoString('{{five:def}}test{{four:ault}}', obj, ''),
+  ).toEqual('deftest4');
 });

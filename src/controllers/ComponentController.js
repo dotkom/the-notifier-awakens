@@ -36,7 +36,7 @@ export default class ComponentController {
   }
 
   injectSettings(value) {
-    return injectValuesIntoString(value, this.settings, '', '${', '}');
+    return injectValuesIntoString(value, this.settings, '', '{{', '}}');
   }
 
   update(key, data) {}
@@ -58,10 +58,10 @@ export default class ComponentController {
       const Component = Components[component.template];
       const dataProps = Object.entries(component.apis).reduce(
         (acc, [key, path]) => {
-          const [apiPath, pathInRequest] = path.split(':');
-          const apiPathParsed = this.injectSettings(apiPath);
-          if (apiPathParsed in data) {
-            const dataFromApi = data[apiPathParsed];
+          const pathParsed = this.injectSettings(path);
+          const [apiPath, pathInRequest] = pathParsed.split(':');
+          if (apiPath in data) {
+            const dataFromApi = data[apiPath];
             const dataToKey = pathInRequest
               ? get(dataFromApi, pathInRequest, '')
               : dataFromApi;
