@@ -1,5 +1,5 @@
 export const defaultSettings = {
-  affiliation: 'online',
+  affiliation: 'debug',
   bus: 'glossyd',
   bus2: 'prof',
   showCoffeePots: true,
