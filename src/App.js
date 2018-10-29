@@ -88,7 +88,8 @@ class App extends Component {
    * Examples:
 ```javascript
 getGridTemplateFromLayoutArray(['a b', 'a b']) => '"a b" "a b" / 1fr 1fr'
-getGridTemplateFromLayoutArray(['a a', '. b b']) => '"a a" ". b b" / 1fr 1fr 1fr'
+getGridTemplateFromLayoutArray(['a a', '. b b']) => '"a a ." ". b b" / 1fr 1fr 1fr'
+getGridTemplateFromLayoutArray(['a', 'a b b']) => '"a . ." "a b b" / 1fr 1fr 1fr'
 ```
    * 
    * @param {array} layout Array with placed components.
@@ -100,7 +101,12 @@ getGridTemplateFromLayoutArray(['a a', '. b b']) => '"a a" ". b b" / 1fr 1fr 1fr
       (acc, row) => Math.max(acc, row.split(' ').length),
       0,
     );
-    const wrappedInQuotes = layout.map(e => `"${e}"`).join(' ');
+    const wrappedInQuotes = layout
+      .map(
+        e =>
+          `"${e + ' .'.repeat((cols - (e.split(' ').length % cols)) % cols)}"`,
+      )
+      .join(' ');
 
     return `${wrappedInQuotes} /${' 1fr'.repeat(cols)}`;
   }

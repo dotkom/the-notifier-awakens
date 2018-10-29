@@ -14,7 +14,10 @@ it('get correct grid-template value', () => {
     '"a b" "a b" / 1fr 1fr',
   );
   expect(app.getGridTemplateFromLayoutArray(['a a', '. b b'])).toEqual(
-    '"a a" ". b b" / 1fr 1fr 1fr',
+    '"a a ." ". b b" / 1fr 1fr 1fr',
+  );
+  expect(app.getGridTemplateFromLayoutArray(['a', 'a b b'])).toEqual(
+    '"a . ." "a b b" / 1fr 1fr 1fr',
   );
 });
 
