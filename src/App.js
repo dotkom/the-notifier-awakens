@@ -17,7 +17,9 @@ class App extends Component {
   constructor() {
     super();
     const { affiliation } = defaultSettings;
-    const { components } = defaultAffiliationSettings[affiliation];
+    const {
+      style = 'online',
+    } = defaultAffiliationSettings[affiliation];
 
     this.updateData = this.updateData.bind(this);
 
@@ -142,10 +144,14 @@ generateDefaultGridTemplateFromComponents(components, 3) => ['Bus Clock Office']
 
     let globalCSS = ' ';
     if (this.state.settings.style in styles) {
-      globalCSS = styles[this.state.settings.style];
+      globalCSS += styles[this.state.settings.style];
+    } else {
+      if (this.state.style in styles) {
+        globalCSS += styles[this.state.style];
     } else {
       if (this.state.settings.affiliation in styles) {
-        globalCSS = styles[this.state.settings.affiliation];
+          globalCSS += styles[this.state.settings.affiliation];
+        }
       }
     }
 
