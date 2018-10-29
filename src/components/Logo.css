@@ -1,0 +1,7 @@
+.Logo > .logo-container {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom left;
+  min-height: 18vw;
+  margin: 16px;
+}
