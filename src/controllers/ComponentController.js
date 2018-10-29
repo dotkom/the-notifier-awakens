@@ -56,7 +56,7 @@ export default class ComponentController {
         return acc;
       }, component);
       const Component = Components[component.template];
-      const dataProps = Object.entries(component.apis).reduce(
+      const dataProps = Object.entries(component.apis || {}).reduce(
         (acc, [key, path]) => {
           const pathParsed = this.injectSettings(path);
           const [apiPath, pathInRequest] = pathParsed.split(':');
