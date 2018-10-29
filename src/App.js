@@ -79,8 +79,12 @@ class App extends Component {
     );
 
     let globalCSS = ' ';
-    if (this.state.settings.affiliation in styles) {
-      globalCSS = styles[this.state.settings.affiliation];
+    if (this.state.settings.style in styles) {
+      globalCSS = styles[this.state.settings.style];
+    } else {
+      if (this.state.settings.affiliation in styles) {
+        globalCSS = styles[this.state.settings.affiliation];
+      }
     }
 
     return (
