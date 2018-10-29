@@ -1,13 +1,18 @@
 export const defaultAffiliationSettings = {
   debug: {
+    layouts: [
+      ['Office', 'Clock', 'Bus'], // Mobile
+      ['Office Clock', 'Bus Bus'], // Tablet / Desktop portrait
+      ['Office Clock Bus'], // Desktop
+    ],
     components: [
       {
         template: 'Clock',
         apis: {
           pots: 'coffeePots.org.debug:pots',
-          message: 'affiliation.org.debug:servant.message',
-          responsible: 'affiliation.org.debug:servant.responsible',
-          servants: 'affiliation.org.debug:servant.servants',
+          message: 'affiliation.org.{{affiliation}}:servant.message',
+          responsible: 'affiliation.org.{{affiliation}}:servant.responsible',
+          servants: 'affiliation.org.{{affiliation}}:servant.servants',
         },
       },
       {
@@ -20,22 +25,27 @@ export const defaultAffiliationSettings = {
       {
         template: 'Office',
         apis: {
-          servants: 'affiliation.org.debug:servant.servants',
-          message: 'affiliation.org.debug:servant.message',
-          status: 'affiliation.org.debug:meeting.message',
+          servants: 'affiliation.org.{{affiliation}}:servant.servants',
+          message: 'affiliation.org.{{affiliation}}:servant.message',
+          status: 'affiliation.org.{{affiliation}}:meeting.message',
         },
       },
     ],
   },
   online: {
+    layouts: [
+      ['Clock', 'Office', 'Bus'],
+      ['Office Clock', 'Bus Bus'],
+      ['Office Clock', 'Bus Bus'],
+    ],
     components: [
       {
         template: 'Clock',
         apis: {
           pots: 'coffeePots.org.online:pots',
-          message: 'affiliation.org.online:servant.message',
-          responsible: 'affiliation.org.online:servant.responsible',
-          servants: 'affiliation.org.online:servant.servants',
+          message: 'affiliation.org.{{affiliation}}:servant.message',
+          responsible: 'affiliation.org.{{affiliation}}:servant.responsible',
+          servants: 'affiliation.org.{{affiliation}}:servant.servants',
         },
       },
       {
