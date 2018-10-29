@@ -76,7 +76,7 @@ export default class ComponentController {
 
       let modularCSS = `
 .${component.template} {
-  grid-area: ${component.template};
+  grid-area: ${component.id || component.template};
 }
 `;
       if ('css' in dataProps) {

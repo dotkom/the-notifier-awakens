@@ -140,7 +140,7 @@ generateDefaultGridTemplateFromComponents(components, 3) => ['Bus Clock Office']
       gridTemplate.push(
         components
           .slice(i, i + width)
-          .map(component => component.template)
+          .map(component => `${component.id || component.template}`)
           .join(' '),
       );
       lastIndex++;
