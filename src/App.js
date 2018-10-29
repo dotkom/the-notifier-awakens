@@ -18,7 +18,7 @@ import { DEBUG } from './constants';
 class App extends Component {
   constructor() {
     super();
-    const { affiliation } = defaultSettings;
+    const { affiliation = 'debug' } = defaultSettings;
     const {
       components = [],
       layouts = [],
