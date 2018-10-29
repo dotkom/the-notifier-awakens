@@ -56,7 +56,7 @@ export default class ComponentController {
         return acc;
       }, component);
       const Component = Components[component.template];
-      const dataProps = Object.entries(component.apis).reduce(
+      const dataProps = Object.entries(component.apis || {}).reduce(
         (acc, [key, path]) => {
           const pathParsed = this.injectSettings(path);
           const [apiPath, pathInRequest] = pathParsed.split(':');
@@ -74,15 +74,19 @@ export default class ComponentController {
         props,
       );
 
-      let modularCSS = ' ';
+      let modularCSS = `
+.${component.template} {
+  grid-area: ${component.id || component.template};
+}
+`;
       if ('css' in dataProps) {
-        modularCSS = dataProps.css;
+        modularCSS += dataProps.css;
       }
 
       return (
         <Style key={i}>
           {modularCSS}
-          <div>
+          <div className={`${component.template} component`}>
             <Component translate={e => this.translate(e)} {...dataProps} />
           </div>
         </Style>

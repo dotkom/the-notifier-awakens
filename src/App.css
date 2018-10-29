@@ -15,3 +15,9 @@
 .menu-button:hover {
   opacity: 0.8;
 }
+
+.component-container {
+  width: 100%;
+  min-height: 100%;
+  display: grid;
+}
