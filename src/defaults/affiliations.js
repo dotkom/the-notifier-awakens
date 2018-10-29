@@ -1,19 +1,17 @@
 export const defaultAffiliationSettings = {
   debug: {
     layouts: [
-      ['Office', 'Clock', 'Bus'], // Mobile
-      ['Office Clock', 'Bus Bus'], // Tablet / Desktop portrait
-      ['Office Clock Bus'], // Desktop
+      ['Clock', 'Clock2', 'Office', 'Bus'], // Mobile
+      ['Clock Clock2 Office Office', 'Bus Bus'], // Tablet / Desktop portrait
+      ['Office Clock Clock2', 'Bus Bus Bus'], // Desktop
     ],
     components: [
       {
         template: 'Clock',
-        apis: {
-          pots: 'coffeePots.org.debug:pots',
-          message: 'affiliation.org.{{affiliation}}:servant.message',
-          responsible: 'affiliation.org.{{affiliation}}:servant.responsible',
-          servants: 'affiliation.org.{{affiliation}}:servant.servants',
-        },
+      },
+      {
+        template: 'Clock',
+        id: 'Clock2',
       },
       {
         template: 'Bus',
@@ -34,17 +32,16 @@ export const defaultAffiliationSettings = {
   },
   online: {
     layouts: [
-      ['Clock', 'Clock2', 'Office', 'Bus'],
-      ['Clock Clock2 Office Office', 'Bus Bus'],
-      ['Office Clock Clock2', 'Bus Bus Bus'],
+      ['Logo', 'Clock', 'Office', 'Bus'],
+      ['Logo Logo', 'Office Clock', 'Bus Bus'],
     ],
     components: [
       {
-        template: 'Clock',
+        template: 'Logo',
+        url: 'https://online.ntnu.no/static/img/online_logo.svg',
       },
       {
         template: 'Clock',
-        id: 'Clock2',
       },
       {
         template: 'Bus',
