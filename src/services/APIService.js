@@ -38,7 +38,7 @@ export default class APIService {
    * @param {number} time Start time (in seconds) of the scheduler.
    */
   start(time = 0) {
-    this.time = 0;
+    this.time = time;
     this.oldClockTime = new Date().getTime();
 
     this.interval = setInterval(() => {
