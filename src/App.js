@@ -159,24 +159,30 @@ generateDefaultGridTemplateFromComponents(components, 3) => ['Bus Clock Office']
     let tabletLayout = get(this.state, 'layouts.1', []);
     let desktopLayout = get(this.state, 'layouts.2', []);
 
+    if (!desktopLayout.length) {
+      desktopLayout = tabletLayout.length
+        ? tabletLayout
+        : mobileLayout.length
+          ? mobileLayout
+          : this.generateDefaultGridTemplateFromComponents(
+              this.state.components,
+              3,
+            );
+    }
+
+    if (!tabletLayout.length) {
+      tabletLayout = mobileLayout.length
+        ? mobileLayout
+        : this.generateDefaultGridTemplateFromComponents(
+            this.state.components,
+            2,
+          );
+    }
+
     if (!mobileLayout.length) {
       mobileLayout = this.generateDefaultGridTemplateFromComponents(
         this.state.components,
         1,
-      );
-    }
-
-    if (!tabletLayout.length) {
-      tabletLayout = this.generateDefaultGridTemplateFromComponents(
-        this.state.components,
-        2,
-      );
-    }
-
-    if (!desktopLayout.length) {
-      desktopLayout = this.generateDefaultGridTemplateFromComponents(
-        this.state.components,
-        3,
       );
     }
 
