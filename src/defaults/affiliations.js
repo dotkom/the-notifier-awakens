@@ -34,19 +34,17 @@ export const defaultAffiliationSettings = {
   },
   online: {
     layouts: [
-      ['Clock', 'Office', 'Bus'],
-      ['Office Clock', 'Bus Bus'],
-      ['Office Clock', 'Bus Bus'],
+      ['Clock', 'Clock2', 'Office', 'Bus'],
+      ['Clock Clock2 Office Office', 'Bus Bus'],
+      ['Office Clock Clock2', 'Bus Bus Bus'],
     ],
     components: [
       {
         template: 'Clock',
-        apis: {
-          pots: 'coffeePots.org.online:pots',
-          message: 'affiliation.org.{{affiliation}}:servant.message',
-          responsible: 'affiliation.org.{{affiliation}}:servant.responsible',
-          servants: 'affiliation.org.{{affiliation}}:servant.servants',
-        },
+      },
+      {
+        template: 'Clock',
+        id: 'Clock2',
       },
       {
         template: 'Bus',
