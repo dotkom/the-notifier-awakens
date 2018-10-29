@@ -73,6 +73,68 @@ class App extends Component {
     this.APIService.update();
   }
 
+  /**
+   * Get a CSS grid-template value from layout array.
+   * 
+   * Examples:
+```javascript
+getGridTemplateFromLayoutArray(['a b', 'a b']) => '"a b" "a b" / 1fr 1fr'
+getGridTemplateFromLayoutArray(['a a', '. b b']) => '"a a" ". b b" / 1fr 1fr 1fr'
+```
+   * 
+   * @param {array} layout Array with placed components.
+   * 
+   * @returns {string} A string for grid-template.
+   */
+  getGridTemplateFromLayoutArray(layout) {
+    const cols = layout.reduce(
+      (acc, row) => Math.max(acc, row.split(' ').length),
+      0,
+    );
+    const wrappedInQuotes = layout.map(e => `"${e}"`).join(' ');
+
+    return `${wrappedInQuotes} /${' 1fr'.repeat(cols)}`;
+  }
+
+  /**
+   * Make it possible to input a list of components and get
+   * a grid-template which wraps to correct size.
+   * 
+   * Examples:
+```javascript
+const components = [
+  { template: 'Bus' },
+  { template: 'Clock' },
+  { template: 'Office' },
+]
+
+generateDefaultGridTemplateFromComponents(components, 1) => ['Bus', 'Clock', 'Office']
+generateDefaultGridTemplateFromComponents(components, 2) => ['Bus Clock', 'Office .']
+generateDefaultGridTemplateFromComponents(components, 3) => ['Bus Clock Office']
+```
+   * @param {array} components List of components in view.
+   * @param {number} width When to wrap.
+   * 
+   * @returns {array} A grid-template value.
+   */
+  generateDefaultGridTemplateFromComponents(components, width = 1) {
+    let gridTemplate = [];
+    const count = components.length;
+    let lastIndex = -1;
+    for (let i = 0; i < count; i += width) {
+      gridTemplate.push(
+        components
+          .slice(i, i + width)
+          .map(component => component.template)
+          .join(' '),
+      );
+      lastIndex++;
+    }
+    gridTemplate[lastIndex] += ' .'.repeat((width - (count % width)) % width);
+
+    return gridTemplate;
+  }
+
   render() {
     const componentsRendered = this.ComponentController.renderComponents(
       this.state.data,
