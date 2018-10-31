@@ -15,6 +15,13 @@ export const defaultAffiliationSettings = {
       },
       {
         template: 'Bus',
+        departureSchema: {
+          name: 'destination',
+          number: 'line',
+          registredTime: 'registeredDepartureTime',
+          scheduledTime: 'scheduledDepartureTime',
+          isRealtime: 'isRealtimeData',
+        },
         apis: {
           fromCity: 'tarbus.stops.{{bus:glossyd}}.fromCity:departures',
           toCity: 'tarbus.stops.{{bus:glossyd}}.toCity:departures',
@@ -45,6 +52,13 @@ export const defaultAffiliationSettings = {
       },
       {
         template: 'Bus',
+        departureSchema: {
+          name: 'destination',
+          number: 'line',
+          registredTime: 'registeredDepartureTime',
+          scheduledTime: 'scheduledDepartureTime',
+          isRealtime: 'isRealtimeData',
+        },
         apis: {
           fromCity: 'tarbus.stops.{{bus:glossyd}}.fromCity:departures',
           toCity: 'tarbus.stops.{{bus:glossyd}}.toCity:departures',
