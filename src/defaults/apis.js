@@ -79,4 +79,8 @@ export const defaultApis = {
       prof: { fromCity: '73103', toCity: '73101' },
     },
   },
+  onlineEvents: {
+    interval: 100,
+    url: 'https://online.ntnu.no/api/v1/events/',
+  },
 };
