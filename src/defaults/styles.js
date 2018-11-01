@@ -47,6 +47,7 @@ const online = `
   .Bus .bus-stop {
     flex: 1 0 100%;
     margin-bottom: 0;
+    text-align: center;
   }
 
   .Bus .bus-dir {
