@@ -27,6 +27,7 @@ export const defaultApis = {
     stops: {
       glossyd: { fromCity: '16010265', toCity: '16011265' },
       samf: { fromCity: '16010476', toCity: '16011476' },
+      prof: { fromCity: '16010376', toCity: '16011376' },
     },
   },
   bartebuss: {
