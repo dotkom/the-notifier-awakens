@@ -52,6 +52,8 @@ export const defaultAffiliationSettings = {
       },
       {
         template: 'Bus',
+        name: '{{bus}}',
+        name2: '{{bus2}}',
         departureSchema: {
           name: 'destination',
           number: 'line',
@@ -62,6 +64,8 @@ export const defaultAffiliationSettings = {
         apis: {
           fromCity: 'tarbus.stops.{{bus:glossyd}}.fromCity:departures',
           toCity: 'tarbus.stops.{{bus:glossyd}}.toCity:departures',
+          fromCity2: 'tarbus.stops.{{bus2:glossyd}}.fromCity:departures',
+          toCity2: 'tarbus.stops.{{bus2:glossyd}}.toCity:departures',
         },
       },
       {
