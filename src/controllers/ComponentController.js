@@ -55,6 +55,13 @@ export default class ComponentController {
         }
         return acc;
       }, component);
+      if (!~Object.keys(Components).indexOf(component.template)) {
+        throw new Error(
+          `Remember to export the "${
+            component.template
+          }" component from the components module (in ../components/index.js)`,
+        );
+      }
       const Component = Components[component.template];
       const dataProps = Object.entries(component.apis || {}).reduce(
         (acc, [key, path]) => {
