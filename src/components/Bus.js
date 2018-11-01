@@ -125,7 +125,7 @@ class Bus extends Component {
         const isRealtime = get(e, this.props.departureSchema.isRealtime);
         const timeLeft = differenceInMinutes(e.time, new Date(), { locale });
         let time = isRealtime ? '' : '';
-        const isClose = timeLeft <= 11
+        const isClose = timeLeft <= 11;
 
         if (timeLeft === 0) {
           time += 'nå';
@@ -135,7 +135,7 @@ class Bus extends Component {
           time = format(e.time, 'HH:mm');
         }
 
-        //if (DEBUG) time += '; ' + format(e.time, 'HH:mm');
+        if (DEBUG) time += '; ' + format(e.time, 'HH:mm');
 
         const style = isClose ? { color: '#ffb800' } : {};
 
@@ -146,9 +146,9 @@ class Bus extends Component {
             className="bus-list-item"
           >
             <div
-              className={`bus-list-item-number${
-                isClose ? ' is-close' : ''
-              }${isRealtime ? ' is-realtime' : ''}`}
+              className={`bus-list-item-number${isClose ? ' is-close' : ''}${
+                isRealtime ? ' is-realtime' : ''
+              }`}
             >
               {get(e, this.props.departureSchema.number)}
               &nbsp;
