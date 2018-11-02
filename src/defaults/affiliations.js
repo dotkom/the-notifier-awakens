@@ -39,8 +39,8 @@ export const defaultAffiliationSettings = {
   },
   online: {
     layouts: [
-      ['Logo', 'Events', 'Clock', 'Office', 'Bus'],
-      ['Logo Logo', 'Events Events', 'Office Clock', 'Bus Bus'],
+      ['Logo', 'Clock', 'Office', 'Bus', 'Events'],
+      ['Logo Logo', 'Office Clock', 'Bus Bus', 'Events Events'],
     ],
     components: [
       {
@@ -86,6 +86,7 @@ export const defaultAffiliationSettings = {
         apis: {
           events: 'onlineEvents:results',
         },
+        css: '.Events { padding-bottom: 0; }',
       },
     ],
   },
