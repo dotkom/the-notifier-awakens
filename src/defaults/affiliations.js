@@ -41,6 +41,7 @@ export const defaultAffiliationSettings = {
     layouts: [
       ['Logo', 'Clock', 'Office', 'Bus', 'Events'],
       ['Logo Logo', 'Office Clock', 'Bus Bus', 'Events Events'],
+      ['Logo Logo Office Clock', 'Bus Bus Events Events'],
     ],
     components: [
       {
