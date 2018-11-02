@@ -76,11 +76,14 @@ class EventsFromSplash extends Component {
             content: '';
             position: absolute;
             right: calc(100% - 5px);
-            top: calc(50% - 7px);
+            top: 18px;
             background-color: ${lineColor};
             width: 14px;
             height: 14px;
             border-radius: 7px;
+          }
+          .event:last-child .title {
+            padding-bottom: 32px;
           }
           .start-date {
             order: 1;
