@@ -44,8 +44,12 @@ class EventsFromSplash extends Component {
           .event-list {
             display: flex;
             flex-direction: column;
+            max-width: 800px;
+            margin: auto;
           }
           .main-event {
+            max-width: 800px;
+            margin: auto;
             display: flex;
             flex-direction: column;
             height: 160px;
