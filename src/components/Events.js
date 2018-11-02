@@ -5,18 +5,31 @@ import { format } from 'date-fns';
 export default class Events extends Component {
   render() {
     const EventsUI = EventsFromSplash;
-    return <EventsUI {...this.props} />;
+    const { events = [], eventMapping } = this.props;
+    const eventsMapped = events.map(e => {
+      const startDateTime = get(e, eventMapping.startDate, '');
+      const startDate = format(startDateTime, 'dddd D. MMM');
+      const startTime = format(startDateTime, 'HH:MM');
+      const title = get(e, eventMapping.title, '');
+      const image = get(e, eventMapping.image, '');
+      const companyImage = get(e, eventMapping.companyImage, '');
+
+      return {
+        startDate,
+        startTime,
+        title,
+        image: image || companyImage,
+      };
+    });
+    return <EventsUI {...this.props} events={eventsMapped} />;
   }
 }
 
 class EventsFromSplash extends Component {
   render() {
-    const { events = [], eventMapping } = this.props;
+    const { events = [] } = this.props;
     const eventList = events.slice(1).map((e, i) => {
-      const startDateTime = get(e, eventMapping.startDate, '');
-      const startDate = format(startDateTime, 'dddd D. MMM');
-      const startTime = format(startDateTime, 'HH:MM');
-      const title = get(e, eventMapping.title, '');
+      const { startDate, startTime, title } = e;
       const style = {};
 
       return (
@@ -33,9 +46,6 @@ class EventsFromSplash extends Component {
     const timeColor = this.props.timeColor || 'rgba(160, 160, 160, .8)';
 
     const firstEvent = events[0] || {};
-    const firstEventStartDateTime = get(firstEvent, eventMapping.startDate, '');
-    const firstEventStartDate = format(firstEventStartDateTime, 'dddd D. MMM');
-    const firstEventStartTime = format(firstEventStartDateTime, 'HH:MM');
 
     return (
       <>
@@ -109,9 +119,9 @@ class EventsFromSplash extends Component {
         <div className="main-event">
           <span className="main-title">{firstEvent.title}</span>
           <span className="main-start-datetime">
-            {firstEventStartDate}
+            {firstEvent.startDate}
             &nbsp;&nbsp;
-            {firstEventStartTime}
+            {firstEvent.startTime}
           </span>
         </div>
         <div className="event-list">{eventList}</div>
