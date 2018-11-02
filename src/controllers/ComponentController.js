@@ -84,6 +84,7 @@ export default class ComponentController {
       let modularCSS = `
 .${component.template} {
   grid-area: ${component.id || component.template};
+  padding: 32px;
 }
 `;
       if ('css' in dataProps) {
