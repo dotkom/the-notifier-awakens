@@ -99,7 +99,7 @@ const online = `
     position: relative;
   }
   .Bus .bus-list-item-number.is-close::before {
-    background-image: url(/knowit-express.svg);
+    background-image: url(/spaceship.svg);
     content: '';
     display: block;
     width: 2em;
