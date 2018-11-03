@@ -39,8 +39,9 @@ export const defaultAffiliationSettings = {
   },
   online: {
     layouts: [
-      ['Logo', 'Clock', 'Office', 'Bus'],
-      ['Logo Logo', 'Office Clock', 'Bus Bus'],
+      ['Logo', 'Clock', 'Office', 'Bus', 'Events'],
+      ['Logo Logo', 'Office Clock', 'Bus Bus', 'Events Events'],
+      ['Logo Logo Office Clock', 'Bus Bus Events Events'],
     ],
     components: [
       {
@@ -75,6 +76,22 @@ export const defaultAffiliationSettings = {
           message: 'affiliation.org.{{affiliation}}:servant.message',
           status: 'affiliation.org.{{affiliation}}:meeting.message',
         },
+      },
+      {
+        template: 'Events',
+        type: '{{eventType}}',
+        eventMapping: {
+          startDate: 'event_start',
+          endDate: 'event_end',
+          title: 'title',
+          image: 'image.wide',
+          companyImage: 'company_event.0.company.image.wide',
+        },
+        imageHost: 'https://online.ntnu.no',
+        apis: {
+          events: 'onlineEvents:results',
+        },
+        css: '.Events { padding-bottom: 0; }',
       },
     ],
   },
