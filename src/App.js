@@ -21,7 +21,7 @@ class App extends Component {
     const { affiliation = 'debug' } = defaultSettings;
     const {
       components = [],
-      layouts = [],
+      layouts = {},
       style = 'online',
     } = defaultAffiliationSettings[affiliation];
 
@@ -150,62 +150,95 @@ generateDefaultGridTemplateFromComponents(components, 3) => ['Bus Clock Office']
     return gridTemplate;
   }
 
+  /**
+   * Generate layout CSS from a layout object.
+   * 
+   * Examples:
+```javascript
+layouts = {
+  0: ['Clock', 'Clock2', 'Office', 'Bus'],
+  400: ['Clock Clock2 Office Office', 'Bus Bus'],
+  800: ['Office Clock Clock2', 'Bus Bus Bus'],
+}
+
+generateLayoutCSS(layouts) => `
+.component-container {
+  grid-template: "Clock" "Clock2" "Office" "Bus" / 1fr;
+}
+@media (min-width: 400px) {
+  .component-container {
+    grid-template:"Clock Clock2 Office Office" "Bus Bus . ." / 1fr 1fr 1fr 1fr;
+  }
+}
+@media (min-width: 800px) {
+  .component-container {
+    grid-template:"Office Clock Clock2" "Bus Bus Bus" / 1fr 1fr 1fr;
+  }
+}
+`
+```
+   * @param {object} layouts Object defined as {[size: number]: grid: string[]}
+   */
+  generateLayoutCSS(layouts, containerClass = 'component-container') {
+    if (Array.isArray(layouts)) {
+      return layouts.reduce((acc, grid, index) => {
+        let size = 0;
+        switch (index) {
+          case 0:
+            size = 0;
+            break;
+          case 1:
+            size = 720;
+            break;
+          case 2:
+            size = 1400;
+            break;
+          case 3:
+            size = 1500;
+            break;
+        }
+        if (size === 0) {
+          return `${acc}
+.${containerClass} {
+  grid-template: ${this.getGridTemplateFromLayoutArray(grid)};
+}`;
+        }
+
+        return `${acc}
+@media (min-width: ${size}px) {
+  .${containerClass} {
+    grid-template:${this.getGridTemplateFromLayoutArray(grid)};
+  }
+}`;
+      }, '');
+    }
+    return Object.entries(layouts).reduce((acc, [size, grid]) => {
+      if (size === '0') {
+        return `${acc}
+.${containerClass} {
+  grid-template: ${this.getGridTemplateFromLayoutArray(grid)};
+}`;
+      }
+
+      return `${acc}
+@media (min-width: ${size}px) {
+  .${containerClass} {
+    grid-template:${this.getGridTemplateFromLayoutArray(grid)};
+  }
+}`;
+    }, '');
+  }
+
   render() {
-    const componentsRendered = this.ComponentController.renderComponents(
-      this.state.data,
-    );
-
-    let mobileLayout = get(this.state, 'layouts.0', []);
-    let tabletLayout = get(this.state, 'layouts.1', []);
-    let desktopLayout = get(this.state, 'layouts.2', []);
-
-    if (!desktopLayout.length) {
-      desktopLayout = tabletLayout.length
-        ? tabletLayout
-        : mobileLayout.length
-          ? mobileLayout
-          : this.generateDefaultGridTemplateFromComponents(
-              this.state.components,
-              3,
-            );
-    }
-
-    if (!tabletLayout.length) {
-      tabletLayout = mobileLayout.length
-        ? mobileLayout
-        : this.generateDefaultGridTemplateFromComponents(
-            this.state.components,
-            2,
-          );
-    }
-
-    if (!mobileLayout.length) {
-      mobileLayout = this.generateDefaultGridTemplateFromComponents(
-        this.state.components,
-        1,
-      );
-    }
+    const { data, layouts } = this.state;
+    const componentsRendered = this.ComponentController.renderComponents(data);
 
     let globalCSS = `
 .component {
   ${DEBUG ? 'border: 1px solid rgba(255, 0, 0, .5);' : ''}
 }
 
-.component-container {
-  grid-template: ${this.getGridTemplateFromLayoutArray(mobileLayout)};
-}
-
-@media (min-width: 512px) {
-  .component-container {
-    grid-template: ${this.getGridTemplateFromLayoutArray(tabletLayout)};
-  }
-}
-
-@media (min-width: 1024px) {
-  .component-container {
-    grid-template: ${this.getGridTemplateFromLayoutArray(desktopLayout)};
-  }
-}
+${this.generateLayoutCSS(layouts)}
 `;
     if (this.state.settings.style in styles) {
       globalCSS += styles[this.state.settings.style];
