@@ -1,10 +1,10 @@
 export const defaultAffiliationSettings = {
   debug: {
-    layouts: [
-      ['Clock', 'Clock2', 'Office', 'Bus'], // Mobile
-      ['Clock Clock2 Office Office', 'Bus Bus'], // Tablet / Desktop portrait
-      ['Office Clock Clock2', 'Bus Bus Bus'], // Desktop
-    ],
+    layouts: {
+      0: ['Clock', 'Clock2', 'Office', 'Bus'], // Mobile
+      512: ['Clock Clock2 Office Office', 'Bus Bus'], // Tablet / Desktop portrait
+      1024: ['Office Clock Clock2', 'Bus Bus Bus'], // Desktop
+    },
     components: [
       {
         template: 'Clock',
@@ -39,9 +39,13 @@ export const defaultAffiliationSettings = {
   },
   online: {
     layouts: [
-      ['Logo', 'Clock', 'Office', 'Bus', 'Events'],
-      ['Logo Logo', 'Office Clock', 'Bus Bus', 'Events Events'],
-      ['Logo Logo Office Clock', 'Bus Bus Events Events'],
+      ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events'],
+      ['Logo Logo', 'Office Clock', 'Bus Bus', 'Bus2 Bus2', 'Events Events'],
+      [
+        'Logo Logo Office Clock',
+        'Bus Bus Events Events',
+        'Bus2 Bus2 Events Events',
+      ],
     ],
     components: [
       {
@@ -54,7 +58,6 @@ export const defaultAffiliationSettings = {
       {
         template: 'Bus',
         name: '{{bus}}',
-        name2: '{{bus2}}',
         departureSchema: {
           name: 'destination',
           number: 'line',
@@ -65,8 +68,22 @@ export const defaultAffiliationSettings = {
         apis: {
           fromCity: 'tarbus.stops.{{bus:glossyd}}.fromCity:departures',
           toCity: 'tarbus.stops.{{bus:glossyd}}.toCity:departures',
-          fromCity2: 'tarbus.stops.{{bus2:glossyd}}.fromCity:departures',
-          toCity2: 'tarbus.stops.{{bus2:glossyd}}.toCity:departures',
+        },
+      },
+      {
+        template: 'Bus',
+        id: 'Bus2',
+        name: '{{bus2}}',
+        departureSchema: {
+          name: 'destination',
+          number: 'line',
+          registredTime: 'registeredDepartureTime',
+          scheduledTime: 'scheduledDepartureTime',
+          isRealtime: 'isRealtimeData',
+        },
+        apis: {
+          fromCity: 'tarbus.stops.{{bus2:prof}}.fromCity:departures',
+          toCity: 'tarbus.stops.{{bus2:prof}}.toCity:departures',
         },
       },
       {
