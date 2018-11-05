@@ -189,8 +189,13 @@ generateURLs(api, 'bus') =>
    */
   static generateURLs(api, apiName) {
     const { url } = api;
-    const params = getStringParams(url);
-    const fragments = url.split(/{{[^}]+}}/g);
+    let postfix = '';
+    if ('method' in api) {
+      postfix = `#${api.method.toUpperCase()}#${api.body || ''}`;
+    }
+    const urlWithPostfix = url + postfix;
+    const params = getStringParams(urlWithPostfix);
+    const fragments = urlWithPostfix.split(/{{[^}]+}}/g);
     const zip = fragments.slice(1).reduce(
       (acc, fragment, i) => {
         const newUrls = [];
