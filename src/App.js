@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Style from 'style-it';
-import { get } from 'object-path';
 
 import './App.css';
 
