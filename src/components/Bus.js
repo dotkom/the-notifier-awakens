@@ -5,7 +5,6 @@ import {
   differenceInMilliseconds,
   differenceInMinutes,
 } from 'date-fns';
-import { get, set } from 'object-path';
 import * as locale from 'date-fns/locale/nb';
 import { DEBUG } from '../constants';
 
@@ -36,10 +35,10 @@ class Bus extends Component {
   componentWillReceiveProps(nextProps) {
     this.setState(
       Object.assign({}, this.state, {
-        toCity: get(nextProps, 'toCity', []),
-        fromCity: get(nextProps, 'fromCity', []),
-        toCity2: get(nextProps, 'toCity2', []),
-        fromCity2: get(nextProps, 'fromCity2', []),
+        toCity: nextProps.toCity || [],
+        fromCity: nextProps.fromCity || [],
+        toCity2: nextProps.toCity2 || [],
+        fromCity2: nextProps.fromCity2 || [],
       }),
     );
   }
@@ -50,41 +49,13 @@ class Bus extends Component {
     let diff = differenceInMilliseconds(new Date(), this.state.lastTick);
 
     for (let departure of toCity) {
-      set(
-        departure,
-        this.props.departureSchema.registredTime,
-        this.addTime(
-          get(departure, this.props.departureSchema.registredTime),
-          diff,
-        ),
-      );
-      set(
-        departure,
-        this.props.departureSchema.scheduledTime,
-        this.addTime(
-          get(departure, this.props.departureSchema.scheduledTime),
-          diff,
-        ),
-      );
+      departure.registeredTime = this.addTime(departure.registeredTime, diff);
+      departure.scheduledTime = this.addTime(departure.scheduledTime, diff);
     }
 
     for (let departure of fromCity) {
-      set(
-        departure,
-        this.props.departureSchema.registredTime,
-        this.addTime(
-          get(departure, this.props.departureSchema.registredTime),
-          diff,
-        ),
-      );
-      set(
-        departure,
-        this.props.departureSchema.scheduledTime,
-        this.addTime(
-          get(departure, this.props.departureSchema.scheduledTime),
-          diff,
-        ),
-      );
+      departure.registeredTime = this.addTime(departure.registeredTime, diff);
+      departure.scheduledTime = this.addTime(departure.scheduledTime, diff);
     }
 
     if (this.mounted) {
@@ -106,15 +77,15 @@ class Bus extends Component {
   getDepartureList(departures) {
     return departures
       .map(e => {
-        e.time = get(e, this.props.departureSchema.scheduledTime);
+        e.time = e.scheduledTime;
 
-        if (get(e, this.props.departureSchema.isRealtime)) {
-          e.time = get(e, this.props.departureSchema.registredTime);
+        if (e.isRealtime) {
+          e.time = e.registeredTime;
         }
 
         return e;
       })
-      .filter(e => !/^FB/.test(get(e, this.props.departureSchema.number)))
+      .filter(e => !/^FB/.test(e.number))
       .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime())
       .filter(
         e =>
@@ -123,7 +94,7 @@ class Bus extends Component {
       )
       .slice(0, 4)
       .map((e, i) => {
-        const isRealtime = get(e, this.props.departureSchema.isRealtime);
+        const isRealtime = e.isRealtime;
         const timeLeft = differenceInMinutes(e.time, new Date(), { locale });
         let time = isRealtime ? '' : '';
         const isClose = timeLeft <= 11;
@@ -141,17 +112,13 @@ class Bus extends Component {
         const style = isClose ? { color: '#ffb800' } : {};
 
         return (
-          <div
-            key={i}
-            title={get(e, this.props.departureSchema.name)}
-            className="bus-list-item"
-          >
+          <div key={i} title={e.name} className="bus-list-item">
             <div
               className={`bus-list-item-number${isClose ? ' is-close' : ''}${
                 isRealtime ? ' is-realtime' : ''
               }`}
             >
-              {get(e, this.props.departureSchema.number)}
+              {e.number}
               &nbsp;
             </div>
             <div className="bus-list-item-time" style={style}>

@@ -18,7 +18,7 @@ export const defaultAffiliationSettings = {
         departureSchema: {
           name: 'destination',
           number: 'line',
-          registredTime: 'registeredDepartureTime',
+          registeredTime: 'registeredDepartureTime',
           scheduledTime: 'scheduledDepartureTime',
           isRealtime: 'isRealtimeData',
         },
@@ -58,13 +58,6 @@ export const defaultAffiliationSettings = {
       {
         template: 'Bus',
         name: '{{bus}}',
-        departureSchema: {
-          name: 'destination',
-          number: 'line',
-          registredTime: 'registeredDepartureTime',
-          scheduledTime: 'scheduledDepartureTime',
-          isRealtime: 'isRealtimeData',
-        },
         apis: {
           fromCity: 'tarbus.stops.{{bus:glossyd}}.fromCity:departures',
           toCity: 'tarbus.stops.{{bus:glossyd}}.toCity:departures',
@@ -74,18 +67,9 @@ export const defaultAffiliationSettings = {
         template: 'Bus',
         id: 'Bus2',
         name: '{{bus2}}',
-        departureSchema: {
-          name: 'destinationDisplay.frontText',
-          number: 'serviceJourney.line.publicCode',
-          registredTime: 'aimedArrivalTime',
-          scheduledTime: 'expectedArrivalTime',
-          isRealtime: 'realtime',
-        },
         apis: {
-          fromCity:
-            'enturbus.stops.{{bus2:prof}}.fromCity:data.quay.estimatedCalls',
-          toCity:
-            'enturbus.stops.{{bus2:prof}}.toCity:data.quay.estimatedCalls',
+          fromCity: 'enturbus.stops.{{bus2:prof}}.fromCity:departures',
+          toCity: 'enturbus.stops.{{bus2:prof}}.toCity:departures',
         },
       },
       {
