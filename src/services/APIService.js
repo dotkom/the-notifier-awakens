@@ -119,6 +119,8 @@ export default class APIService {
    * Get which APIs that are in use given the current components.
    *
    * @param {array} components List of components in view.
+   *
+   * @returns {{[api: string]: boolean}} API keys with boolean telling if it is used.
    */
   getUsedApis(components) {
     const apis = this.generateURLs();

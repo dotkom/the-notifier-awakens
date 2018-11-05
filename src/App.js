@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Style from 'style-it';
-import { get } from 'object-path';
 
 import './App.css';
 
@@ -177,7 +176,10 @@ generateLayoutCSS(layouts) => `
 }
 `
 ```
-   * @param {object} layouts Object defined as {[size: number]: grid: string[]}
+   * @param {{[size]: string[]|string[][]}} layouts Description of grid layout
+   * @param {string} [containerClass=component-container] Which class to create layout for
+   * 
+   * @returns {string} CSS generated for containerClass
    */
   generateLayoutCSS(layouts, containerClass = 'component-container') {
     if (Array.isArray(layouts)) {
@@ -193,8 +195,8 @@ generateLayoutCSS(layouts) => `
           case 2:
             size = 1400;
             break;
-          case 3:
-            size = 1500;
+          default:
+            size = 1400 + 360 * Math.max(0, index - 2);
             break;
         }
         if (size === 0) {
