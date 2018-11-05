@@ -79,19 +79,29 @@ export default class APIService {
             this.usedApis[key] &&
             this.hasNotFailed(key)
           ) {
-            API.getRequest(
-              url,
-              data => {
-                if ('error' in data) {
-                  this.handleFail(key, apiName);
-                } else {
-                  this.callback(key, data);
-                }
-              },
-              () => {
+            const [coreUrl, method = 'GET', body = ''] = url.split('#');
+            const callback = data => {
+              if ('error' in data) {
                 this.handleFail(key, apiName);
-              },
-            );
+              } else {
+                this.callback(key, data);
+              }
+            };
+            const error = () => {
+              this.handleFail(key, apiName);
+            };
+            switch (method) {
+              case 'GET':
+                API.getRequest(coreUrl, api.request || {}, callback, error);
+                break;
+              case 'POST':
+                const req = Object.assign({ body }, api.request || {});
+                API.postRequest(coreUrl, req, callback, error);
+                break;
+              default:
+                API.getRequest(coreUrl, api.request || {}, callback, error);
+                break;
+            }
           }
         });
       }
