@@ -87,6 +87,24 @@ export const defaultAffiliationSettings = {
         },
       },
       {
+        template: 'Bus',
+        id: 'Bus3',
+        name: '{{bus2}}',
+        departureSchema: {
+          name: 'destinationDisplay.frontText',
+          number: 'serviceJourney.line.publicCode',
+          registredTime: 'aimedArrivalTime',
+          scheduledTime: 'expectedArrivalTime',
+          isRealtime: 'realtime',
+        },
+        apis: {
+          fromCity:
+            'enturbus.stops.{{bus2:prof}}.fromCity:data.quay.estimatedCalls',
+          toCity:
+            'enturbus.stops.{{bus2:prof}}.toCity:data.quay.estimatedCalls',
+        },
+      },
+      {
         template: 'Office',
         apis: {
           servants: 'affiliation.org.{{affiliation}}:servant.servants',
