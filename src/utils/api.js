@@ -10,19 +10,17 @@ export const API = {
    * @param {function} error Error from when request fails
    */
   postRequest(url, req, callback = () => {}, error = () => {}) {
+    req.method = 'POST';
     req.headers = Object.assign(
-      {},
       {
         'Content-Type': 'application/json',
       },
       req.headers,
     );
-    req.method = 'POST';
-    req.headers = new Headers(req.headers);
     req.body =
       typeof req.body === 'object' ? JSON.stringify(req.body || {}) : req.body;
 
-    return fetch(new Request(API.transformURL(url), req))
+    return fetch(API.transformURL(url), req)
       .then(res => res.json())
       .then(callback)
       .catch(error);
@@ -32,11 +30,12 @@ export const API = {
    * Send a GET request.
    *
    * @param {string} url The URL to GET from
+   * @param {object} req Headers and more request spesific (see the fetch API)
    * @param {function} callback Function that retrieves data from request
    * @param {function} error Error from when request fails
    */
-  getRequest(url, callback = () => {}, error = () => {}) {
-    return fetch(new Request(API.transformURL(url)))
+  getRequest(url, req, callback = () => {}, error = () => {}) {
+    return fetch(API.transformURL(url), req)
       .then(res => res.json())
       .then(callback)
       .catch(error);
