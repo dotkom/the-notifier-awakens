@@ -176,7 +176,10 @@ generateLayoutCSS(layouts) => `
 }
 `
 ```
-   * @param {object} layouts Object defined as {[size: number]: grid: string[]}
+   * @param {{[size]: string[]|string[][]}} layouts Description of grid layout
+   * @param {string} [containerClass=component-container] Which class to create layout for
+   * 
+   * @returns {string} CSS generated for containerClass
    */
   generateLayoutCSS(layouts, containerClass = 'component-container') {
     if (Array.isArray(layouts)) {
