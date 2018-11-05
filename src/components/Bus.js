@@ -114,6 +114,7 @@ class Bus extends Component {
 
         return e;
       })
+      .filter(e => !/^FB/.test(get(e, this.props.departureSchema.number)))
       .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime())
       .filter(
         e =>

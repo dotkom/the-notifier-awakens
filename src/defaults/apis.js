@@ -31,7 +31,7 @@ export const defaultApis = {
     },
   },
   bartebuss: {
-    interval: 100,
+    interval: 10,
     offline: true,
     url: 'https://bartebuss.no/api/unified/{{stops.*.fromCity,toCity}}',
     stops: {
@@ -40,21 +40,21 @@ export const defaultApis = {
     },
   },
   enturbus: {
-    interval: 100,
-    offline: true,
+    interval: 10,
     method: 'POST',
-    req: {
+    url: `https://api.entur.org/journeyplanner/2.0/index/graphql`,
+    request: {
       headers: {
-        'ET-Client-Name': 'Notifier-dev',
+        'ET-Client-Name': 'onlinentnu-notifier-dev',
       },
+      mode: 'cors',
     },
-    url: `https://api.entur.org/journeyplanner/2.0/index/graphql>>${JSON.stringify(
-      {
-        query: `{
+    body: JSON.stringify({
+      query: `{
         quay(id: "NSR:Quay:{{stops.*.fromCity,toCity}}") {
           id
           name
-          estimatedCalls(startTime:"[[now]]" timeRange: 72100, numberOfDepartures: 5) {
+          estimatedCalls(numberOfDepartures: 10) {
             aimedArrivalTime
             aimedDepartureTime
             expectedArrivalTime
@@ -72,8 +72,7 @@ export const defaultApis = {
           }
         }
       }`,
-      },
-    )}`,
+    }),
     stops: {
       glossyd: { fromCity: '75707', toCity: '75708' },
       samf: { fromCity: '73103', toCity: '73101' },

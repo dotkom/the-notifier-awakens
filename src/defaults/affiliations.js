@@ -75,15 +75,17 @@ export const defaultAffiliationSettings = {
         id: 'Bus2',
         name: '{{bus2}}',
         departureSchema: {
-          name: 'destination',
-          number: 'line',
-          registredTime: 'registeredDepartureTime',
-          scheduledTime: 'scheduledDepartureTime',
-          isRealtime: 'isRealtimeData',
+          name: 'destinationDisplay.frontText',
+          number: 'serviceJourney.line.publicCode',
+          registredTime: 'aimedArrivalTime',
+          scheduledTime: 'expectedArrivalTime',
+          isRealtime: 'realtime',
         },
         apis: {
-          fromCity: 'tarbus.stops.{{bus2:prof}}.fromCity:departures',
-          toCity: 'tarbus.stops.{{bus2:prof}}.toCity:departures',
+          fromCity:
+            'enturbus.stops.{{bus2:prof}}.fromCity:data.quay.estimatedCalls',
+          toCity:
+            'enturbus.stops.{{bus2:prof}}.toCity:data.quay.estimatedCalls',
         },
       },
       {
