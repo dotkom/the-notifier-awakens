@@ -145,9 +145,9 @@ class EventsCarousel extends Component {
   render() {
     const {
       events = [],
-      lineColor = '#ddd',
-      dateColor = '#f80',
-      timeColor = 'rgba(160, 160, 160, .8)',
+      //lineColor = '#ddd',
+      //dateColor = '#f80',
+      //timeColor = 'rgba(160, 160, 160, .8)',
     } = this.props;
     const eventList = events.slice(1).map((e, i) => {
       const { startDate, startTime, title } = e;
