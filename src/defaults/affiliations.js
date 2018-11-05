@@ -75,22 +75,6 @@ export const defaultAffiliationSettings = {
         id: 'Bus2',
         name: '{{bus2}}',
         departureSchema: {
-          name: 'destination',
-          number: 'line',
-          registredTime: 'registeredDepartureTime',
-          scheduledTime: 'scheduledDepartureTime',
-          isRealtime: 'isRealtimeData',
-        },
-        apis: {
-          fromCity: 'tarbus.stops.{{bus2:prof}}.fromCity:departures',
-          toCity: 'tarbus.stops.{{bus2:prof}}.toCity:departures',
-        },
-      },
-      {
-        template: 'Bus',
-        id: 'Bus3',
-        name: '{{bus2}}',
-        departureSchema: {
           name: 'destinationDisplay.frontText',
           number: 'serviceJourney.line.publicCode',
           registredTime: 'aimedArrivalTime',
