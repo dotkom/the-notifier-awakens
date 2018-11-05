@@ -77,16 +77,9 @@ export const defaultAffiliationSettings = {
       {
         template: 'Events',
         type: '{{eventType}}',
-        eventMapping: {
-          startDate: 'event_start',
-          endDate: 'event_end',
-          title: 'title',
-          image: 'image.wide',
-          companyImage: 'company_event.0.company.image.wide',
-        },
         imageHost: 'https://online.ntnu.no',
         apis: {
-          events: 'onlineEvents:results',
+          events: 'onlineEvents:events',
         },
         css: '.Events { padding-bottom: 0; }',
       },
