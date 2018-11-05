@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { get } from 'object-path';
 import { format } from 'date-fns';
 
 export default class Events extends Component {
@@ -15,14 +14,14 @@ export default class Events extends Component {
       default:
         EventsUI = EventsCarousel;
     }
-    const { events = [], eventMapping } = this.props;
+    const { events = [] } = this.props;
     const eventsMapped = events.map(e => {
-      const startDateTime = get(e, eventMapping.startDate, '');
+      const startDateTime = e.startDate;
       const startDate = format(startDateTime, 'dddd D. MMM');
       const startTime = format(startDateTime, 'HH:MM');
-      const title = get(e, eventMapping.title, '');
-      const image = get(e, eventMapping.image, '');
-      const companyImage = get(e, eventMapping.companyImage, '');
+      const title = e.title;
+      const image = e.image;
+      const companyImage = e.companyImage;
 
       return {
         startDate,

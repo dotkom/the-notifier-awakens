@@ -5,6 +5,7 @@ import {
   injectValuesIntoString,
 } from '../utils';
 import { get } from 'object-path';
+import ST from 'stjs';
 
 /**
  * The API service schedules API requests and passes the
@@ -84,7 +85,14 @@ export default class APIService {
               if ('error' in data) {
                 this.handleFail(key, apiName);
               } else {
-                this.callback(key, data);
+                if ('transform' in api) {
+                  const transformedData = ST.select(data)
+                    .transformWith(api.transform)
+                    .root();
+                  this.callback(key, transformedData);
+                } else {
+                  this.callback(key, data);
+                }
               }
             };
             const error = () => {
@@ -201,7 +209,11 @@ generateURLs(api, 'bus') =>
     const { url } = api;
     let postfix = '';
     if ('method' in api) {
-      postfix = `#${api.method.toUpperCase()}#${api.body || ''}`;
+      const body =
+        typeof api.body === 'object'
+          ? JSON.stringify(api.body)
+          : api.body || '';
+      postfix = `#${api.method.toUpperCase()}#${body}`;
     }
     const urlWithPostfix = url + postfix;
     const params = getStringParams(urlWithPostfix);

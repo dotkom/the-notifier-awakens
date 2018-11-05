@@ -29,6 +29,18 @@ export const defaultApis = {
       samf: { fromCity: '16010476', toCity: '16011476' },
       prof: { fromCity: '16010376', toCity: '16011376' },
     },
+    // Using STJS for object mapping (https://www.npmjs.com/package/stjs#2-transform)
+    transform: {
+      departures: {
+        '{{#each departures}}': {
+          name: '{{destination}}',
+          number: '{{line}}',
+          registredTime: '{{registeredDepartureTime}}',
+          scheduledTime: '{{scheduledDepartureTime}}',
+          isRealtime: '{{isRealtimeData}}',
+        },
+      },
+    },
   },
   bartebuss: {
     interval: 10,
@@ -49,7 +61,7 @@ export const defaultApis = {
       },
       mode: 'cors',
     },
-    body: JSON.stringify({
+    body: {
       query: `{
         quay(id: "NSR:Quay:{{stops.*.fromCity,toCity}}") {
           id
@@ -72,15 +84,37 @@ export const defaultApis = {
           }
         }
       }`,
-    }),
+    },
     stops: {
       glossyd: { fromCity: '75707', toCity: '75708' },
       samf: { fromCity: '73103', toCity: '73101' },
       prof: { fromCity: '73103', toCity: '73101' },
     },
+    transform: {
+      departures: {
+        '{{#each data.quay.estimatedCalls}}': {
+          name: '{{destinationDisplay.frontText}}',
+          number: '{{serviceJourney.line.publicCode}}',
+          registredTime: '{{aimedArrivalTime}}',
+          scheduledTime: '{{expectedArrivalTime}}',
+          isRealtime: '{{realtime}}',
+        },
+      },
+    },
   },
   onlineEvents: {
     interval: 100,
     url: 'https://online.ntnu.no/api/v1/events/',
+    transform: {
+      events: {
+        '{{#each results}}': {
+          startDate: '{{event_start}}',
+          endDate: '{{event_end}}',
+          title: '{{title}}',
+          image: '{{image.wide}}',
+          companyImage: '{{company_event.0.company.image.wide}}',
+        },
+      },
+    },
   },
 };
