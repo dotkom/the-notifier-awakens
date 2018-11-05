@@ -193,8 +193,8 @@ generateLayoutCSS(layouts) => `
           case 2:
             size = 1400;
             break;
-          case 3:
-            size = 1500;
+          default:
+            size = 1400 + 360 * Math.max(0, index - 2);
             break;
         }
         if (size === 0) {
