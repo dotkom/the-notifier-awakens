@@ -48,9 +48,8 @@ export const defaultApis = {
         'ET-Client-Name': 'Notifier-dev',
       },
     },
-    url: `https://api.entur.org/journeyplanner/2.0/index/graphql>>${JSON.stringify(
-      {
-        query: `{
+    body: JSON.stringify({
+      query: `{
         quay(id: "NSR:Quay:{{stops.*.fromCity,toCity}}") {
           id
           name
@@ -72,8 +71,8 @@ export const defaultApis = {
           }
         }
       }`,
-      },
-    )}`,
+    }),
+    url: `https://api.entur.org/journeyplanner/2.0/index/graphql`,
     stops: {
       glossyd: { fromCity: '75707', toCity: '75708' },
       samf: { fromCity: '73103', toCity: '73101' },
