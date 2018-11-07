@@ -85,4 +85,16 @@ export const defaultAffiliationSettings = {
       },
     ],
   },
+  delta: {
+    color: '#a00',
+    components: [
+      {
+        template: 'Articles',
+        apis: {
+          articles: 'deltaArticles:articles',
+        },
+        css: '.Articles .article { background-size: contain; }',
+      },
+    ],
+  },
 };
