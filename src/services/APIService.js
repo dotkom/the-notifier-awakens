@@ -64,6 +64,33 @@ export default class APIService {
   }
 
   /**
+   * Transform URLs by injecting values from functions.
+   * 
+   * Examples:
+```javascript
+transform('[[now]]') => '2018-10-12T13:14:15Z'
+transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?date=2018-10-12'
+```
+   * @param {string} url Any URL, or string
+   * @param {string} [start='[['] Encapsulation start
+   * @param {string} [end=']]'] Encapsulation end
+   * 
+   * @returns {string} A transformed string
+   */
+  transform(url, start = '[[', end = ']]') {
+    const functions = Object.assign(
+      {
+        now: () => Date.now(),
+        'now.date': () => new Date().toISOString().slice(0, 10),
+        'now.datetime': () => new Date().toISOString(),
+        'now.time': () => new Date().toISOString().slice(11, 19),
+      },
+      this.settings,
+    );
+    return injectValuesIntoString(url, functions, null, start, end);
+  }
+
+  /**
    * Decides what to do on each tick.
    *
    * @param {number} time Time (in seconds) of the tick.
@@ -80,7 +107,10 @@ export default class APIService {
             this.usedApis[key] &&
             this.hasNotFailed(key)
           ) {
-            const [coreUrl, method = 'GET', body = ''] = url.split('#');
+            const urlTransformed = this.transform(url);
+            const [coreUrl, method = 'GET', body = ''] = urlTransformed.split(
+              '#',
+            );
             const callback = data => {
               if ('error' in data) {
                 this.handleFail(key, apiName);

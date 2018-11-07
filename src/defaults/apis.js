@@ -105,7 +105,8 @@ export const defaultApis = {
   },
   onlineEvents: {
     interval: 100,
-    url: 'https://online.ntnu.no/api/v1/events/',
+    url:
+      'https://online.ntnu.no/api/v1/events/?ordering=event_start&event_start__gte=[[now.date]]',
     transform: {
       events: {
         '{{#each results}}': {
