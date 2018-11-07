@@ -35,7 +35,7 @@ export const defaultApis = {
         '{{#each departures}}': {
           name: '{{destination}}',
           number: '{{line}}',
-          registredTime: '{{registeredDepartureTime}}',
+          registeredTime: '{{registeredDepartureTime}}',
           scheduledTime: '{{scheduledDepartureTime}}',
           isRealtime: '{{isRealtimeData}}',
         },
@@ -64,12 +64,9 @@ export const defaultApis = {
     body: {
       query: `{
         quay(id: "NSR:Quay:{{stops.*.fromCity,toCity}}") {
-          id
           name
-          estimatedCalls(numberOfDepartures: 10) {
-            aimedArrivalTime
+          estimatedCalls(numberOfDepartures: 20) {
             aimedDepartureTime
-            expectedArrivalTime
             expectedDepartureTime
             realtime
             forBoarding
@@ -88,17 +85,21 @@ export const defaultApis = {
     stops: {
       glossyd: { fromCity: '75707', toCity: '75708' },
       samf: { fromCity: '73103', toCity: '73101' },
-      prof: { fromCity: '73103', toCity: '73101' },
+      prof: { fromCity: '71204', toCity: '71195' },
     },
     transform: {
       departures: {
-        '{{#each data.quay.estimatedCalls}}': {
-          name: '{{destinationDisplay.frontText}}',
-          number: '{{serviceJourney.line.publicCode}}',
-          registredTime: '{{aimedArrivalTime}}',
-          scheduledTime: '{{expectedArrivalTime}}',
-          isRealtime: '{{realtime}}',
-        },
+        '{{#each data.quay.estimatedCalls}}': [
+          {
+            '{{#if forBoarding}}': {
+              name: '{{destinationDisplay.frontText}}',
+              number: '{{serviceJourney.line.publicCode}}',
+              registeredTime: '{{expectedDepartureTime}}',
+              scheduledTime: '{{aimedDepartureTime}}',
+              isRealtime: '{{realtime}}',
+            },
+          },
+        ],
       },
     },
   },

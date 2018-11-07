@@ -1,10 +1,5 @@
 import React, { Component } from 'react';
-import {
-  format,
-  addMilliseconds,
-  differenceInMilliseconds,
-  differenceInMinutes,
-} from 'date-fns';
+import { format, differenceInMinutes } from 'date-fns';
 import * as locale from 'date-fns/locale/nb';
 import { DEBUG } from '../constants';
 
@@ -13,68 +8,26 @@ class Bus extends Component {
     super();
 
     this.mounted = false;
-
-    this.state = {
-      toCity: [],
-      fromCity: [],
-      toCity2: [],
-      fromCity2: [],
-      lastTick: new Date().getTime(),
-    };
+    this.interval = null;
   }
 
   componentDidMount() {
     this.mounted = true;
-    setInterval(() => this.tick(), 1000);
+    this.interval = setInterval(() => this.forceUpdate(), 1000);
   }
 
   componentWillUnmount() {
+    if (this.interval !== null) {
+      clearInterval(this.interval);
+      this.interval = null;
+    }
     this.mounted = false;
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState(
-      Object.assign({}, this.state, {
-        toCity: nextProps.toCity || [],
-        fromCity: nextProps.fromCity || [],
-        toCity2: nextProps.toCity2 || [],
-        fromCity2: nextProps.fromCity2 || [],
-      }),
-    );
-  }
-
-  tick() {
-    let toCity = this.state.toCity.slice();
-    let fromCity = this.state.fromCity.slice();
-    let diff = differenceInMilliseconds(new Date(), this.state.lastTick);
-
-    for (let departure of toCity) {
-      departure.registeredTime = this.addTime(departure.registeredTime, diff);
-      departure.scheduledTime = this.addTime(departure.scheduledTime, diff);
-    }
-
-    for (let departure of fromCity) {
-      departure.registeredTime = this.addTime(departure.registeredTime, diff);
-      departure.scheduledTime = this.addTime(departure.scheduledTime, diff);
-    }
-
-    if (this.mounted) {
-      this.setState(
-        Object.assign({}, this.state, {
-          toCity,
-          fromCity,
-          lastTick: new Date().getTime(),
-        }),
-      );
-    }
-  }
-
-  addTime(time, add, strFormat = 'YYYY-MM-DDTHH:mm:ss') {
-    let newTime = addMilliseconds(time, add);
-    return format(newTime, strFormat);
-  }
-
   getDepartureList(departures) {
+    if (!departures) {
+      return;
+    }
     return departures
       .map(e => {
         e.time = e.scheduledTime;
@@ -97,7 +50,7 @@ class Bus extends Component {
         const isRealtime = e.isRealtime;
         const timeLeft = differenceInMinutes(e.time, new Date(), { locale });
         let time = isRealtime ? '' : '';
-        const isClose = timeLeft <= 11;
+        const isClose = timeLeft <= 9;
 
         if (timeLeft === 0) {
           time += 'nå';
@@ -130,10 +83,10 @@ class Bus extends Component {
   }
 
   render() {
-    const toCity = this.getDepartureList(this.state.toCity);
-    const fromCity = this.getDepartureList(this.state.fromCity);
-    const toCity2 = this.getDepartureList(this.state.toCity2);
-    const fromCity2 = this.getDepartureList(this.state.fromCity2);
+    const toCity = this.getDepartureList(this.props.toCity) || [];
+    const fromCity = this.getDepartureList(this.props.fromCity) || [];
+    const toCity2 = this.getDepartureList(this.props.toCity2) || [];
+    const fromCity2 = this.getDepartureList(this.props.fromCity2) || [];
     const { translate } = this.props;
 
     return (

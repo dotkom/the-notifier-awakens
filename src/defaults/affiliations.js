@@ -53,8 +53,8 @@ export const defaultAffiliationSettings = {
         template: 'Bus',
         name: '{{bus}}',
         apis: {
-          fromCity: 'tarbus.stops.{{bus:glossyd}}.fromCity:departures',
-          toCity: 'tarbus.stops.{{bus:glossyd}}.toCity:departures',
+          fromCity: 'enturbus.stops.{{bus:glossyd}}.fromCity:departures',
+          toCity: 'enturbus.stops.{{bus:glossyd}}.toCity:departures',
         },
       },
       {
