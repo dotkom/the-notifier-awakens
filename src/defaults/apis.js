@@ -119,4 +119,20 @@ export const defaultApis = {
       },
     },
   },
+  deltaArticles: {
+    interval: 1000,
+    url: 'http://www.deltahouse.no/feed/#RSS',
+    transform: {
+      articles: {
+        '{{#each rss.channel[0].item}}': {
+          title: '{{title[0]}}',
+          date: '{{pubDate[0]}}',
+          link: '{{link[0]}}',
+          author: '{{this["dc:creator"][0]}}',
+          image:
+            'https://www.deltahouse.no/wp-content/themes/delta/dist/images/logo.svg',
+        },
+      },
+    },
+  },
 };
