@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { format } from 'date-fns';
+import { format, isToday } from 'date-fns';
+import * as locale from 'date-fns/locale/nb';
 
 export default class Events extends Component {
   render() {
@@ -15,21 +16,38 @@ export default class Events extends Component {
         EventsUI = EventsCarousel;
     }
     const { events = [] } = this.props;
-    const eventsMapped = events.map(e => {
-      const startDateTime = e.startDate;
-      const startDate = format(startDateTime, 'dddd D. MMM');
-      const startTime = format(startDateTime, 'HH:MM');
-      const title = e.title;
-      const image = e.image;
-      const companyImage = e.companyImage;
+    const now = Date.now();
+    const eventsMapped = events
+      .filter(e => now <= new Date(e.startDate).getTime())
+      .map(e => {
+        const startDateTime = e.startDate;
+        const startDateFormatted = isToday(startDateTime)
+          ? 'I dag'
+          : format(startDateTime, 'dddd D. MMM', {
+              locale,
+            });
+        const startTimeFormatted = format(startDateTime, 'HH:MM', { locale });
+        const endDateTime = e.endDate;
+        const endDateFormatted = isToday(endDateTime)
+          ? 'I dag'
+          : format(endDateTime, 'dddd D. MMM', { locale });
+        const endTimeFormatted = format(endDateTime, 'HH:MM', { locale });
+        const title = e.title;
+        const image = e.image;
+        const companyImage = e.companyImage;
 
-      return {
-        startDate,
-        startTime,
-        title,
-        image: image || companyImage,
-      };
-    });
+        return {
+          startDate: new Date(startDateTime),
+          startDateFormatted,
+          startTimeFormatted,
+          endDate: new Date(endDateTime),
+          endDateFormatted,
+          endTimeFormatted,
+          title,
+          image: image || companyImage,
+        };
+      })
+      .sort((a, b) => a.startDate - b.startDate);
     return <EventsUI {...this.props} events={eventsMapped} />;
   }
 }
@@ -43,14 +61,14 @@ class EventsFromSplash extends Component {
       timeColor = 'rgba(160, 160, 160, .8)',
     } = this.props;
     const eventList = events.slice(1).map((e, i) => {
-      const { startDate, startTime, title } = e;
+      const { startDateFormatted, startTimeFormatted, title } = e;
       const style = {};
 
       return (
         <div key={i} className="event event-splash" style={style}>
           <span className="title">{title}</span>
-          <span className="start-date">{startDate}</span>
-          <span className="start-time">{startTime}</span>
+          <span className="start-date">{startDateFormatted}</span>
+          <span className="start-time">{startTimeFormatted}</span>
         </div>
       );
     });
@@ -80,6 +98,9 @@ class EventsFromSplash extends Component {
             font-size: 2em;
             color: #fff;
           }
+          .main-start-datetime:first-letter {
+            text-transform: capitalize;
+          }
           .main-start-datetime {
             margin: 10px 0 0 50px;
           }
@@ -91,7 +112,7 @@ class EventsFromSplash extends Component {
           }
           .title {
             order: 3;
-            flex: 1 0 auto;
+            flex: 1 1 auto;
             position: relative;
             border-left: 3px solid ${lineColor};
             padding: 10px 0 10px 42px;
@@ -108,6 +129,9 @@ class EventsFromSplash extends Component {
           }
           .event:last-child .title {
             padding-bottom: 32px;
+          }
+          .start-date:first-letter {
+            text-transform: capitalize;
           }
           .start-date {
             order: 1;
@@ -129,9 +153,8 @@ class EventsFromSplash extends Component {
         <div className="main-event">
           <span className="main-title">{firstEvent.title}</span>
           <span className="main-start-datetime">
-            {firstEvent.startDate}
-            &nbsp;&nbsp;
-            {firstEvent.startTime}
+            {firstEvent.startDateFormatted} klokken{' '}
+            {firstEvent.startTimeFormatted}
           </span>
         </div>
         <div className="event-list">{eventList}</div>
@@ -149,14 +172,14 @@ class EventsCarousel extends Component {
       //timeColor = 'rgba(160, 160, 160, .8)',
     } = this.props;
     const eventList = events.slice(1).map((e, i) => {
-      const { startDate, startTime, title } = e;
+      const { startDateFormatted, startTimeFormatted, title } = e;
       const style = {};
 
       return (
         <div key={i} className="event event-splash" style={style}>
           <span className="title">{title}</span>
-          <span className="start-date">{startDate}</span>
-          <span className="start-time">{startTime}</span>
+          <span className="start-date">{startDateFormatted}</span>
+          <span className="start-time">{startTimeFormatted}</span>
         </div>
       );
     });
@@ -192,9 +215,9 @@ class EventsCarousel extends Component {
         <div className="main-event">
           <span className="main-title">{firstEvent.title}</span>
           <span className="main-start-datetime">
-            {firstEvent.startDate}
+            {firstEvent.startDateFormatted}
             &nbsp;&nbsp;
-            {firstEvent.startTime}
+            {firstEvent.startTimeFormatted}
           </span>
         </div>
         <div className="event-list">{eventList}</div>

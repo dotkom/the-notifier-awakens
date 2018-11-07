@@ -180,7 +180,11 @@ export const injectValuesIntoString = (
     let value = '';
 
     if (param in values) {
-      value = values[param];
+      if (typeof values[param] === 'function') {
+        value = values[param]();
+      } else {
+        value = values[param];
+      }
     } else if (~param.indexOf(':')) {
       const [extractedParam, defaultVal] = param.split(':');
       if (extractedParam in values) {
