@@ -1,0 +1,30 @@
+.articles {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.article-author {
+  font-style: italic;
+}
+.article-author::before {
+  content: '- ';
+}
+
+.article {
+  padding: 8px;
+  margin: 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  text-decoration: none;
+  background-color: white;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  color: #eee;
+  text-shadow: 0 0 2px #000, 0 0 2px #000, 0 0 2px #000;
+  height: 100px;
+  width: 200px;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+}
