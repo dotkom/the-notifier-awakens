@@ -22,6 +22,7 @@ class App extends Component {
       components = [],
       layouts = {},
       style = 'online',
+      color = defaultSettings.color || '',
     } = defaultAffiliationSettings[affiliation];
 
     this.updateData = this.updateData.bind(this);
@@ -43,6 +44,7 @@ class App extends Component {
       components,
       layouts,
       style,
+      color,
       settings: defaultSettings,
     };
 
@@ -232,14 +234,10 @@ generateLayoutCSS(layouts) => `
   }
 
   render() {
-    const { data, layouts } = this.state;
+    const { data, layouts, color } = this.state;
     const componentsRendered = this.ComponentController.renderComponents(data);
 
     let globalCSS = `
-.component {
-  ${DEBUG ? 'border: 1px solid rgba(255, 0, 0, .5);' : ''}
-}
-
 ${this.generateLayoutCSS(layouts)}
 `;
     if (this.state.settings.style in styles) {
@@ -253,6 +251,15 @@ ${this.generateLayoutCSS(layouts)}
         }
       }
     }
+
+    globalCSS += `
+.App {
+  ${color ? `background-color: ${color};` : ''}
+}
+
+.component {
+  ${DEBUG ? 'border: 1px solid rgba(255, 0, 0, .5);' : ''}
+}`;
 
     return (
       <Style>
