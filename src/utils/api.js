@@ -1,4 +1,5 @@
 import { API_ROOT } from '../constants';
+import { parseString } from 'xml2js';
 
 export const API = {
   /**
@@ -38,6 +39,26 @@ export const API = {
     return fetch(API.transformURL(url), req)
       .then(res => res.json())
       .then(callback)
+      .catch(error);
+  },
+
+  /**
+   * Send a GET request and parse RSS.
+   *
+   * @param {string} url The URL to GET from
+   * @param {object} req Headers and more request spesific (see the fetch API)
+   * @param {function} callback Function that retrieves data from request
+   * @param {function} error Error from when request fails
+   */
+  getRSSRequest(url, req, callback = () => {}, error = () => {}) {
+    const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
+    return fetch(API.transformURL(CORS_PROXY + url), req)
+      .then(res => res.text())
+      .then(res => {
+        parseString(res, (_, parsedResult) => {
+          callback(parsedResult);
+        });
+      })
       .catch(error);
   },
 

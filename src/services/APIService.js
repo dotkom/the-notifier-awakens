@@ -136,6 +136,9 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
                 const req = Object.assign({ body }, api.request || {});
                 API.postRequest(coreUrl, req, callback, error);
                 break;
+              case 'RSS':
+                API.getRSSRequest(coreUrl, api.request || {}, callback, error);
+                break;
               default:
                 API.getRequest(coreUrl, api.request || {}, callback, error);
                 break;
