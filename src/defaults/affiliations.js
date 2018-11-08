@@ -86,7 +86,7 @@ export const defaultAffiliationSettings = {
     ],
   },
   delta: {
-    color: '#a00',
+    color: '#030',
     components: [
       {
         template: 'Articles',
