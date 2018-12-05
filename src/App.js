@@ -20,7 +20,7 @@ class App extends Component {
     const { affiliation = 'debug' } = defaultSettings;
     const {
       components = [],
-      layouts = {},
+      layouts,
       style = 'online',
       color = defaultSettings.color || '',
     } = defaultAffiliationSettings[affiliation];
@@ -184,6 +184,17 @@ generateLayoutCSS(layouts) => `
    * @returns {string} CSS generated for containerClass
    */
   generateLayoutCSS(layouts, containerClass = 'component-container') {
+    if (typeof layouts === 'undefined') {
+      return `
+.${containerClass} {
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+}
+
+.${containerClass} > div {
+  grid-area: unset;
+}
+`;
+    }
     if (Array.isArray(layouts)) {
       return layouts.reduce((acc, grid, index) => {
         let size = 0;
