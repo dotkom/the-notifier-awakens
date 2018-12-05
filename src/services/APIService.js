@@ -115,6 +115,9 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
               if ('error' in data) {
                 this.handleFail(key, apiName);
               } else {
+                if ('print' in api && api.print) {
+                  console.log(data);
+                }
                 if ('transform' in api) {
                   const transformedData = ST.select(data)
                     .transformWith(api.transform)
