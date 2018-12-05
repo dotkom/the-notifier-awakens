@@ -12,7 +12,7 @@
 
 .article {
   padding: 8px;
-  margin: 8px;
+  margin: 8px auto;
   border-radius: 4px;
   font-size: 0.8em;
   text-decoration: none;
