@@ -152,10 +152,11 @@ injectValuesIntoString('{{five:def}}test{{six:ault}}', obj, '', '{{', '}}') => '
 injectValuesIntoString('{{five:def}}test{{four:ault}}', obj, '', '{{', '}}') => 'deftest4'
  * ```
  * @param {string} string The String to search through
- * @param {string} values An object with all values that can fit the keys
+ * @param {object} values An object with all values that can fit the keys
  * @param {string} fallbackValue Default value if no keys in values matches
  * @param {string} start Start of match
  * @param {string} end End of match
+ * @param {string} defaultMatch How to split default values
  *
  * @returns {string} Generated string
  */
@@ -165,6 +166,7 @@ export const injectValuesIntoString = (
   fallbackValue = null,
   start = '{{',
   end = '}}',
+  defaultMatch = ':',
 ) => {
   const params = getStringParams(string, start, end);
 
@@ -185,8 +187,8 @@ export const injectValuesIntoString = (
       } else {
         value = values[param];
       }
-    } else if (~param.indexOf(':')) {
-      const [extractedParam, defaultVal] = param.split(':');
+    } else if (~param.indexOf(defaultMatch)) {
+      const [extractedParam, defaultVal] = param.split(defaultMatch);
       if (extractedParam in values) {
         value = values[extractedParam];
       } else {
