@@ -43,7 +43,7 @@ export const API = {
   },
 
   /**
-   * Send a GET request and parse RSS.
+   * Send a GET request, resolve CORS and parse RSS.
    *
    * @param {string} url The URL to GET from
    * @param {object} req Headers and more request spesific (see the fetch API)
@@ -59,6 +59,47 @@ export const API = {
           callback(parsedResult);
         });
       })
+      .catch(error);
+  },
+
+  /**
+   * Send a GET request and resolve CORS.
+   *
+   * @param {string} url The URL to GET from
+   * @param {object} req Headers and more request spesific (see the fetch API)
+   * @param {function} callback Function that retrieves data from request
+   * @param {function} error Error from when request fails
+   */
+  getHTMLRequest(url, selector, req, callback = () => {}, error = () => {}) {
+    const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
+    return fetch(API.transformURL(CORS_PROXY + url), req)
+      .then(res => res.text())
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const [querySelector = 'html', attribute = ''] = selector.split('@');
+        const element = doc.querySelector(querySelector);
+        const scrapeData = attribute
+          ? element.getAttribute(attribute)
+          : element.innerHTML;
+        callback(scrapeData);
+      })
+      .catch(error);
+  },
+
+  /**
+   * Send a GET request and resolve CORS.
+   *
+   * @param {string} url The URL to GET from
+   * @param {object} req Headers and more request spesific (see the fetch API)
+   * @param {function} callback Function that retrieves data from request
+   * @param {function} error Error from when request fails
+   */
+  getTextRequest(url, req, callback = () => {}, error = () => {}) {
+    const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
+    return fetch(API.transformURL(CORS_PROXY + url), req)
+      .then(res => res.text())
+      .then(callback)
       .catch(error);
   },
 
