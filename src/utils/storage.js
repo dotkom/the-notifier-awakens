@@ -2,11 +2,11 @@ import { get, set, has } from 'object-path';
 import merge from 'object-merge';
 
 export default class Storage {
-  constructor(data) {
-    this.storageKey = 'data';
+  constructor(data, key) {
+    this.storageKey = key || 'data';
 
     try {
-      if (data) {
+      if (data && data !== null) {
         this.data = data;
       } else {
         let savedData = localStorage.getItem(this.storageKey);
@@ -24,13 +24,13 @@ export default class Storage {
 
   /**
    * Get the data from the storage object.
-   * 
+   *
    * @param {string} key The key to get from storage. Specify none if you want the whole storage.
    * @returns {object} The storage at key or the whole storage set.
    */
   get(key = '') {
     if (key === '') {
-      return !!Object.keys(this.data);
+      return this.data;
     }
 
     return get(this.data, key, undefined);
@@ -38,13 +38,13 @@ export default class Storage {
 
   /**
    * Check if key exists in the storage object.
-   * 
-   * @param {string} key The key to get from storage. Specify none if you want the whole storage.
+   *
+   * @param {string} key The key to get from storage. Specify none if you want to check the whole storage.
    * @returns {bool} If the storage object has the key.
    */
   has(key = '') {
     if (key === '') {
-      return this.data;
+      return !!Object.keys(this.data);
     }
 
     return has(this.data, key);
@@ -52,7 +52,7 @@ export default class Storage {
 
   /**
    * Update the storage at a key and return the new storage state.
-   * 
+   *
    * @param {string} key The key to set in the storage object.
    * @param {string} value The value to set the key to.
    * @param {bool} save Save the storage to device storage.
@@ -60,7 +60,6 @@ export default class Storage {
    */
   set(key, value, save = false) {
     let oldValue = undefined;
-
     if (key) {
       oldValue = get(this.data, key, undefined);
       set(this.data, key, value);
@@ -87,7 +86,7 @@ export default class Storage {
 
   /**
    * Should merge data into current storage as best as it can.
-   * 
+   *
    * @param {object} data Input data that is merged into the original storage object.
    * @returns {object} Unified data sturcture.
    */
