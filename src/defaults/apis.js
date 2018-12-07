@@ -135,4 +135,21 @@ export const defaultApis = {
       },
     },
   },
+  dusken: {
+    interval: 43200,
+    url: 'https://dusken.no/feed#RSS',
+    print: true,
+    scrape: ['articles.*.image'],
+    transform: {
+      articles: {
+        '{{#each rss.channel[0].item}}': {
+          title: '{{title[0]}}',
+          date: '{{pubDate[0]}}',
+          link: '{{link[0]}}',
+          author: 'Dusken.no',
+          image: 'http://dusken.no[[{{link[0]}}#HTML:#header-img@src]]',
+        },
+      },
+    },
+  },
 };

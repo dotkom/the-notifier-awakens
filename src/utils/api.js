@@ -9,11 +9,7 @@ export const API = {
     return cache.get(API.removeDotsFromUrl(`${url}#${type}`));
   },
   addRequestToCache(url, type, data) {
-    cache.set(
-      API.removeDotsFromUrl(`${url}#${type}`),
-      Object.assign({}, data),
-      true,
-    );
+    cache.set(API.removeDotsFromUrl(`${url}#${type}`), data, true);
     API.getRequestFromCache(url, type);
   },
   removeDotsFromUrl(url) {
@@ -120,11 +116,14 @@ export const API = {
       .then(html => {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
-        const [querySelector = 'html', attribute = ''] = selector.split('@');
+        const [querySelector = ':root', attribute = ''] = selector.split('@');
         const element = doc.querySelector(querySelector);
-        const scrapeData = attribute
-          ? element.getAttribute(attribute)
-          : element.innerHTML;
+        const scrapeData =
+          element === null
+            ? ''
+            : attribute
+            ? element.getAttribute(attribute)
+            : element.innerHTML;
         callback(scrapeData);
         API.addRequestToCache(url, `HTML:${selector}`, scrapeData);
       })
