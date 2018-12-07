@@ -1,7 +1,28 @@
 import { API_ROOT } from '../constants';
 import { parseString } from 'xml2js';
+import Storage from './storage';
+
+const cache = new Storage(null, 'cache');
 
 export const API = {
+  getRequestFromCache(url, type) {
+    return cache.get(API.removeDotsFromUrl(`${url}#${type}`));
+  },
+  addRequestToCache(url, type, data) {
+    cache.set(
+      API.removeDotsFromUrl(`${url}#${type}`),
+      Object.assign({}, data),
+      true,
+    );
+    API.getRequestFromCache(url, type);
+  },
+  removeDotsFromUrl(url) {
+    return url.replace(/\./g, '(dot)');
+  },
+  addDotsFromUrl(url) {
+    return url.replace(/\(dot\)/g, '.');
+  },
+
   /**
    * Send a POST request.
    *
@@ -23,7 +44,10 @@ export const API = {
 
     return fetch(API.transformURL(url), req)
       .then(res => res.json())
-      .then(callback)
+      .then(data => {
+        callback(data);
+        API.addRequestToCache(url, 'POST', data);
+      })
       .catch(error);
   },
 
@@ -36,9 +60,17 @@ export const API = {
    * @param {function} error Error from when request fails
    */
   getRequest(url, req, callback = () => {}, error = () => {}) {
+    const cacheData = API.getRequestFromCache(url, 'GET');
+    if (cacheData) {
+      callback(cacheData);
+      return;
+    }
     return fetch(API.transformURL(url), req)
       .then(res => res.json())
-      .then(callback)
+      .then(data => {
+        callback(data);
+        API.addRequestToCache(url, 'GET', data);
+      })
       .catch(error);
   },
 
@@ -51,12 +83,18 @@ export const API = {
    * @param {function} error Error from when request fails
    */
   getRSSRequest(url, req, callback = () => {}, error = () => {}) {
+    const cacheData = API.getRequestFromCache(url, 'RSS');
+    if (cacheData) {
+      callback(cacheData);
+      return;
+    }
     const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
     return fetch(API.transformURL(CORS_PROXY + url), req)
       .then(res => res.text())
       .then(res => {
         parseString(res, (_, parsedResult) => {
           callback(parsedResult);
+          API.addRequestToCache(url, 'RSS', parsedResult);
         });
       })
       .catch(error);
@@ -71,6 +109,11 @@ export const API = {
    * @param {function} error Error from when request fails
    */
   getHTMLRequest(url, selector, req, callback = () => {}, error = () => {}) {
+    const cacheData = API.getRequestFromCache(url, `HTML:${selector}`);
+    if (cacheData) {
+      callback(cacheData);
+      return;
+    }
     const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
     return fetch(API.transformURL(CORS_PROXY + url), req)
       .then(res => res.text())
@@ -83,6 +126,7 @@ export const API = {
           ? element.getAttribute(attribute)
           : element.innerHTML;
         callback(scrapeData);
+        API.addRequestToCache(url, `HTML:${selector}`, scrapeData);
       })
       .catch(error);
   },
@@ -96,10 +140,18 @@ export const API = {
    * @param {function} error Error from when request fails
    */
   getTextRequest(url, req, callback = () => {}, error = () => {}) {
+    const cacheData = API.getRequestFromCache(url, 'RSS');
+    if (cacheData) {
+      callback(cacheData);
+      return;
+    }
     const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
     return fetch(API.transformURL(CORS_PROXY + url), req)
       .then(res => res.text())
-      .then(callback)
+      .then(data => {
+        callback(data);
+        API.addRequestToCache(url, 'TEXT', data);
+      })
       .catch(error);
   },
 
