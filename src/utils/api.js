@@ -5,18 +5,62 @@ import Storage from './storage';
 const cache = new Storage(null, 'cache');
 
 export const API = {
+  /**
+   * Receive data from key in cache. The url and type needs to match the key in the cache.
+   *
+   * @param {string} url Any url
+   * @param {string} type HTML:{css-selector}{?(at)attr}, RSS, or POST:{SHA256 of payload}
+   *
+   * @returns {any} Data from cache
+   */
   getRequestFromCache(url, type) {
     return cache.get(API.removeDotsFromUrl(`${url}#${type}`));
   },
+
+  /**
+   * Add data to cache using an ID on a spesific format.
+   *
+   * @param {string} url Any url
+   * @param {string} type HTML:{css-selector}{?(at)attr}, RSS, or POST:{SHA256 of payload}
+   * @param {any} data The data from request
+   */
   addRequestToCache(url, type, data) {
     cache.set(API.removeDotsFromUrl(`${url}#${type}`), data, true);
     API.getRequestFromCache(url, type);
   },
+
+  /**
+   * Dots (.) are used to access properties from objects. Replace them to "(dot)" instead.
+   *
+   * @param {string} url Any url
+   */
   removeDotsFromUrl(url) {
     return url.replace(/\./g, '(dot)');
   },
+
+  /**
+   * Replace (dot) with an actual ".".
+   *
+   * @param {string} url Any url
+   */
   addDotsFromUrl(url) {
     return url.replace(/\(dot\)/g, '.');
+  },
+
+  /**
+   * Create a sha256 hash from payload.
+   *
+   * @param {any} message Input to hash function
+   * @returns {string} sha256 hash
+   */
+  async sha256(message) {
+    const msgBuffer = new TextEncoder('utf-8').encode(message);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray
+      .map(b => ('00' + b.toString(16)).slice(-2))
+      .join('');
+    return hashHex;
   },
 
   /**
@@ -45,13 +89,32 @@ export const API = {
     req.body =
       typeof req.body === 'object' ? JSON.stringify(req.body || {}) : req.body;
 
-    return fetch(API.transformURL(url), req)
-      .then(res => res.json())
-      .then(data => {
-        callback(data);
-        if (useCache) API.addRequestToCache(url, 'POST', data);
-      })
-      .catch(error);
+    if (useCache) {
+      (async function() {
+        const hash = await API.sha256(req.body);
+        const cacheData = API.getRequestFromCache(url, `POST:${hash}`);
+
+        if (cacheData) {
+          callback(cacheData);
+          return;
+        }
+
+        return fetch(API.transformURL(url), req)
+          .then(res => res.json())
+          .then(data => {
+            callback(data);
+            API.addRequestToCache(url, `POST:${hash}`, data);
+          })
+          .catch(error);
+      })();
+    } else {
+      return fetch(API.transformURL(url), req)
+        .then(res => res.json())
+        .then(data => {
+          callback(data);
+        })
+        .catch(error);
+    }
   },
 
   /**
@@ -140,7 +203,7 @@ export const API = {
   ) {
     if (useCache) {
       const cacheData = API.getRequestFromCache(url, `HTML:${selector}`);
-      if (cacheData) {
+      if (cacheData || cacheData === '') {
         callback(cacheData);
         return;
       }
