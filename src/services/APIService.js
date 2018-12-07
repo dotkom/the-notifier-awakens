@@ -107,42 +107,36 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
             this.usedApis[key] &&
             this.hasNotFailed(key)
           ) {
-            const urlTransformed = this.transform(url);
-            const [coreUrl, method = 'GET', body = ''] = urlTransformed.split(
-              '#',
-            );
+            const { cache: useCache = false } = api;
             const callback = data => {
               if ('error' in data) {
                 this.handleFail(key, apiName);
               } else {
+                if ('print' in api && api.print) {
+                  console.log(`Fra ${key}:`, data);
+                }
                 if ('transform' in api) {
                   const transformedData = ST.select(data)
                     .transformWith(api.transform)
                     .root();
-                  this.callback(key, transformedData);
+                  const { scrape } = api;
+                  this.callback(key, transformedData, useCache, scrape);
                 } else {
-                  this.callback(key, data);
+                  this.callback(key, data, useCache);
                 }
               }
             };
             const error = () => {
               this.handleFail(key, apiName);
             };
-            switch (method) {
-              case 'GET':
-                API.getRequest(coreUrl, api.request || {}, callback, error);
-                break;
-              case 'POST':
-                const req = Object.assign({ body }, api.request || {});
-                API.postRequest(coreUrl, req, callback, error);
-                break;
-              case 'RSS':
-                API.getRSSRequest(coreUrl, api.request || {}, callback, error);
-                break;
-              default:
-                API.getRequest(coreUrl, api.request || {}, callback, error);
-                break;
-            }
+            const urlTransformed = this.transform(url);
+            this.request(
+              urlTransformed,
+              api.request || {},
+              callback,
+              error,
+              useCache,
+            );
           }
         });
       }
@@ -206,6 +200,62 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
 
   updateSettings(settings) {
     this.settings = settings;
+  }
+
+  scrape(path, data, callback, useCache) {
+    const selectors = findObjectPaths(data, path);
+    for (const selector of selectors) {
+      const string = get(data, selector, '');
+      const scrapeSections = getStringParams(string, '[[', ']]');
+      for (const section of scrapeSections) {
+        const selectorIndex = section.indexOf(':', 7);
+        const req = section.slice(0, selectorIndex);
+        const htmlSelector = section.slice(selectorIndex + 1);
+        this.request(
+          req,
+          { htmlSelector },
+          scrapeData => {
+            callback(scrapeData, selector, section);
+          },
+          () => {},
+          useCache,
+        );
+      }
+    }
+  }
+
+  request(url, req, callback, error, useCache = false) {
+    const [coreUrl, type = 'GET', body = ''] = url.split('#');
+    switch (type) {
+      case 'GET':
+        API.getRequest(coreUrl, req, callback, error, useCache);
+        break;
+      case 'POST':
+        const newReq = Object.assign({ body }, req);
+        API.postRequest(coreUrl, newReq, callback, error, useCache);
+        break;
+      case 'RSS':
+        API.getRSSRequest(coreUrl, req, callback, error, useCache);
+        break;
+      case 'HTML':
+        const { htmlSelector } = req;
+        delete req.htmlSelector;
+        API.getHTMLRequest(
+          coreUrl,
+          htmlSelector,
+          req,
+          callback,
+          error,
+          useCache,
+        );
+        break;
+      case 'TEXT':
+        API.getTextRequest(coreUrl, req, callback, error, useCache);
+        break;
+      default:
+        API.getRequest(url, req, callback, error, useCache);
+        break;
+    }
   }
 
   /**

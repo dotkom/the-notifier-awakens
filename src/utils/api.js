@@ -1,7 +1,24 @@
 import { API_ROOT } from '../constants';
 import { parseString } from 'xml2js';
+import Storage from './storage';
+
+const cache = new Storage(null, 'cache');
 
 export const API = {
+  getRequestFromCache(url, type) {
+    return cache.get(API.removeDotsFromUrl(`${url}#${type}`));
+  },
+  addRequestToCache(url, type, data) {
+    cache.set(API.removeDotsFromUrl(`${url}#${type}`), data, true);
+    API.getRequestFromCache(url, type);
+  },
+  removeDotsFromUrl(url) {
+    return url.replace(/\./g, '(dot)');
+  },
+  addDotsFromUrl(url) {
+    return url.replace(/\(dot\)/g, '.');
+  },
+
   /**
    * Send a POST request.
    *
@@ -9,8 +26,15 @@ export const API = {
    * @param {object} req Headers and more request spesific (see the fetch API)
    * @param {function} callback Function that retrieves data from request
    * @param {function} error Error from when request fails
+   * @param {boolean} useCache Tell if cache should be used if available
    */
-  postRequest(url, req, callback = () => {}, error = () => {}) {
+  postRequest(
+    url,
+    req,
+    callback = () => {},
+    error = () => {},
+    useCache = false,
+  ) {
     req.method = 'POST';
     req.headers = Object.assign(
       {
@@ -23,7 +47,10 @@ export const API = {
 
     return fetch(API.transformURL(url), req)
       .then(res => res.json())
-      .then(callback)
+      .then(data => {
+        callback(data);
+        if (useCache) API.addRequestToCache(url, 'POST', data);
+      })
       .catch(error);
   },
 
@@ -34,30 +61,139 @@ export const API = {
    * @param {object} req Headers and more request spesific (see the fetch API)
    * @param {function} callback Function that retrieves data from request
    * @param {function} error Error from when request fails
+   * @param {boolean} useCache Tell if cache should be used if available
    */
-  getRequest(url, req, callback = () => {}, error = () => {}) {
+  getRequest(
+    url,
+    req,
+    callback = () => {},
+    error = () => {},
+    useCache = false,
+  ) {
+    if (useCache) {
+      const cacheData = API.getRequestFromCache(url, 'GET');
+      if (cacheData) {
+        callback(cacheData);
+        return;
+      }
+    }
     return fetch(API.transformURL(url), req)
       .then(res => res.json())
-      .then(callback)
+      .then(data => {
+        callback(data);
+        if (useCache) API.addRequestToCache(url, 'GET', data);
+      })
       .catch(error);
   },
 
   /**
-   * Send a GET request and parse RSS.
+   * Send a GET request, resolve CORS and parse RSS.
    *
    * @param {string} url The URL to GET from
    * @param {object} req Headers and more request spesific (see the fetch API)
    * @param {function} callback Function that retrieves data from request
    * @param {function} error Error from when request fails
+   * @param {boolean} useCache Tell if cache should be used if available
    */
-  getRSSRequest(url, req, callback = () => {}, error = () => {}) {
+  getRSSRequest(
+    url,
+    req,
+    callback = () => {},
+    error = () => {},
+    useCache = false,
+  ) {
+    if (useCache) {
+      const cacheData = API.getRequestFromCache(url, 'RSS');
+      if (cacheData) {
+        callback(cacheData);
+        return;
+      }
+    }
     const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
     return fetch(API.transformURL(CORS_PROXY + url), req)
       .then(res => res.text())
       .then(res => {
         parseString(res, (_, parsedResult) => {
           callback(parsedResult);
+          if (useCache) API.addRequestToCache(url, 'RSS', parsedResult);
         });
+      })
+      .catch(error);
+  },
+
+  /**
+   * Send a GET request and resolve CORS.
+   *
+   * @param {string} url The URL to GET from
+   * @param {object} req Headers and more request spesific (see the fetch API)
+   * @param {function} callback Function that retrieves data from request
+   * @param {function} error Error from when request fails
+   * @param {boolean} useCache Tell if cache should be used if available
+   */
+  getHTMLRequest(
+    url,
+    selector,
+    req,
+    callback = () => {},
+    error = () => {},
+    useCache = false,
+  ) {
+    if (useCache) {
+      const cacheData = API.getRequestFromCache(url, `HTML:${selector}`);
+      if (cacheData) {
+        callback(cacheData);
+        return;
+      }
+    }
+    const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
+    return fetch(API.transformURL(CORS_PROXY + url), req)
+      .then(res => res.text())
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const [querySelector = ':root', attribute = ''] = selector.split('@');
+        const element = doc.querySelector(querySelector);
+        const scrapeData =
+          element === null
+            ? ''
+            : attribute
+            ? element.getAttribute(attribute)
+            : element.innerHTML;
+        callback(scrapeData);
+        API.addRequestToCache(url, `HTML:${selector}`, scrapeData);
+      })
+      .catch(error);
+  },
+
+  /**
+   * Send a GET request and resolve CORS.
+   *
+   * @param {string} url The URL to GET from
+   * @param {object} req Headers and more request spesific (see the fetch API)
+   * @param {function} callback Function that retrieves data from request
+   * @param {function} error Error from when request fails
+   * @param {boolean} useCache Tell if cache should be used if available
+   */
+  getTextRequest(
+    url,
+    req,
+    callback = () => {},
+    error = () => {},
+    useCache = false,
+  ) {
+    if (useCache) {
+      const cacheData = API.getRequestFromCache(url, 'RSS');
+      if (cacheData) {
+        callback(cacheData);
+        return;
+      }
+    }
+    const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
+    return fetch(API.transformURL(CORS_PROXY + url), req)
+      .then(res => res.text())
+      .then(data => {
+        callback(data);
+        if (useCache) API.addRequestToCache(url, 'TEXT', data);
       })
       .catch(error);
   },

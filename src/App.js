@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Style from 'style-it';
+import { get, set } from 'object-path';
 
 import './App.css';
 
@@ -13,6 +14,7 @@ import {
   styles,
 } from './defaults';
 import { DEBUG } from './constants';
+import { injectValuesIntoString } from './utils';
 
 class App extends Component {
   constructor() {
@@ -20,7 +22,7 @@ class App extends Component {
     const { affiliation = 'debug' } = defaultSettings;
     const {
       components = [],
-      layouts = {},
+      layouts,
       style = 'online',
       color = defaultSettings.color || '',
     } = defaultAffiliationSettings[affiliation];
@@ -51,7 +53,7 @@ class App extends Component {
     this.startAPIs();
   }
 
-  updateData(key, data) {
+  updateData(key, data, useCache = false, scrape = []) {
     this.ComponentController.update(key, data);
     const newData = Object.assign({}, this.state.data, {
       [key]: data,
@@ -61,6 +63,38 @@ class App extends Component {
         data: newData,
       }),
     );
+
+    if (scrape.length) {
+      for (const path of scrape) {
+        this.APIService.scrape(
+          path,
+          data,
+          (scrapeData, selector, innerValue) => {
+            const oldValue = get(data, selector);
+            const newValue = injectValuesIntoString(
+              oldValue,
+              {
+                [innerValue]: scrapeData,
+              },
+              '',
+              '[[',
+              ']]',
+              null,
+            );
+            set(data, selector, newValue);
+            const newData = Object.assign({}, this.state.data, {
+              [key]: data,
+            });
+            this.setState(
+              Object.assign({}, this.state, {
+                data: newData,
+              }),
+            );
+          },
+          useCache,
+        );
+      }
+    }
   }
 
   updateSettings(settings) {
@@ -184,6 +218,17 @@ generateLayoutCSS(layouts) => `
    * @returns {string} CSS generated for containerClass
    */
   generateLayoutCSS(layouts, containerClass = 'component-container') {
+    if (typeof layouts === 'undefined') {
+      return `
+.${containerClass} {
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+}
+
+.${containerClass} > div {
+  grid-area: unset;
+}
+`;
+    }
     if (Array.isArray(layouts)) {
       return layouts.reduce((acc, grid, index) => {
         let size = 0;
