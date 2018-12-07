@@ -113,7 +113,7 @@ export const defaultApis = {
           startDate: '{{event_start}}',
           endDate: '{{event_end}}',
           title: '{{title}}',
-          image: '{{image.wide}}',
+          image: 'https://online.ntnu.no{{image.wide}}',
           companyImage: '{{company_event.0.company.image.wide}}',
         },
       },
