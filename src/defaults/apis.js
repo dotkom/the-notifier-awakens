@@ -854,17 +854,36 @@ export const defaultApis = {
   */
 
   /*usikker på om jeg satte api vediene riktig*/
+  esnArticles: {
+    interval: 100,
+    url: 'https://trondheim.esn.no/rss.xml#RSS',
+    scrape: ['articles.*.image'],
+    cache: true,
+    transform: {
+      articles: {
+        '{{#each rss.channel[0].item}}': {
+          title: '{{title[0]}}',
+          date: '{{pubDate[0]}}',
+          link: '{{link[0]}}',
+          author: '{{this["dc:creator"][0]}}',
+          image: '[[{{link[0]}}#HTML:.group-image img@src]]',
+        },
+      },
+    },
+  },
  esnEvents: {
   interval: 100,
   url:
     'https://sales-embed.hoopla.no/api/v2.0/public/organizations/58861643/events',
+    cors: true,
   transform: {
     events: {
-      '{{#each results}}': {
+        '{{#each data}}': {
         startDate: '{{start}}',
         endDate: '{{end}}',
-        title: '{{category}}',
-        image: '{{image}}',
+          title: '{{name}}',
+          image:
+            '//hoopla.imgix.net/production/{{data.image}}?auto=format,compress&rect=108,7,843,527&h=80',
       },
     },
   },
