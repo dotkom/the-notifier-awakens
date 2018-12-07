@@ -18,7 +18,7 @@ export default class Events extends Component {
     const { events = [] } = this.props;
     const now = Date.now();
     const eventsMapped = events
-      .filter(e => now <= new Date(e.startDate).getTime())
+      .filter(e => now <= new Date(e.endDate || e.startDate).getTime())
       .map(e => {
         const startDateTime = e.startDate;
         const startDateFormatted = isToday(startDateTime)
