@@ -53,7 +53,7 @@ class App extends Component {
     this.startAPIs();
   }
 
-  updateData(key, data, scrape = []) {
+  updateData(key, data, useCache = false, scrape = []) {
     this.ComponentController.update(key, data);
     const newData = Object.assign({}, this.state.data, {
       [key]: data,
@@ -91,6 +91,7 @@ class App extends Component {
               }),
             );
           },
+          useCache,
         );
       }
     }
