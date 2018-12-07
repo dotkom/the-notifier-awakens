@@ -107,6 +107,7 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
             this.usedApis[key] &&
             this.hasNotFailed(key)
           ) {
+            const { cache: useCache = false } = api;
             const callback = data => {
               if ('error' in data) {
                 this.handleFail(key, apiName);
@@ -119,9 +120,9 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
                     .transformWith(api.transform)
                     .root();
                   const { scrape } = api;
-                  this.callback(key, transformedData, scrape);
+                  this.callback(key, transformedData, useCache, scrape);
                 } else {
-                  this.callback(key, data);
+                  this.callback(key, data, useCache);
                 }
               }
             };
@@ -129,7 +130,13 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
               this.handleFail(key, apiName);
             };
             const urlTransformed = this.transform(url);
-            this.request(urlTransformed, api.request || {}, callback, error);
+            this.request(
+              urlTransformed,
+              api.request || {},
+              callback,
+              error,
+              useCache,
+            );
           }
         });
       }
@@ -195,7 +202,7 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
     this.settings = settings;
   }
 
-  scrape(path, data, callback) {
+  scrape(path, data, callback, useCache) {
     const selectors = findObjectPaths(data, path);
     for (const selector of selectors) {
       const string = get(data, selector, '');
@@ -204,36 +211,49 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
         const selectorIndex = section.indexOf(':', 7);
         const req = section.slice(0, selectorIndex);
         const htmlSelector = section.slice(selectorIndex + 1);
-        this.request(req, { htmlSelector }, scrapeData => {
-          callback(scrapeData, selector, section);
-        });
+        this.request(
+          req,
+          { htmlSelector },
+          scrapeData => {
+            callback(scrapeData, selector, section);
+          },
+          () => {},
+          useCache,
+        );
       }
     }
   }
 
-  request(url, req, callback, error) {
+  request(url, req, callback, error, useCache = false) {
     const [coreUrl, type = 'GET', body = ''] = url.split('#');
     switch (type) {
       case 'GET':
-        API.getRequest(coreUrl, req, callback, error);
+        API.getRequest(coreUrl, req, callback, error, useCache);
         break;
       case 'POST':
         const newReq = Object.assign({ body }, req);
-        API.postRequest(coreUrl, newReq, callback, error);
+        API.postRequest(coreUrl, newReq, callback, error, useCache);
         break;
       case 'RSS':
-        API.getRSSRequest(coreUrl, req, callback, error);
+        API.getRSSRequest(coreUrl, req, callback, error, useCache);
         break;
       case 'HTML':
         const { htmlSelector } = req;
         delete req.htmlSelector;
-        API.getHTMLRequest(coreUrl, htmlSelector, req, callback, error);
+        API.getHTMLRequest(
+          coreUrl,
+          htmlSelector,
+          req,
+          callback,
+          error,
+          useCache,
+        );
         break;
       case 'TEXT':
-        API.getTextRequest(coreUrl, req, callback, error);
+        API.getTextRequest(coreUrl, req, callback, error, useCache);
         break;
       default:
-        API.getRequest(url, req, callback, error);
+        API.getRequest(url, req, callback, error, useCache);
         break;
     }
   }

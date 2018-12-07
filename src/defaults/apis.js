@@ -104,7 +104,7 @@ export const defaultApis = {
     },
   },
   onlineEvents: {
-    interval: 100,
+    interval: 1000,
     url:
       'https://online.ntnu.no/api/v1/events/?ordering=event_start&event_start__gte=[[now.date]]',
     transform: {
@@ -120,8 +120,9 @@ export const defaultApis = {
     },
   },
   deltaArticles: {
-    interval: 1000,
+    interval: 43200,
     url: 'http://www.deltahouse.no/feed/#RSS',
+    cache: true,
     transform: {
       articles: {
         '{{#each rss.channel[0].item}}': {
@@ -131,6 +132,24 @@ export const defaultApis = {
           author: '{{this["dc:creator"][0]}}',
           image:
             'https://www.deltahouse.no/wp-content/themes/delta/dist/images/logo.svg',
+        },
+      },
+    },
+  },
+  dusken: {
+    interval: 43200,
+    url: 'https://dusken.no/feed#RSS',
+    print: true,
+    cache: true,
+    scrape: ['articles.*.image'],
+    transform: {
+      articles: {
+        '{{#each rss.channel[0].item}}': {
+          title: '{{title[0]}}',
+          date: '{{pubDate[0]}}',
+          link: '{{link[0]}}',
+          author: 'Dusken.no',
+          image: 'http://dusken.no[[{{link[0]}}#HTML:#header-img@src]]',
         },
       },
     },
