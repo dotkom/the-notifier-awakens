@@ -121,8 +121,7 @@ export const defaultApis = {
   },
   abakusEvents: {
     interval: 100,
-    url:
-      'https://lego.abakus.no/api/v1/events/?date_after=[[now.date]]',
+    url: 'https://lego.abakus.no/api/v1/events/?date_after=[[now.date]]',
     transform: {
       events: {
         '{{#each results}}': {
