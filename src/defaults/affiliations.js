@@ -78,17 +78,17 @@ layout: [
 
 // With descriptions
 {
-  // Name of the component to use. Complete list if found below '../components'
+  // The component to use. Complete list is found in the '../components' file
   template: string,
 
   // Key-value list where keys are input to each component, and value is pointing
   // to data from an API from the APIs list in './apis.js'.
   apis: object,
 
-  // Background. Can also be specified through the css property.
+  // Background color. Can also be specified through the css property.
   color: string,
 
-  // Style for each component.
+  // Style for each component. Overrides all other styles.
   css: string,
 }
 ```
@@ -96,8 +96,8 @@ layout: [
   @param {string?} style
     Choose a style to use from the './styles.js' file. If not specified, the
     affiliation key determines what style which is used. The style property
-    in the settings can override style from affiliation. If no key exists, the
-    CSS remain empty.
+    in the settings can override the style from affiliation. If no key exists,
+    the CSS remain empty.
 
   @param {string?} css
     Global CSS for the whole application. If you really want to change the grid
@@ -124,10 +124,10 @@ affiliationkey: {
 // If you want to do more, then just specify more properties.
 affiliationkey: {
   name: 'Name of Affiliation',
-  layouts: [
-    ['Articles', 'Articles-someotherfeed'], // 0 to 719px
-    ['Articles Articles-someotherfeed'], // 720px to infinite
-  ],
+  layouts: {
+    0: ['Articles', 'Articles-someotherfeed'], // 0 to 511px
+    512: ['Articles Articles-someotherfeed'], // 512px to infinite
+  },
   components: [
     {
       template: 'Articles',
