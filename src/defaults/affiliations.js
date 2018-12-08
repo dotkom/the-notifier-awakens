@@ -1,17 +1,161 @@
+/**
+ * List of default settings for each affiliation.
+ * 
+ * Each affiliation consists of a set of components, but can also contain
+ * other properties:
+
+  @param {string?} [name=nameofkey]
+    Name of the affiliation. Of not specified, the key is used as name.
+
+  @param {array|object?} layouts
+    Describing how the components are placed. This can be done using a single
+    array of arrays, or an object with min-widths as keys, each containing an array
+    describing the layout at the different stages. If the layout is not specified,
+    it is auto calculated, but this may result in unwanted behaviour.
+    Let us look at two examples using array-of-arrays and object-with-arrays:
+
+  @example
+```javascript
+// Use of object keys to specify min-width
+layout: {
+
+  // Screen width from 0 to 511px. Key "0" must exist.
+  0: [
+    'Component1', // Each array element is a row in the layout.
+    'Component2',
+    'Component3'
+  ],
+
+   // Screen width from 512px to 1023px
+  512: [
+    'Component1 Component2',
+    'Component3 Component3'
+  ],
+
+  // Screen width from 1024px to infinite
+  1024: [
+    'Component1 Component2 Component3'
+  ],
+}
+```
+
+  @example
+```javascript
+// Use of array to auto specify min-width (using 0-720px-1400px-(1400+360*i)px)
+layout: [
+
+  // Screen width from 0 to 719px.
+  [
+    'Component1', // Each array element is a row in the layout.
+    'Component2',
+    'Component3'
+  ],
+
+   // Screen width from 720px to 1399px
+  [
+    'Component1 Component2',
+    'Component3 Component3'
+  ],
+
+  // Screen width from 1400px to infinite
+  [
+    'Component1 Component2 Component3'
+  ],
+]
+```
+
+  @param {component[]} components
+    Array of components. The structure of a component is described below:
+
+```javascript
+// Structure of a component
+{
+  template: string,
+  apis?: object,
+  color?: string,
+  css?: string,
+}
+
+// With descriptions
+{
+  // Name of the component to use. Complete list if found below '../components'
+  template: string,
+
+  // Key-value list where keys are input to each component, and value is pointing
+  // to data from an API from the APIs list in './apis.js'.
+  apis: object,
+
+  // Background. Can also be specified through the css property.
+  color: string,
+
+  // Style for each component.
+  css: string,
+}
+```
+
+  @param {string?} style
+    Choose a style to use from the './styles.js' file. If not specified, the
+    affiliation key determines what style which is used. The style property
+    in the settings can override style from affiliation. If no key exists, the
+    CSS remain empty.
+
+  @param {string?} css
+    Global CSS for the whole application. If you really want to change the grid
+    system, you will be allowed to do so. This will be appended after global CSS
+    declared in the settings.
+
+  @example
+```javascript
+// Most of the components has the same pattern. Therefore
+// it is possible to just write the names and let the
+// application figure it out.
+affiliationkey: {
+  name: 'Name of Affiliation',
+  layouts: [
+    ['Events', 'Events-2'], // 0 to 719px
+    ['Events Events-2'], // 720px to infinite
+  ],
+  components: ['Events', 'Events-2'] // Much shorter!
+},
+```
+
+  @example
+```javascript
+// If you want to do more, then just specify more properties.
+affiliationkey: {
+  name: 'Name of Affiliation',
+  layouts: [
+    ['Articles', 'Articles-someotherfeed'], // 0 to 719px
+    ['Articles Articles-someotherfeed'], // 720px to infinite
+  ],
+  components: [
+    {
+      template: 'Articles',
+      apis: {
+        // affiliationkeyArticles should exist in './apis.js'
+        articles: 'affiliationkeyArticles:articles',
+      },
+    },
+    {
+      // Using 'Template-id' to make it unique for the layout.
+      template: 'Articles-someotherfeed',
+      apis: {
+        // '{{affiliation}}Articles' results in the same as 'affiliationkeyArticles'
+        articles: '{{affiliation}}Articles:articles',
+      },
+    }
+  ]
+},
+```
+ */
 export const defaultAffiliationSettings = {
   debug: {
-    layouts: {
-      0: ['Clock', 'Clock2', 'Office', 'Bus'], // Mobile
-      512: ['Clock Clock2 Office Office', 'Bus Bus'], // Tablet / Desktop portrait
-      1024: ['Office Clock Clock2', 'Bus Bus Bus'], // Desktop
-    },
     components: [
       {
         template: 'Clock',
       },
       {
-        template: 'Clock',
-        id: 'Clock2',
+        template: 'Clock-2',
       },
       {
         template: 'Bus',
