@@ -47,6 +47,7 @@ export default class ComponentController {
 
   renderComponents(data = {}) {
     return this.components.map((component, i) => {
+      const template = component.template.split('-')[0];
       const props = Object.entries(component).reduce((acc, [key, val]) => {
         if (typeof val === 'string') {
           return Object.assign({}, acc, {
@@ -55,14 +56,12 @@ export default class ComponentController {
         }
         return acc;
       }, component);
-      if (!~Object.keys(Components).indexOf(component.template)) {
+      if (!~Object.keys(Components).indexOf(template)) {
         throw new Error(
-          `Remember to export the "${
-            component.template
-          }" component from the components module (in ../components/index.js)`,
+          `Remember to export the "${template}" component from the components module (in ../components/index.js)`,
         );
       }
-      const Component = Components[component.template];
+      const Component = Components[template];
       const dataProps = Object.entries(component.apis || {}).reduce(
         (acc, [key, path]) => {
           const pathParsed = this.injectSettings(path);
