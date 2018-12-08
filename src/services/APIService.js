@@ -132,7 +132,7 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
             const urlTransformed = this.transform(url);
             this.request(
               urlTransformed,
-              api.request || {},
+              Object.assign({ cors: api.cors }, api.request),
               callback,
               error,
               useCache,
