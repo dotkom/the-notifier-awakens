@@ -1,5 +1,152 @@
 import { API_URL } from '../constants';
 
+/**
+ * APIs that can be used as input by components.
+ *
+ * Each API object describes an API endpoint. This is the structure:
+
+ @param {string} url
+    An endpoint. Needs to start with the http protocol.
+    It is possible to create permutations of the URL using
+    this fancy bracket syntax: example.com/{{data.*.id}}, where
+    "data" is declared in the same object, aside with url and the
+    next parameters described below. Examples of this:
+      - ```javascript
+{
+    url: 'example.com/{{data.*.id}}/anotherone/{{data.*.id}}',
+    data: { first: {id: 1}, second: {id: 2} },
+}
+// This generates these URLs:
+// 'example.com/1/anotherone/1'
+// 'example.com/2/anotherone/1'
+// 'example.com/1/anotherone/2'
+// 'example.com/2/anotherone/2'
+```
+
+    You can also specify the request type using a postfix #TYPE.
+    This type can be:
+      - #GET (JSON => JSON)
+      - #POST[#body] (JSON => JSON)
+      - #RSS (XML => JSON)
+      - #HTML[:query-selector[(at)attribute]] (HTML => HTML)
+      - #TEXT (Plain text => Plain text)
+    Any part of the URL can be permuted, meaning stuff can get
+    really complex. Especially when involving types.
+
+ @param {integer?} [interval=0]
+    Number of seconds to wait before making a new request.
+
+ @param {integer?} [delay=0]
+    Number of seconds until the request feed starts.
+
+ @param {object?} transform
+    Mapping output data from API to a custom structure
+    using STJS, which is kind of genius: https://selecttransform.github.io/site/
+
+ @param {array?} [scrape=[]]
+    Array telling what paths in the transform (^) to scrape. The paths in the
+    transform needs to have a piece of '[[{{link}}#HTML:selector(at)attribute]]'
+   Example for scrape:
+            scrape: ['articles.*.image'],
+            transform: {
+              articles: {
+                '{{#each rss.channel[0].item}}': {
+                  ...
+                  image: '[[{{link[0]}}#HTML:.group-image img@src]]',
+                },
+              },
+            }
+
+ @param {object?} [request={}]
+    Specify any params into the fetch request. You can read more about what
+    to place here at https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch.
+
+ @param {string|object?} body
+     Object or string that get passed into the request. Same as setting the
+     request.body value. A small detail that is not obvious is that the
+     body (or payload) is appended to the url param (see url types). This
+     is because each URL should be able to permute each body too. Example
+     can be found for enturbus in the API list.
+
+ @param {boolean?} print
+    Boolean telling the API to output results into the console.log before
+    any transformation. Nice for development of transforms.
+
+ @param {boolean?} cache
+    Boolean telling the API to keep results from spesific request. Sometimes
+    when scraping articles you would want to keep the data for a long time.
+    Other times, when fetching realtime data from buses, you do not want to
+    use cache.
+
+ @param {boolean?} cors
+    Boolean telling the API to allow CORS by prepending a URL. Some of the
+    types (#RSS, #HTML and #TEXT) uses this CORS hack by default. Setting this
+    parameter will override any defaults.
+
+ @example
+```javascript
+  minimalexample: {
+    url: `https://example.com/api/v1/events`, // Fetches JSON
+  },
+```
+
+ @example
+```javascript
+  rssfeedexample: {
+    interval: 60,
+    cache: true,
+    print: true, // Use this in development only
+
+    // Telling API to parse RSS (XML) feed using #RSS as postfix
+    url: `https://example.com/feed#RSS`,
+
+    // Tell API to scrape articles.(everything).image in the transform
+    scrape: ['articles.*.image'],
+
+    transform: {
+      articles: {
+        '{{#each rss.channel[0].item}}': {
+          title: '{{title[0]}}',
+          date: '{{pubDate[0]}}',
+          link: '{{link[0]}}',
+          author: '{{this["dc:creator"][0]}}',
+
+          // Scrape content inside [[request#TYPE]]
+          image: 'http://example.com[[{{link[0]}}#HTML:#header-img@src]]',
+        },
+      },
+    },
+  },
+```
+
+ @example
+```javascript
+  postexample: {
+    interval: 60,
+    delay: 30,
+    cors: true,
+    url: `https://example.com/api/v1/event#POST`,
+    body: {
+      title: '{{examples.*}}', // This will create 3 requests with different bodies, but equal URLs.
+    },
+    examples: ['Example1', 'Example2', 'Example3'],
+    transform: {
+      events: {
+        '{{#each results}}': [
+          {
+            '{{#if visible}}': {
+              startDate: '{{start_date}}',
+              endDate: '{{end_date}}',
+              title: '{{title}}',
+              image: 'https://example.com{{image.wide}}',
+            },
+          },
+        ],
+      },
+    },
+  },
+```
+ */
 export const defaultApis = {
   affiliation: {
     interval: 60,
