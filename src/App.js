@@ -19,11 +19,12 @@ import { injectValuesIntoString } from './utils';
 class App extends Component {
   constructor() {
     super();
-    const { affiliation = 'debug' } = defaultSettings;
+    const { affiliation = 'debug', css: globalCSS = '' } = defaultSettings;
     const {
       components = [],
       layouts,
       style = 'online',
+      css = '',
       color = defaultSettings.color || '',
     } = defaultAffiliationSettings[affiliation];
 
@@ -46,6 +47,8 @@ class App extends Component {
       components,
       layouts,
       style,
+      globalCSS,
+      css,
       color,
       settings: defaultSettings,
     };
@@ -304,7 +307,11 @@ ${this.generateLayoutCSS(layouts)}
 
 .component {
   ${DEBUG ? 'border: 1px solid rgba(255, 0, 0, .5);' : ''}
-}`;
+}
+
+${this.state.globalCSS}
+
+${this.state.css}`;
 
     return (
       <Style>
