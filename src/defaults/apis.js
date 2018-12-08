@@ -12,15 +12,18 @@ import { API_URL } from '../constants';
     "data" is declared in the same object, aside with url and the
     next parameters described below. Examples of this:
       - ```javascript
-{
+apikey: {
     url: 'example.com/{{data.*.id}}/anotherone/{{data.*.id}}',
-    data: { first: {id: 1}, second: {id: 2} },
+    data: { first: { id: 1 }, second: { id: 2 } },
 }
 // This generates these URLs:
-// 'example.com/1/anotherone/1'
-// 'example.com/2/anotherone/1'
-// 'example.com/1/anotherone/2'
-// 'example.com/2/anotherone/2'
+// 'example.com/1/anotherone/1' // Can be accessed using 'apikey.data.first.id.data.first.id' from component.apis.
+// 'example.com/2/anotherone/1' // Can be accessed using 'apikey.data.second.id.data.first.id' from component.apis.
+// 'example.com/1/anotherone/2' // Can be accessed using 'apikey.data.first.id.data.second.id' from component.apis.
+// 'example.com/2/anotherone/2' // Can be accessed using 'apikey.data.second.id.data.second.id' from component.apis.
+
+// None of the URLs will be sent before a component uses any of
+// the spesific ids, example: 'apikey.data.second.id.data.first.id'.
 ```
 
     You can also specify the request type using a postfix #TYPE.
