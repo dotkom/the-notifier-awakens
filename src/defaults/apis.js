@@ -176,7 +176,6 @@ export const defaultApis = {
       samf: { fromCity: '16010476', toCity: '16011476' },
       prof: { fromCity: '16010376', toCity: '16011376' },
     },
-    // Using STJS for object mapping (https://www.npmjs.com/package/stjs#2-transform)
     transform: {
       departures: {
         '{{#each departures}}': {
@@ -999,8 +998,6 @@ export const defaultApis = {
     },
   },
   */
-
-  /*usikker på om jeg satte api vediene riktig*/
   esnArticles: {
     interval: 100,
     url: 'https://trondheim.esn.no/rss.xml#RSS',
@@ -1018,24 +1015,24 @@ export const defaultApis = {
       },
     },
   },
- esnEvents: {
-  interval: 100,
-  url:
-    'https://sales-embed.hoopla.no/api/v2.0/public/organizations/58861643/events',
+  esnEvents: {
+    interval: 100,
+    url:
+      'https://sales-embed.hoopla.no/api/v2.0/public/organizations/58861643/events',
     cors: true,
-  transform: {
-    events: {
+    transform: {
+      events: {
         '{{#each data}}': {
-        startDate: '{{start}}',
-        endDate: '{{end}}',
+          startDate: '{{start}}',
+          endDate: '{{end}}',
           title: '{{name}}',
           image:
             '//hoopla.imgix.net/production/{{data.image}}?auto=format,compress&rect=108,7,843,527&h=80',
+        },
       },
     },
   },
-},
-/*
+  /*
 XML eller facebook
   iaesteEvents: {
     interval: 100,
@@ -1191,7 +1188,7 @@ XML eller facebook
       },
     },
   },
-  dusken: {
+  duskenArticles: {
     interval: 43200,
     url: 'https://dusken.no/feed#RSS',
     print: true,
