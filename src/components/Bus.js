@@ -28,7 +28,7 @@ class Bus extends Component {
     if (!departures) {
       return;
     }
-    return departures
+    return (departures || [])
       .map(e => {
         e.time = e.scheduledTime;
 
