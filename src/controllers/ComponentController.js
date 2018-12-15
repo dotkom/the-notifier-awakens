@@ -45,7 +45,16 @@ export default class ComponentController {
     return this.components;
   }
 
-  renderComponents(data = {}) {
+  isPropOffline(apiService, component, prop) {
+    if ('apis' in component && prop in component.apis) {
+      const apiKey = this.injectSettings(component.apis[prop]).split(':')[0];
+      return apiService.isOffline(apiKey);
+    }
+
+    return false;
+  }
+
+  renderComponents(apiService, data = {}) {
     return this.components.map((component, i) => {
       const template = component.template.split('-')[0];
       const props = Object.entries(component).reduce((acc, [key, val]) => {
@@ -95,7 +104,13 @@ export default class ComponentController {
         <Style key={i}>
           {modularCSS}
           <div className={`${component.template} component`}>
-            <Component translate={e => this.translate(e)} {...dataProps} />
+            <Component
+              translate={e => this.translate(e)}
+              isOffline={prop =>
+                this.isPropOffline(apiService, component, prop)
+              }
+              {...dataProps}
+            />
           </div>
         </Style>
       );

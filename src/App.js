@@ -283,7 +283,10 @@ generateLayoutCSS(layouts) => `
 
   render() {
     const { data, layouts, color } = this.state;
-    const componentsRendered = this.ComponentController.renderComponents(data);
+    const componentsRendered = this.ComponentController.renderComponents(
+      this.APIService,
+      data,
+    );
 
     let globalCSS = `
 ${this.generateLayoutCSS(layouts)}

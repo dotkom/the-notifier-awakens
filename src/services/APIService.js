@@ -150,6 +150,16 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
     );
   }
 
+  /**
+   * A public function to use outside of the service.
+   *
+   * @param {string} key The API key name
+   * @returns {boolean} If the API is offline.
+   */
+  isOffline(key) {
+    return !this.hasNotFailed(key);
+  }
+
   handleFail(key, apiName) {
     const { delay = 0 } = this.apis[apiName];
     this.apis[apiName].delay = delay + 1;
