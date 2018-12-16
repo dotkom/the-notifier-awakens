@@ -87,7 +87,7 @@ class Bus extends Component {
     const fromCity = this.getDepartureList(this.props.fromCity) || [];
     const toCity2 = this.getDepartureList(this.props.toCity2) || [];
     const fromCity2 = this.getDepartureList(this.props.fromCity2) || [];
-    const { translate } = this.props;
+    const { translate, IfPropIsOnline } = this.props;
 
     return (
       <>
@@ -98,8 +98,15 @@ class Bus extends Component {
             <h3 className="bus-dir-item">Fra byen</h3>
           </div>
           <div className="bus-list-row">
-            <div className="bus-list">{fromCity}</div>
-            <div className="bus-list">{toCity}</div>
+            <IfPropIsOnline
+              else={apiName => `Klarte ikke å hente data fra ${apiName}`}
+              props={this.props}
+              prop={['toCity', 'fromCity']}
+              loading={(i, j) => `Laster${'.'.repeat(Math.min(i, j) + 1)}`}
+            >
+              <div className="bus-list">{fromCity}</div>
+              <div className="bus-list">{toCity}</div>
+            </IfPropIsOnline>
           </div>
         </div>
         {toCity2.length || fromCity2.length ? (
@@ -110,8 +117,15 @@ class Bus extends Component {
               <h3 className="bus-dir-item">Fra byen</h3>
             </div>
             <div className="bus-list-row">
-              <div className="bus-list">{fromCity2}</div>
-              <div className="bus-list">{toCity2}</div>
+              <IfPropIsOnline
+                else={apiName => `Klarte ikke å hente data fra ${apiName}`}
+                props={this.props}
+                prop={['toCity', 'fromCity']}
+                loading={(i, j) => `Laster${'.'.repeat(Math.min(i, j) + 1)}`}
+              >
+                <div className="bus-list">{fromCity2}</div>
+                <div className="bus-list">{toCity2}</div>
+              </IfPropIsOnline>
             </div>
           </div>
         ) : null}

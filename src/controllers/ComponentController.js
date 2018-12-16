@@ -4,6 +4,7 @@ import Style from 'style-it';
 import * as Components from '../components';
 import { get } from 'object-path';
 import { injectValuesIntoString } from '../utils';
+import { IfPropIsOnline } from './IfPropIsOnline';
 
 /**
  * The component controller passes data into components and
@@ -52,6 +53,35 @@ export default class ComponentController {
     }
 
     return false;
+  }
+
+  isPropOnline(apiService, component, prop) {
+    if ('apis' in component && prop in component.apis) {
+      const apiKey = this.injectSettings(component.apis[prop]).split(':')[0];
+      return apiService.isOnline(apiKey);
+    }
+
+    return false;
+  }
+
+  getPropFailCount(apiService, component, prop) {
+    if ('apis' in component && prop in component.apis) {
+      const apiKey = this.injectSettings(component.apis[prop]).split(':')[0];
+      return apiService.getFailCount(apiKey);
+    }
+
+    return 0;
+  }
+
+  getApiName(component, prop) {
+    if ('apis' in component && prop in component.apis) {
+      const apiRootKey = this.injectSettings(component.apis[prop]).split(
+        '.',
+      )[0];
+      return this.translate(apiRootKey);
+    }
+
+    return prop;
   }
 
   renderComponents(apiService, data = {}) {
@@ -106,9 +136,17 @@ export default class ComponentController {
           <div className={`${component.template} component`}>
             <Component
               translate={e => this.translate(e)}
-              isOffline={prop =>
+              isPropOffline={prop =>
                 this.isPropOffline(apiService, component, prop)
               }
+              isPropOnline={prop =>
+                this.isPropOnline(apiService, component, prop)
+              }
+              getPropFailCount={prop =>
+                this.getPropFailCount(apiService, component, prop)
+              }
+              getApiName={prop => this.getApiName(component, prop)}
+              IfPropIsOnline={IfPropIsOnline}
               {...dataProps}
             />
           </div>

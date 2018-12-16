@@ -27,6 +27,7 @@ export default class APIService {
     this.usedApis = {};
     this.attemptsUntilFail = 3;
     this.failedApis = {};
+    this.workingApis = {};
 
     if (components.length) {
       this.updateUsedApis(components);
@@ -111,7 +112,9 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
             const callback = data => {
               if ('error' in data) {
                 this.handleFail(key, apiName);
+                this.workingApis[key] = false;
               } else {
+                this.workingApis[key] = true;
                 if ('print' in api && api.print) {
                   console.log(`Fra ${key}:`, data);
                 }
@@ -154,10 +157,35 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
    * A public function to use outside of the service.
    *
    * @param {string} key The API key name
-   * @returns {boolean} If the API is offline.
+   * @returns {boolean} If the API is offline
    */
   isOffline(key) {
     return !this.hasNotFailed(key);
+  }
+
+  /**
+   * Get the fail count from an API.
+   *
+   * @param {string} key The API key name
+   * @returns {number} Amount of fails from the API
+   */
+  getFailCount(key) {
+    if (key in this.failedApis) {
+      return this.failedApis[key];
+    }
+
+    return 0;
+  }
+
+  /**
+   * An API is working if it has sent a request and returned a
+   * successful result.
+   *
+   * @param {string} key The API key name
+   * @returns {boolean} If the API is online
+   */
+  isOnline(key) {
+    return key in this.workingApis && this.workingApis[key];
   }
 
   handleFail(key, apiName) {
