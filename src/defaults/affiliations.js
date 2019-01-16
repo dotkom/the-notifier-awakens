@@ -405,12 +405,18 @@ export const defaultAffiliationSettings = {
         'Bus Bus Events Events',
         'Bus2 Bus2 Events Events',
         'Articles Articles Events Events',
+        '. . . Sponsor'
       ],
     ],
     components: [
       {
         template: 'Logo',
         url: 'https://online.ntnu.no/static/img/online_logo.svg',
+      },
+      {
+        template: 'Logo',
+        id: 'Sponsor',
+        url: 'https://online.ntnu.no/static/img/knowit.svg',
       },
       {
         template: 'Clock',

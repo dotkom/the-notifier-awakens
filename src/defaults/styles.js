@@ -5,6 +5,11 @@ const online = `
 
   .App {
     background: #001533;
+    background-image: url(/onlineplanet.svg);
+    background-repeat: no-repeat;
+    background-position: center calc(100% + 125vw);
+    background-size: 214.58vw;
+
   }
   .Header {
     background-image: url(https://online.ntnu.no/static/img/online_logo.svg);
