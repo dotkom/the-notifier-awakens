@@ -136,7 +136,7 @@ class EventsFromSplash extends Component {
           }
           .start-date {
             order: 1;
-            flex: 0 0 240px;
+            flex: 0 0 215px;
             text-align: right;
             color: ${dateColor};
             padding: 10px 0;

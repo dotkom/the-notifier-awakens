@@ -5,5 +5,5 @@ export const defaultSettings = {
   eventType: 'splash',
   showCoffeePots: true,
   showClock: true,
-  events: 8,
+  events: 6,
 };

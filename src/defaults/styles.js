@@ -5,10 +5,10 @@ const online = `
 
   .App {
     background: #001533;
-    background-image: url(/onlineplanet.svg);
+    background-image: url(https://online.ntnu.no/static/img/knowit.svg), url(/onlineplanet.svg);
     background-repeat: no-repeat;
-    background-position: center calc(100% + 125vw);
-    background-size: 214.58vw;
+    background-position: 98% 99%, center calc(100% + 125vw);
+    background-size: 200px, 214.58vw;
 
   }
   .Header {
@@ -17,6 +17,10 @@ const online = `
     background-repeat: no-repeat;
     background-position: bottom left;
     min-height: 18vw;
+  }
+
+  .component-container{
+    grid-template-rows: auto auto auto 1fr auto;
   }
 
   .Vakter > h1 {

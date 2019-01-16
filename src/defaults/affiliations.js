@@ -390,36 +390,30 @@ export const defaultAffiliationSettings = {
   },
   online: {
     name: 'Online',
-    layouts: [
-      ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events', 'Articles'],
-      [
-        'Logo Logo',
-        'Office Clock',
-        'Bus Bus',
-        'Bus2 Bus2',
-        'Events Events',
-        'Articles Articles',
+    layouts: {
+      512: ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events', 'Articles'],
+      720: [
+        'Logo Logo Logo Logo Logo Logo',
+        'Office Office Office Clock Clock Clock',
+        'Bus Bus Bus Bus2 Bus2 Bus2',
+        '.',
+        'Events Events Events Events Events .',
       ],
-      [
+      1400: [
         'Logo Logo Office Clock',
         'Bus Bus Events Events',
         'Bus2 Bus2 Events Events',
-        'Articles Articles Events Events',
-        '. . . Sponsor'
+        '. . Events Events',
       ],
-    ],
+    },
     components: [
       {
         template: 'Logo',
         url: 'https://online.ntnu.no/static/img/online_logo.svg',
       },
       {
-        template: 'Logo',
-        id: 'Sponsor',
-        url: 'https://online.ntnu.no/static/img/knowit.svg',
-      },
-      {
         template: 'Clock',
+        css: ', {text-align: center;}'
       },
       {
         template: 'Bus',
@@ -452,14 +446,7 @@ export const defaultAffiliationSettings = {
         apis: {
           events: 'onlineEvents:events',
         },
-        css: '.Events { padding-bottom: 0; }',
-      },
-      {
-        template: 'Articles',
-        apis: {
-          articles: 'onlineArticles:articles',
-        },
-        css: '.Articles .article { background-size: contain; }',
+        css: '.Events { padding-bottom: 0; padding-left: 0; margin-left: -50px; }',
       },
     ],
   },
