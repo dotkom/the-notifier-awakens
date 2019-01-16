@@ -13,7 +13,7 @@ export default class Events extends Component {
         EventsUI = EventsCarousel;
         break;
       default:
-        EventsUI = EventsCarousel;
+        EventsUI = EventsFromSplash;
     }
     const { events = [] } = this.props;
     const now = Date.now();
@@ -59,6 +59,7 @@ class EventsFromSplash extends Component {
       lineColor = '#ddd',
       dateColor = '#f80',
       timeColor = 'rgba(160, 160, 160, .8)',
+      IfPropIsOnline,
     } = this.props;
     const eventList = events.slice(1).map((e, i) => {
       const { startDateFormatted, startTimeFormatted, title } = e;
@@ -150,14 +151,21 @@ class EventsFromSplash extends Component {
           }
           `}
         </style>
-        <div className="main-event">
-          <span className="main-title">{firstEvent.title}</span>
-          <span className="main-start-datetime">
-            {firstEvent.startDateFormatted} klokken{' '}
-            {firstEvent.startTimeFormatted}
-          </span>
-        </div>
-        <div className="event-list">{eventList}</div>
+        <IfPropIsOnline
+          prop="events"
+          props={this.props}
+          else={apiName => `Kunne ikke koble til ${apiName}`}
+          loading={i => `Henter arrangementer...${'.'.repeat(i)}`}
+        >
+          <div className="main-event">
+            <span className="main-title">{firstEvent.title}</span>
+            <span className="main-start-datetime">
+              {firstEvent.startDateFormatted} klokken{' '}
+              {firstEvent.startTimeFormatted}
+            </span>
+          </div>
+          <div className="event-list">{eventList}</div>
+        </IfPropIsOnline>
       </>
     );
   }

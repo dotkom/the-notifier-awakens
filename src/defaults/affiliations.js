@@ -173,16 +173,238 @@ export const defaultAffiliationSettings = {
           status: 'affiliation.org.{{affiliation}}:meeting.message',
         },
       },
+      {
+        template: 'Events',
+        type: '{{eventType}}',
+        apis: {
+          events: 'esnEvents:events',
+        },
+      },
+      {
+        template: 'Articles',
+        apis: {
+          articles: 'esnArticles:articles',
+        },
+      },
     ],
   },
+  aarhonen: {
+    name: 'H.M. Aarhønen',
+    color: 'purple',
+    components: ['Events', 'Articles'],
+  },
+  abakus: {
+    name: 'Abakus',
+    color: 'red',
+    layouts: [['Events', 'Events-1']],
+    components: [
+      'Events',
+      {
+        template: 'Events-1',
+        apis: {
+          events: 'onlineEvents:events',
+        },
+      },
+    ],
+  },
+  berg: {
+    name: 'Bergstuderendes Forening',
+    color: 'grey',
+    components: [],
+  },
+  broderskabet: {
+    name: 'Broderskabet',
+    color: 'grey',
+    components: [],
+  },
+  caf: {
+    name: 'CAF',
+    color: 'blue',
+    components: [],
+  },
+  communitas: {
+    name: 'Communitas',
+    color: 'cyan',
+    components: [],
+  },
+  delta: {
+    name: 'Delta',
+    color: 'green',
+    components: [
+      {
+        template: 'Articles',
+        apis: {
+          articles: 'deltaArticles:articles',
+        },
+        css: '.Articles .article { background-size: contain; }',
+      },
+    ],
+  },
+  dhs: {
+    name: 'Det Historiske Selskab',
+    color: 'purple',
+    components: [],
+  },
+  dion: {
+    name: 'DION',
+    color: 'cyan',
+    components: [],
+  },
+  dionysos: {
+    name: 'Dionysos',
+    color: 'purple',
+    components: [],
+  },
+  dmmh: {
+    name: 'DMMH',
+    color: 'red',
+    components: [],
+  },
+  dusken: {
+    name: 'Dusken.no',
+    color: 'grey',
+    components: [
+      {
+        template: 'Articles',
+        id: 'Dusken',
+        apis: {
+          articles: 'dusken:articles',
+        },
+      },
+    ],
+  },
+  emil: {
+    name: 'EMIL',
+    color: 'green',
+    components: [],
+  },
+  erudio: {
+    name: 'Erudio',
+    color: 'red',
+    components: [],
+  },
+  esn: {
+    name: 'ESN',
+    color: 'cyan',
+    components: [],
+  },
+  eureka: {
+    name: 'Eureka',
+    color: 'blue',
+    components: [],
+  },
+  gemini: {
+    name: 'Gemini',
+    color: 'cyan',
+    components: [],
+  },
+  gengangere: {
+    name: 'Gengangere',
+    color: 'grey',
+    components: [],
+  },
+  geolf: {
+    name: 'Geolf',
+    color: 'blue',
+    components: [],
+  },
+  hc: {
+    name: 'Høiskolens Chemikerforening',
+    color: 'yellow',
+    components: [],
+  },
+  hybrida: {
+    name: 'Hybrida',
+    color: 'blue',
+    components: [],
+  },
+  iaeste: {
+    name: 'IAESTE',
+    color: 'blue',
+    components: [],
+  },
+  industrivinduet: {
+    name: 'Industrivinduet',
+    color: 'blue',
+    components: [],
+  },
+  isu: {
+    name: 'International Student Union',
+    color: 'blue',
+    components: [],
+  },
+  janus: {
+    name: 'Janus',
+    color: 'blue',
+    components: [],
+  },
+  jump_cut: {
+    name: 'Jump Cut',
+    color: 'grey',
+    components: [],
+  },
+  kom: {
+    name: 'KOM',
+    color: 'cyan',
+    components: [],
+  },
+  leonardo: {
+    name: 'Leonardo',
+    color: 'cyan',
+    components: [],
+  },
+  logistikkstudentene: {
+    name: 'Logistikkstudentene',
+    color: 'cyan',
+    components: [],
+  },
+  mannhullet: {
+    name: 'Mannhullet',
+    color: 'blue',
+    components: [],
+  },
+  nabla: {
+    name: 'Nabla',
+    color: 'red',
+    components: [],
+  },
+  ntnu: {
+    name: 'NTNU',
+    color: 'blue',
+    components: [],
+  },
+  nutrix: {
+    name: 'Nutrix',
+    color: 'green',
+    components: [],
+  },
+  omega: {
+    name: 'Omega',
+    color: 'grey',
+    components: [],
+  },
+  omegav: {
+    name: 'Omega Verksted',
+    color: 'grey',
+    components: [],
+  },
   online: {
+    name: 'Online',
     layouts: [
-      ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events'],
-      ['Logo Logo', 'Office Clock', 'Bus Bus', 'Bus2 Bus2', 'Events Events'],
+      ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events', 'Articles'],
+      [
+        'Logo Logo',
+        'Office Clock',
+        'Bus Bus',
+        'Bus2 Bus2',
+        'Events Events',
+        'Articles Articles',
+      ],
       [
         'Logo Logo Office Clock',
         'Bus Bus Events Events',
         'Bus2 Bus2 Events Events',
+        'Articles Articles Events Events',
       ],
     ],
     components: [
@@ -221,24 +443,158 @@ export const defaultAffiliationSettings = {
       {
         template: 'Events',
         type: '{{eventType}}',
-        imageHost: 'https://online.ntnu.no',
         apis: {
           events: 'onlineEvents:events',
         },
         css: '.Events { padding-bottom: 0; }',
       },
-    ],
-  },
-  delta: {
-    color: '#030',
-    components: [
       {
         template: 'Articles',
         apis: {
-          articles: 'deltaArticles:articles',
+          articles: 'onlineArticles:articles',
         },
         css: '.Articles .article { background-size: contain; }',
       },
     ],
+  },
+  paideia: {
+    name: 'Paideia',
+    color: 'blue',
+    components: [],
+  },
+  panoptikon: {
+    name: 'Panoptikon',
+    color: 'blue',
+    components: [],
+  },
+  pareto: {
+    name: 'Pareto',
+    color: 'blue',
+    components: [],
+  },
+  placebo: {
+    name: 'MF Placebo',
+    color: 'red',
+    components: [],
+  },
+  primetime: {
+    name: 'Primetime',
+    color: 'cyan',
+    components: [],
+  },
+  psi: {
+    name: 'PSI',
+    color: 'red',
+    components: [],
+  },
+  psykolosjen: {
+    name: 'Psykolosjen',
+    color: 'blue',
+    components: [],
+  },
+  rektoratet_ntnu: {
+    name: 'Rektoratet NTNU',
+    color: 'blue',
+    components: [],
+  },
+  samfundet: {
+    name: 'Studentersamfundet',
+    color: 'red',
+    components: [],
+  },
+  sftoh: {
+    name: 'STØH',
+    color: 'blue',
+    components: [],
+  },
+  signifikant: {
+    name: 'Signifikant',
+    color: 'cyan',
+    components: [],
+  },
+  smorekoppen: {
+    name: 'A/F Smørekoppen',
+    color: 'red',
+    components: [],
+  },
+  solan: {
+    name: 'Solan',
+    color: 'blue',
+    components: [],
+  },
+  soma: {
+    name: 'SOMA',
+    color: 'cyan',
+    components: [],
+  },
+  spanskroeret: {
+    name: 'Spanskrøret',
+    color: 'green',
+    components: [],
+  },
+  studenttinget_ntnu: {
+    name: 'Studenttinget NTNU',
+    color: 'purple',
+    components: [],
+  },
+  sturm_und_drang: {
+    name: 'Sturm Und Drang',
+    color: 'red',
+    components: [],
+  },
+  symbiosis: {
+    name: 'Symbiosis',
+    color: 'green',
+    components: [],
+  },
+  teaterlosjen: {
+    name: 'Teaterlosjen',
+    color: 'red',
+    components: [],
+  },
+  tihlde: {
+    name: 'TIHLDE',
+    color: 'blue',
+    components: [],
+  },
+  tim_og_shaenko: {
+    name: 'Tim & Shænko',
+    color: 'blue',
+    components: [],
+  },
+  timini: {
+    name: 'Timini',
+    color: 'cyan',
+    components: [],
+  },
+  tjsf: {
+    name: 'TJSF',
+    color: 'grey',
+    components: [],
+  },
+  universitetsavisa: {
+    name: 'Universitetsavisa',
+    color: 'cyan',
+    components: [],
+  },
+  universitetsteatret: {
+    name: 'Universitetsteatret',
+    color: 'blue',
+    components: [],
+  },
+  velferdstinget: {
+    name: 'Velferdstinget',
+    color: 'cyan',
+    components: [],
+  },
+  vivas: {
+    name: 'Vivas',
+    color: 'cyan',
+    components: [],
+  },
+  volvox: {
+    name: 'Volvox & Alkymisten',
+    color: 'green',
+    components: [],
   },
 };

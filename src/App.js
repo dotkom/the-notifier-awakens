@@ -28,23 +28,28 @@ class App extends Component {
       color = defaultSettings.color || '',
     } = defaultAffiliationSettings[affiliation];
 
+    const autofilledComponents = this.autofillComponents(
+      components,
+      affiliation,
+    );
+
     this.updateData = this.updateData.bind(this);
 
     this.APIService = new APIService(
       defaultApis,
       this.updateData,
       defaultSettings,
-      components,
+      autofilledComponents,
     );
     this.ComponentController = new ComponentController(
-      components,
+      autofilledComponents,
       defaultSettings,
       defaultTranslations,
     );
 
     this.state = {
       data: {},
-      components,
+      components: autofilledComponents,
       layouts,
       style,
       globalCSS,
@@ -108,6 +113,22 @@ class App extends Component {
         settings,
       }),
     );
+  }
+
+  autofillComponents(components, affiliation) {
+    return components.map(component => {
+      if (typeof component === 'string') {
+        const type = component.split('-')[0];
+        const typeToLower = type.toLowerCase();
+        return {
+          template: component,
+          apis: {
+            [typeToLower]: `${affiliation}${type}:${typeToLower}`,
+          },
+        };
+      }
+      return component;
+    });
   }
 
   startAPIs() {

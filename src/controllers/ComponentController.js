@@ -75,9 +75,9 @@ export default class ComponentController {
 
   getApiName(component, prop) {
     if ('apis' in component && prop in component.apis) {
-      const apiRootKey = this.injectSettings(component.apis[prop]).split(
-        '.',
-      )[0];
+      const apiRootKey = this.injectSettings(component.apis[prop])
+        .split(':')[0]
+        .split('.')[0];
       return this.translate(apiRootKey);
     }
 

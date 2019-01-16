@@ -7,6 +7,18 @@ export const IfPropIsOnline = ({
   children = null,
   loading = null,
 }) => {
+  if (!prop) {
+    throw Error(
+      'IfPropIsOnline requires which property that needs to be checked. Use an array of string or a simple string in the prop-attribute.',
+    );
+  }
+
+  if (!props) {
+    throw Error(
+      'IfPropIsOnline requires all properties from the component passed to the props-attribute.',
+    );
+  }
+
   const propsToCheck = typeof prop === 'string' ? [prop] : prop;
   let isAllPropsOnline = true;
   let isAllPropsOffline = true;
