@@ -163,7 +163,8 @@ getGridTemplateFromLayoutArray(['a', 'a b b']) => '"a . ." "a b b" / 1fr 1fr 1fr
     const wrappedInQuotes = layout
       .map(
         e =>
-          `"${e + ' .'.repeat((cols - (e.split(' ').length % cols)) % cols)}"`,
+          `"${e + ' .'.repeat((cols - (e.split(' ').length % cols)) % cols)}"` +
+          (/^[. ]+$/.test(e) ? ' 1fr' : ''),
       )
       .join(' ');
 
@@ -221,27 +222,27 @@ layouts = {
 }
 
 generateLayoutCSS(layouts) => `
-.component-container {
+.Components {
   grid-template: "Clock" "Clock2" "Office" "Bus" / 1fr;
 }
 @media (min-width: 400px) {
-  .component-container {
+  .Components {
     grid-template:"Clock Clock2 Office Office" "Bus Bus . ." / 1fr 1fr 1fr 1fr;
   }
 }
 @media (min-width: 800px) {
-  .component-container {
+  .Components {
     grid-template:"Office Clock Clock2" "Bus Bus Bus" / 1fr 1fr 1fr;
   }
 }
 `
 ```
    * @param {{[size]: string[]|string[][]}} layouts Description of grid layout
-   * @param {string} [containerClass=component-container] Which class to create layout for
+   * @param {string} [containerClass=Components] Which class to create layout for
    * 
    * @returns {string} CSS generated for containerClass
    */
-  generateLayoutCSS(layouts, containerClass = 'component-container') {
+  generateLayoutCSS(layouts, containerClass = 'Components') {
     if (typeof layouts === 'undefined') {
       return `
 .${containerClass} {
@@ -341,7 +342,7 @@ ${this.state.css}`;
       <Style>
         {globalCSS}
         <div className="App">
-          <div className="component-container">{componentsRendered}</div>
+          <div className="Components">{componentsRendered}</div>
         </div>
       </Style>
     );
