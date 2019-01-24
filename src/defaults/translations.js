@@ -8,4 +8,5 @@ export const defaultTranslations = {
   prof: 'Professor Brochs gate',
   tarbus: 'tarbus.no',
   enturbus: 'entur.no',
+  dotkom: 'dotKom',
 };
