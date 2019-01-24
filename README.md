@@ -47,20 +47,20 @@ The fetch call above is not called unless a component asks for it.
 
 To use the data from the API's you need a component to pass the data into. Components for each affiliation (linjeforening) is described in `./src/defaults/affiliations.js`. Each affiliation can have a set of components:
 
-```javascript
+```diff
   ...
-  dotkom: { // Set affiliation in `./src/defaults/settings.js`
+  dotkom: { // Select affiliation in `./src/defaults/settings.js`
     name: 'DotKom',
     components: [
-      {
-        template: 'Clock',
-      },
-      {
-        template: 'GitHub',
-        apis: {
-          repos: 'github.user.dotkom',
-        },
-      },
++     {
++       template: 'Clock',
++     },
++     {
++       template: 'GitHub',
++       apis: {
++         repos: 'github.user.dotkom',
++       },
++     },
     ],
   },
   ...
@@ -71,16 +71,16 @@ To use the data from the API's you need a component to pass the data into. Compo
 Most times you want to specify a layout. This can eighter be fixed using plain CSS or the inbuilt app grid systemᵗᵐ. Here is an example from both:
 
 <details open>
-<summary>The app grid systemᵗᵐ</summary>
+<summary>The app grid systemᵗᵐ (preferred)</summary>
 
-```javascript
+```diff
   ...
   dotkom: {
     name: 'DotKom',
-    layouts: {
-      0: ['Clock', 'GitHub'], // From 0 to 511px
-      512: ['Clock GitHub'], // From 512px and out
-    },
++   layouts: {
++     0: ['Clock', 'GitHub'], // From 0 to 511px
++     512: ['Clock GitHub'], // From 512px and out
++   },
     components: [
       'Clock', // Can shorten components using strings if only defaults are used
       {
@@ -97,20 +97,20 @@ Most times you want to specify a layout. This can eighter be fixed using plain C
 <details>
 <summary>Equivalent example in plain CSS</summary>
 
-```javascript
+```diff
   ...
   dotkom: {
     name: 'DotKom',
-    layouts: {}, // Deactivate layout generator
-    css: `
-    .Components {
-      grid-template: "Clock" "GitHub" / 1fr;
-    }
-    @media (min-width: 512px) {
-      .Components {
-        grid-template: "Clock GitHub" / 1fr 1fr;
-      }
-    }`,
++   layouts: {}, // Deactivate layout generator
++   css: `
++   .Components {
++     grid-template: "Clock" "GitHub" / 1fr;
++   }
++   @media (min-width: 512px) {
++     .Components {
++       grid-template: "Clock GitHub" / 1fr 1fr;
++     }
++   }`,
     components: [
       'Clock',
       {
