@@ -226,7 +226,7 @@ export const API = {
             ? ''
             : attribute
             ? element.getAttribute(attribute)
-            : element.innerHTML;
+            : element.innerText;
         callback(scrapeData);
         API.addRequestToCache(url, `HTML:${selector}`, scrapeData);
       })
