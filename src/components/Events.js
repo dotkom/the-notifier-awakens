@@ -93,6 +93,7 @@ class EventsFromSplash extends Component {
             flex-direction: column;
             min-height: 160px;
             padding: 32px 24px;
+            padding-left: 0;
             box-sizing: border-box;
           }
           .main-title {
