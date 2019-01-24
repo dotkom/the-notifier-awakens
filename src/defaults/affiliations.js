@@ -486,7 +486,6 @@ export const defaultAffiliationSettings = {
         },
         css: '.Events { padding-bottom: 0; }',
       },
-      'Articles',
     ],
   },
   paideia: {
