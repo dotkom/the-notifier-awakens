@@ -45,7 +45,7 @@ class Bus extends Component {
           new Date(e.time).getTime() >=
           Math.ceil(new Date().getTime() / 60000 - 1) * 60000,
       )
-      .slice(0, 4)
+      .slice(0, this.props.count || 4)
       .map((e, i) => {
         const isRealtime = e.isRealtime;
         const timeLeft = differenceInMinutes(e.time, new Date(), { locale });
