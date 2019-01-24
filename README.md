@@ -33,7 +33,8 @@ First the app starts a fetch schedule described by `./src/defaults/apis.js`. A f
   ...
   github: {
     interval: 60, // Fetch every 60th second
-    url: `https://api.github.com/users/{{users.*}}`, // Create multiple URLs from users. Currently 'dotkom' is the only user
+    print: true, // Print results into the browser console
+    url: `https://api.github.com/users/{{users.*}}/repos`, // Create multiple URLs from users. Currently 'dotkom' is the only user
     users: {
       dotkom: 'dotkom',
     },
@@ -41,7 +42,142 @@ First the app starts a fetch schedule described by `./src/defaults/apis.js`. A f
   ...
 ```
 
+The code above will generate a URL that can be accessed using `github.users.dotkom`.
+
 The fetch call above is not called unless a component asks for it.
+
+More examples:
+
+<details>
+<summary>Plain REST example</summary>
+
+```javascript
+  ...
+  githubDotKom: {
+    interval: 60,
+    url: `https://api.github.com/users/dotkom`,
+  },
+  ...
+```
+
+Available through: `githubDotkom`
+
+</details>
+
+<details>
+<summary>Transform the API output to components</summary>
+
+```diff
+  ...
+  githubDotKom: {
+    interval: 60,
+    url: `https://api.github.com/users/dotkom`,
++   transform: {
++     image: '{{avatar_url}}',
++     description: '{{bio}}',
++     url: '{{html_url}}',
++   }
+  },
+  ...
+```
+
+Output:
+
+```javascript
+{
+  image: 'https://avatars0.githubusercontent.com/u/693951?v=4',
+  description: 'Drifts- og utviklingskomiteen i Online, linjeforeningen for Informatikk ved NTNU.',
+  url: 'https://github.com/dotkom',
+}
+```
+
+</details>
+
+<details>
+<summary>Dealing with RSS feeds</summary>
+
+```javascript
+  ...
+  redditArticles: {
+    interval: 86400,
+    url: `https://www.reddit.com/.rss`,
+    transform: {
+      articles: {
+        '{{#each feed.entry}}': {
+          title: '{{title[0]}}',
+          date: '{{updated[0]}}',
+          link: '{{link[0].$.href}}',
+          author: '{{author[0].name}}',
+          image: 'https://www.redditstatic.com/new-icon.png',
+        },
+      },
+    },
+  },
+  ...
+```
+
+Output:
+
+```javascript
+{
+  articles: [
+    {
+      title: 'Witcher III (My last comic)',
+      date: '1970-01-01T23:41:07+00:00',
+      link: 'https://www.reddit.com/r/gaming/comments/ajdml1/witcher_iii_my_last_comic/',
+      author: '/u/SrGrafo',
+      image: 'https://www.redditstatic.com/new-icon.png',
+    },
+    ...
+  ]
+}
+```
+
+</details>
+
+<details>
+<summary>Dealing with RSS feeds (And scraping images from each feed element)</summary>
+
+```diff
+  ...
+  vgArticles: {
+    interval: 86400,
+    url: `https://www.vg.no/rss/feed/?categories=1068&limit=10#RSS`,
++   cache: true,
++   scrape: ['articles.*.author'],
+    transform: {
+      articles: {
+        '{{#each rss.channel[0].item}}': {
+          title: '{{title[0]}}',
+          date: '{{pubDate[0]}}',
+          link: '{{link[0]}}',
++         author: '[[{{link[0]}}#HTML:article > div > ul > li]]',
+          image: '{{image[0]}}',
+        },
+      },
+    },
+  },
+  ...
+```
+
+Output:
+
+```javascript
+{
+  articles: [
+    {
+      title: 'Tittel på artikkel',
+      date: 'Thu, 01 Jan 1970 23:01:00 +0100',
+      link: 'http://www.vg.no/nyheter/innenriks/...',
+      author: 'Ola Normann',
+      image: 'https://imbo.vgc.no/users/vgno/images/451f60dc338...',
+    },
+    ...
+  ]
+}
+```
+
+</details>
 
 ### 2. Manage components
 
