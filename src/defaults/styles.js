@@ -19,10 +19,6 @@ const online = `
     min-height: 18vw;
   }
 
-  .component-container{
-    grid-template-rows: auto auto auto 1fr auto;
-  }
-
   .Vakter > h1 {
      margin-top: 0.5em;
   }
@@ -31,6 +27,7 @@ const online = `
     display: flex;
     justify-content: center;
     justify-content: space-evenly;
+    align-items: flex-start;
     flex-flow: row wrap;
     font-family: 'Righteous';
   }
