@@ -388,21 +388,57 @@ export const defaultAffiliationSettings = {
     color: 'grey',
     components: [],
   },
+  dotkom: {
+    name: 'DotKom',
+    layouts: {},
+    css: `
+    .Components {
+      grid-template: "Clock" "GitHub" / 1fr;
+    }
+
+    @media (min-width: 512px) {
+      .Components {
+        grid-template: "Clock GitHub" / 1fr 1fr;
+      }
+    }`,
+    components: [
+      'Clock',
+      {
+        template: 'GitHub',
+        user: '{{affiliation}}',
+        apis: {
+          repos: 'github.users.{{affiliation}}',
+        },
+      },
+      {
+        template: 'Articles',
+        apis: {
+          articles: 'vgArticles:articles',
+        },
+      },
+    ],
+  },
   online: {
     name: 'Online',
     layouts: {
-      512: ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events', 'Articles'],
+      0: ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events', 'Articles'],
       720: [
         'Logo Logo Logo Logo Logo Logo',
         'Office Office Office Clock Clock Clock',
+        '. . . . . .',
         'Bus Bus Bus Bus2 Bus2 Bus2',
-        '.',
+        '. . . . . .',
         'Events Events Events Events Events .',
       ],
       1400: [
         'Logo Logo Office Clock',
         'Bus Bus Events Events',
         'Bus2 Bus2 Events Events',
+        '. Articles Articles .',
+      ],
+      2000: [
+        'Logo Logo Office Clock',
+        'Bus Bus2 Events Events',
         '. . Events Events',
       ],
     },
@@ -413,23 +449,25 @@ export const defaultAffiliationSettings = {
       },
       {
         template: 'Clock',
-        css: ', {text-align: center;}'
+        css: ', {text-align: center;}',
       },
       {
         template: 'Bus',
         name: '{{bus}}',
+        count: '{{busCount}}',
         apis: {
-          fromCity: 'enturbus.stops.{{bus:glossyd}}.fromCity:departures',
-          toCity: 'enturbus.stops.{{bus:glossyd}}.toCity:departures',
+          fromCity: 'tarbus.stops.{{bus:glossyd}}.fromCity:departures',
+          toCity: 'tarbus.stops.{{bus:glossyd}}.toCity:departures',
         },
       },
       {
         template: 'Bus',
         id: 'Bus2',
         name: '{{bus2}}',
+        count: '{{busCount}}',
         apis: {
-          fromCity: 'enturbus.stops.{{bus2:prof}}.fromCity:departures',
-          toCity: 'enturbus.stops.{{bus2:prof}}.toCity:departures',
+          fromCity: 'tarbus.stops.{{bus2:prof}}.fromCity:departures',
+          toCity: 'tarbus.stops.{{bus2:prof}}.toCity:departures',
         },
       },
       {
@@ -446,8 +484,9 @@ export const defaultAffiliationSettings = {
         apis: {
           events: 'onlineEvents:events',
         },
-        css: '.Events { padding-bottom: 0; padding-left: 0; margin-left: -50px; }',
+        css: '.Events { padding-bottom: 0; }',
       },
+      'Articles',
     ],
   },
   paideia: {
