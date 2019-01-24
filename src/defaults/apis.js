@@ -165,6 +165,12 @@ export const defaultApis = {
       abakus: 'abakus',
       delta: 'delta',
     },
+    transform: {
+      servant: '{{servant}}',
+      meeting: {
+        message: '{{meeting.meetings[0].message}}',
+      },
+    },
   },
   coffeePots: {
     interval: 60,
@@ -257,6 +263,13 @@ export const defaultApis = {
       },
     },
   },
+  github: {
+    interval: 60, // Fetch every 60th second
+    url: `https://api.github.com/users/{{users.*}}/repos`, // Inject 'dotkom'
+    users: {
+      dotkom: 'dotkom',
+    },
+  },
   onlineEvents: {
     interval: 1000,
     url:
@@ -269,6 +282,19 @@ export const defaultApis = {
           title: '{{title}}',
           image: 'https://online.ntnu.no{{image.wide}}',
           companyImage: '{{company_event.0.company.image.wide}}',
+        },
+      },
+    },
+  },
+  onlineArticles: {
+    interval: 1000,
+    url: 'https://online.ntnu.no/api/v1/articles/',
+    transform: {
+      articles: {
+        '{{#each results}}': {
+          title: '{{heading}}',
+          author: '{{authors}}',
+          image: 'https://online.ntnu.no{{image.wide}}',
         },
       },
     },
@@ -1007,6 +1033,39 @@ export const defaultApis = {
     },
   },
   */
+  redditArticles: {
+    interval: 86400,
+    url: `https://www.reddit.com/.rss#RSS`,
+    transform: {
+      articles: {
+        '{{#each feed.entry}}': {
+          title: '{{title[0]}}',
+          date: '{{updated[0]}}',
+          link: '{{link[0].$.href}}',
+          author: '{{author[0].name}}',
+          image: 'https://www.redditstatic.com/new-icon.png',
+        },
+      },
+    },
+  },
+  vgArticles: {
+    interval: 86400,
+    url: `https://www.vg.no/rss/feed/?categories=1068&limit=10#RSS`,
+    cache: true,
+    print: true,
+    scrape: ['articles.*.author'],
+    transform: {
+      articles: {
+        '{{#each rss.channel[0].item}}': {
+          title: '{{title[0]}}',
+          date: '{{pubDate[0]}}',
+          link: '{{link[0]}}',
+          author: '[[{{link[0]}}#HTML:article > div > ul > li]]',
+          image: '{{image[0]}}',
+        },
+      },
+    },
+  },
   esnArticles: {
     interval: 100,
     url: 'https://trondheim.esn.no/rss.xml#RSS',
