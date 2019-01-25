@@ -167,14 +167,18 @@ export const defaultApis = {
     },
     transform: {
       servant: '{{servant}}',
-      meeting: {
-        '{{#if meeting.meetings[0].message}}': {
-          message: '{{meeting.meetings[0].message}}',
+      meeting: [
+        {
+          '{{#if !meeting.free}}': {
+            message: '{{meeting.meetings[0].message}}',
+          },
         },
-        '{{#else}}': {
-          message: '{{meeting.message}}',
+        {
+          '{{#else}}': {
+            message: '{{meeting.message}}',
+          },
         },
-      },
+      ],
     },
   },
   coffeePots: {
