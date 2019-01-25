@@ -2,7 +2,8 @@ import { API_ROOT } from '../constants';
 import { parseString } from 'xml2js';
 import Storage from './storage';
 
-const cache = new Storage(null, 'cache');
+export const cache = new Storage(null, 'cache');
+export const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
 
 export const API = {
   /**
@@ -140,7 +141,9 @@ export const API = {
         return;
       }
     }
-    return fetch(API.transformURL(url), req)
+    const prefix = req.cors ? CORS_PROXY : '';
+    delete req.cors;
+    return fetch(API.transformURL(prefix + url), req)
       .then(res => res.json())
       .then(data => {
         callback(data);
@@ -172,8 +175,9 @@ export const API = {
         return;
       }
     }
-    const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
-    return fetch(API.transformURL(CORS_PROXY + url), req)
+    const prefix = req.cors || true ? CORS_PROXY : '';
+    delete req.cors;
+    return fetch(API.transformURL(prefix + url), req)
       .then(res => res.text())
       .then(res => {
         parseString(res, (_, parsedResult) => {
@@ -208,8 +212,9 @@ export const API = {
         return;
       }
     }
-    const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
-    return fetch(API.transformURL(CORS_PROXY + url), req)
+    const prefix = req.cors || true ? CORS_PROXY : '';
+    delete req.cors;
+    return fetch(API.transformURL(prefix + url), req)
       .then(res => res.text())
       .then(html => {
         const parser = new DOMParser();
@@ -221,9 +226,10 @@ export const API = {
             ? ''
             : attribute
             ? element.getAttribute(attribute)
-            : element.innerHTML;
+            : element.innerText;
         callback(scrapeData);
-        API.addRequestToCache(url, `HTML:${selector}`, scrapeData);
+        if (useCache)
+          API.addRequestToCache(url, `HTML:${selector}`, scrapeData);
       })
       .catch(error);
   },
@@ -251,8 +257,9 @@ export const API = {
         return;
       }
     }
-    const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
-    return fetch(API.transformURL(CORS_PROXY + url), req)
+    const prefix = req.cors || true ? CORS_PROXY : '';
+    delete req.cors;
+    return fetch(API.transformURL(prefix + url), req)
       .then(res => res.text())
       .then(data => {
         callback(data);

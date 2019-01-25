@@ -27,6 +27,7 @@ export default class APIService {
     this.usedApis = {};
     this.attemptsUntilFail = 3;
     this.failedApis = {};
+    this.workingApis = {};
 
     if (components.length) {
       this.updateUsedApis(components);
@@ -109,9 +110,11 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
           ) {
             const { cache: useCache = false } = api;
             const callback = data => {
-              if ('error' in data) {
+              if (typeof data === 'object' && 'error' in data) {
                 this.handleFail(key, apiName);
+                this.workingApis[key] = false;
               } else {
+                this.workingApis[key] = true;
                 if ('print' in api && api.print) {
                   console.log(`Fra ${key}:`, data);
                 }
@@ -120,6 +123,9 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
                     .transformWith(api.transform)
                     .root();
                   const { scrape } = api;
+                  if ('printTransform' in api && api.printTransform) {
+                    console.log(`Transformert fra ${key}:`, transformedData);
+                  }
                   this.callback(key, transformedData, useCache, scrape);
                 } else {
                   this.callback(key, data, useCache);
@@ -132,7 +138,7 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
             const urlTransformed = this.transform(url);
             this.request(
               urlTransformed,
-              api.request || {},
+              Object.assign({ cors: api.cors }, api.request),
               callback,
               error,
               useCache,
@@ -148,6 +154,41 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
       !(key in this.failedApis) ||
       (key in this.failedApis && this.failedApis[key] < this.attemptsUntilFail)
     );
+  }
+
+  /**
+   * A public function to use outside of the service.
+   *
+   * @param {string} key The API key name
+   * @returns {boolean} If the API is offline
+   */
+  isOffline(key) {
+    return !this.hasNotFailed(key);
+  }
+
+  /**
+   * Get the fail count from an API.
+   *
+   * @param {string} key The API key name
+   * @returns {number} Amount of fails from the API
+   */
+  getFailCount(key) {
+    if (key in this.failedApis) {
+      return this.failedApis[key];
+    }
+
+    return 0;
+  }
+
+  /**
+   * An API is working if it has sent a request and returned a
+   * successful result.
+   *
+   * @param {string} key The API key name
+   * @returns {boolean} If the API is online
+   */
+  isOnline(key) {
+    return key in this.workingApis && this.workingApis[key];
   }
 
   handleFail(key, apiName) {
@@ -226,7 +267,7 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
 
   request(url, req, callback, error, useCache = false) {
     const [coreUrl, type = 'GET', body = ''] = url.split('#');
-    switch (type) {
+    switch (type.split(':')[0]) {
       case 'GET':
         API.getRequest(coreUrl, req, callback, error, useCache);
         break;
@@ -238,7 +279,7 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
         API.getRSSRequest(coreUrl, req, callback, error, useCache);
         break;
       case 'HTML':
-        const { htmlSelector } = req;
+        const htmlSelector = type.split(':')[1] || req.htmlSelector;
         delete req.htmlSelector;
         API.getHTMLRequest(
           coreUrl,

@@ -13,12 +13,12 @@ export default class Events extends Component {
         EventsUI = EventsCarousel;
         break;
       default:
-        EventsUI = EventsCarousel;
+        EventsUI = EventsFromSplash;
     }
     const { events = [] } = this.props;
     const now = Date.now();
     const eventsMapped = events
-      .filter(e => now <= new Date(e.startDate).getTime())
+      .filter(e => now <= new Date(e.endDate || e.startDate).getTime())
       .map(e => {
         const startDateTime = e.startDate;
         const startDateFormatted = isToday(startDateTime)
@@ -59,6 +59,7 @@ class EventsFromSplash extends Component {
       lineColor = '#ddd',
       dateColor = '#f80',
       timeColor = 'rgba(160, 160, 160, .8)',
+      IfPropIsOnline,
     } = this.props;
     const eventList = events.slice(1).map((e, i) => {
       const { startDateFormatted, startTimeFormatted, title } = e;
@@ -92,6 +93,7 @@ class EventsFromSplash extends Component {
             flex-direction: column;
             min-height: 160px;
             padding: 32px 24px;
+            padding-left: 0;
             box-sizing: border-box;
           }
           .main-title {
@@ -135,7 +137,7 @@ class EventsFromSplash extends Component {
           }
           .start-date {
             order: 1;
-            flex: 0 0 240px;
+            flex: 0 0 215px;
             text-align: right;
             color: ${dateColor};
             padding: 10px 0;
@@ -150,14 +152,21 @@ class EventsFromSplash extends Component {
           }
           `}
         </style>
-        <div className="main-event">
-          <span className="main-title">{firstEvent.title}</span>
-          <span className="main-start-datetime">
-            {firstEvent.startDateFormatted} klokken{' '}
-            {firstEvent.startTimeFormatted}
-          </span>
-        </div>
-        <div className="event-list">{eventList}</div>
+        <IfPropIsOnline
+          prop="events"
+          props={this.props}
+          else={apiName => `Kunne ikke koble til ${apiName}`}
+          loading={i => `Henter arrangementer...${'.'.repeat(i)}`}
+        >
+          <div className="main-event">
+            <span className="main-title">{firstEvent.title}</span>
+            <span className="main-start-datetime">
+              {firstEvent.startDateFormatted} klokken{' '}
+              {firstEvent.startTimeFormatted}
+            </span>
+          </div>
+          <div className="event-list">{eventList}</div>
+        </IfPropIsOnline>
       </>
     );
   }

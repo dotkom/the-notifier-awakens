@@ -4,6 +4,7 @@ import Style from 'style-it';
 import * as Components from '../components';
 import { get } from 'object-path';
 import { injectValuesIntoString } from '../utils';
+import { IfPropIsOnline } from './IfPropIsOnline';
 
 /**
  * The component controller passes data into components and
@@ -45,8 +46,47 @@ export default class ComponentController {
     return this.components;
   }
 
-  renderComponents(data = {}) {
+  isPropOffline(apiService, component, prop) {
+    if ('apis' in component && prop in component.apis) {
+      const apiKey = this.injectSettings(component.apis[prop]).split(':')[0];
+      return apiService.isOffline(apiKey);
+    }
+
+    return false;
+  }
+
+  isPropOnline(apiService, component, prop) {
+    if ('apis' in component && prop in component.apis) {
+      const apiKey = this.injectSettings(component.apis[prop]).split(':')[0];
+      return apiService.isOnline(apiKey);
+    }
+
+    return false;
+  }
+
+  getPropFailCount(apiService, component, prop) {
+    if ('apis' in component && prop in component.apis) {
+      const apiKey = this.injectSettings(component.apis[prop]).split(':')[0];
+      return apiService.getFailCount(apiKey);
+    }
+
+    return 0;
+  }
+
+  getApiName(component, prop) {
+    if ('apis' in component && prop in component.apis) {
+      const apiRootKey = this.injectSettings(component.apis[prop])
+        .split(':')[0]
+        .split('.')[0];
+      return this.translate(apiRootKey);
+    }
+
+    return prop;
+  }
+
+  renderComponents(apiService, data = {}) {
     return this.components.map((component, i) => {
+      const template = component.template.split('-')[0];
       const props = Object.entries(component).reduce((acc, [key, val]) => {
         if (typeof val === 'string') {
           return Object.assign({}, acc, {
@@ -55,14 +95,12 @@ export default class ComponentController {
         }
         return acc;
       }, component);
-      if (!~Object.keys(Components).indexOf(component.template)) {
+      if (!~Object.keys(Components).indexOf(template)) {
         throw new Error(
-          `Remember to export the "${
-            component.template
-          }" component from the components module (in ../components/index.js)`,
+          `Remember to export the "${template}" component from the components module (in ../components/index.js)`,
         );
       }
-      const Component = Components[component.template];
+      const Component = Components[template];
       const dataProps = Object.entries(component.apis || {}).reduce(
         (acc, [key, path]) => {
           const pathParsed = this.injectSettings(path);
@@ -96,7 +134,21 @@ export default class ComponentController {
         <Style key={i}>
           {modularCSS}
           <div className={`${component.template} component`}>
-            <Component translate={e => this.translate(e)} {...dataProps} />
+            <Component
+              translate={e => this.translate(e)}
+              isPropOffline={prop =>
+                this.isPropOffline(apiService, component, prop)
+              }
+              isPropOnline={prop =>
+                this.isPropOnline(apiService, component, prop)
+              }
+              getPropFailCount={prop =>
+                this.getPropFailCount(apiService, component, prop)
+              }
+              getApiName={prop => this.getApiName(component, prop)}
+              IfPropIsOnline={IfPropIsOnline}
+              {...dataProps}
+            />
           </div>
         </Style>
       );

@@ -18,8 +18,7 @@ export default class Clock extends Component {
     let time = format(new Date(), 'HH:mm');
     return (
       <div>
-        <svg width="100" height="100">
-          <circle cx="50" cy="50" r="50" fill="#70186f" />
+        <svg width="250" height="200">
           <text
             x="50%"
             y="50%"
@@ -27,6 +26,7 @@ export default class Clock extends Component {
             textAnchor="middle"
             fill="white"
             fontFamily="Righteous"
+            fontSize="80px"
           >
             {time}
           </text>

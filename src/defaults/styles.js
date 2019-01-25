@@ -5,6 +5,11 @@ const online = `
 
   .App {
     background: #001533;
+    background-image: url(https://online.ntnu.no/static/img/knowit.svg), url(/onlineplanet.svg);
+    background-repeat: no-repeat;
+    background-position: 98% 99%, center calc(100% + 125vw);
+    background-size: 200px, 214.58vw;
+    background-attachment: fixed;
   }
   .Header {
     background-image: url(https://online.ntnu.no/static/img/online_logo.svg);
@@ -22,6 +27,7 @@ const online = `
     display: flex;
     justify-content: center;
     justify-content: space-evenly;
+    align-items: flex-start;
     flex-flow: row wrap;
     font-family: 'Righteous';
   }
@@ -41,7 +47,7 @@ const online = `
     max-width: 720px;
     margin: 0 1em;
     flex: 1 1 544px;
-    height: 280px;
+    min-height: 280px;
   }
 
   .Bus .bus-stop {

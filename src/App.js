@@ -19,13 +19,19 @@ import { injectValuesIntoString } from './utils';
 class App extends Component {
   constructor() {
     super();
-    const { affiliation = 'debug' } = defaultSettings;
+    const { affiliation = 'debug', css: globalCSS = '' } = defaultSettings;
     const {
       components = [],
       layouts,
       style = 'online',
+      css = '',
       color = defaultSettings.color || '',
     } = defaultAffiliationSettings[affiliation];
+
+    const autofilledComponents = this.autofillComponents(
+      components,
+      affiliation,
+    );
 
     this.updateData = this.updateData.bind(this);
 
@@ -33,19 +39,21 @@ class App extends Component {
       defaultApis,
       this.updateData,
       defaultSettings,
-      components,
+      autofilledComponents,
     );
     this.ComponentController = new ComponentController(
-      components,
+      autofilledComponents,
       defaultSettings,
       defaultTranslations,
     );
 
     this.state = {
       data: {},
-      components,
+      components: autofilledComponents,
       layouts,
       style,
+      globalCSS,
+      css,
       color,
       settings: defaultSettings,
     };
@@ -107,6 +115,22 @@ class App extends Component {
     );
   }
 
+  autofillComponents(components, affiliation) {
+    return components.map(component => {
+      if (typeof component === 'string') {
+        const type = component.split('-')[0];
+        const typeToLower = type.toLowerCase();
+        return {
+          template: component,
+          apis: {
+            [typeToLower]: `${affiliation}${type}:${typeToLower}`,
+          },
+        };
+      }
+      return component;
+    });
+  }
+
   startAPIs() {
     this.APIService.start();
   }
@@ -139,7 +163,8 @@ getGridTemplateFromLayoutArray(['a', 'a b b']) => '"a . ." "a b b" / 1fr 1fr 1fr
     const wrappedInQuotes = layout
       .map(
         e =>
-          `"${e + ' .'.repeat((cols - (e.split(' ').length % cols)) % cols)}"`,
+          `"${e + ' .'.repeat((cols - (e.split(' ').length % cols)) % cols)}"` +
+          (/^[. ]+$/.test(e) ? ' 1fr' : ''),
       )
       .join(' ');
 
@@ -197,27 +222,27 @@ layouts = {
 }
 
 generateLayoutCSS(layouts) => `
-.component-container {
+.Components {
   grid-template: "Clock" "Clock2" "Office" "Bus" / 1fr;
 }
 @media (min-width: 400px) {
-  .component-container {
+  .Components {
     grid-template:"Clock Clock2 Office Office" "Bus Bus . ." / 1fr 1fr 1fr 1fr;
   }
 }
 @media (min-width: 800px) {
-  .component-container {
+  .Components {
     grid-template:"Office Clock Clock2" "Bus Bus Bus" / 1fr 1fr 1fr;
   }
 }
 `
 ```
    * @param {{[size]: string[]|string[][]}} layouts Description of grid layout
-   * @param {string} [containerClass=component-container] Which class to create layout for
+   * @param {string} [containerClass=Components] Which class to create layout for
    * 
    * @returns {string} CSS generated for containerClass
    */
-  generateLayoutCSS(layouts, containerClass = 'component-container') {
+  generateLayoutCSS(layouts, containerClass = 'Components') {
     if (typeof layouts === 'undefined') {
       return `
 .${containerClass} {
@@ -280,7 +305,10 @@ generateLayoutCSS(layouts) => `
 
   render() {
     const { data, layouts, color } = this.state;
-    const componentsRendered = this.ComponentController.renderComponents(data);
+    const componentsRendered = this.ComponentController.renderComponents(
+      this.APIService,
+      data,
+    );
 
     let globalCSS = `
 ${this.generateLayoutCSS(layouts)}
@@ -304,13 +332,17 @@ ${this.generateLayoutCSS(layouts)}
 
 .component {
   ${DEBUG ? 'border: 1px solid rgba(255, 0, 0, .5);' : ''}
-}`;
+}
+
+${this.state.globalCSS}
+
+${this.state.css}`;
 
     return (
       <Style>
         {globalCSS}
         <div className="App">
-          <div className="component-container">{componentsRendered}</div>
+          <div className="Components">{componentsRendered}</div>
         </div>
       </Style>
     );

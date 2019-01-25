@@ -6,4 +6,7 @@ export const defaultTranslations = {
   glossyd: 'Gløshaugen syd',
   samf: 'Samfundet',
   prof: 'Professor Brochs gate',
+  tarbus: 'tarbus.no',
+  enturbus: 'entur.no',
+  dotkom: 'dotKom',
 };
