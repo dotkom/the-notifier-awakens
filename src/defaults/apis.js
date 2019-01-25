@@ -277,11 +277,16 @@ export const defaultApis = {
     },
   },
   github: {
-    interval: 60, // Fetch every 60th second
-    url: `https://api.github.com/users/{{users.*}}/repos`, // Inject 'dotkom'
+    interval: 60,
+    url: `https://api.github.com/users/{{users.*}}/repos`,
     users: {
       dotkom: 'dotkom',
     },
+  },
+  komplett: {
+    interval: 600,
+    url: `https://www.komplett.no/product/823822/tv-lyd-bilde/hodetelefoner/hodetelefoner/bose-qc-25-hodetelefon-apple#HTML:.product-main-info-stockstatus > div > div > span`,
+    cors: true,
   },
   onlineEvents: {
     interval: 1000,
@@ -1065,7 +1070,6 @@ export const defaultApis = {
     interval: 86400,
     url: `https://www.vg.no/rss/feed/?categories=1068&limit=10#RSS`,
     cache: true,
-    print: true,
     scrape: ['articles.*.author'],
     transform: {
       articles: {

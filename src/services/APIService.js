@@ -110,7 +110,7 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
           ) {
             const { cache: useCache = false } = api;
             const callback = data => {
-              if ('error' in data) {
+              if (typeof data === 'object' && 'error' in data) {
                 this.handleFail(key, apiName);
                 this.workingApis[key] = false;
               } else {
@@ -267,7 +267,7 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
 
   request(url, req, callback, error, useCache = false) {
     const [coreUrl, type = 'GET', body = ''] = url.split('#');
-    switch (type) {
+    switch (type.split(':')[0]) {
       case 'GET':
         API.getRequest(coreUrl, req, callback, error, useCache);
         break;
@@ -279,7 +279,7 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
         API.getRSSRequest(coreUrl, req, callback, error, useCache);
         break;
       case 'HTML':
-        const { htmlSelector } = req;
+        const htmlSelector = type.split(':')[1] || req.htmlSelector;
         delete req.htmlSelector;
         API.getHTMLRequest(
           coreUrl,

@@ -1,5 +1,5 @@
 export const defaultSettings = {
-  affiliation: 'online',
+  affiliation: 'dotkom',
   bus: 'glossyd',
   bus2: 'prof',
   eventType: 'splash',

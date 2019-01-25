@@ -44,7 +44,7 @@ First the app starts a fetch schedule described by `./src/defaults/apis.js`. A f
 
 The code above will generate a URL that can be accessed using `github.users.dotkom`.
 
-The fetch call above is not called unless a component asks for it.
+The fetch call above is not called unless a component asks for it. (More on that in the next section about components.)
 
 More examples:
 
@@ -65,7 +65,11 @@ Available through: `githubDotkom`
 </details>
 
 <details>
-<summary>Transform the API output to components</summary>
+<summary>Transform the API output before it is passed to components</summary>
+
+We use STJS to transform the input from the API data. This is for example useful when using multiple event APIs and you want a spesific structure on the data passed to the components.
+
+You can read about STJS transforms here: https://selecttransform.github.io/site/transform.html
 
 ```diff
   ...
@@ -96,11 +100,20 @@ Output:
 <details>
 <summary>Dealing with RSS feeds</summary>
 
+When dealing with other formats than JSON, you can specify this by appending these to the URL:
+
+- `{URL}#GET (JSON => JSON)`
+- `{URL}#POST[#body] (JSON => JSON)`
+- `{URL}#RSS (XML => JSON)`
+- `{URL}#HTML[:query-selector[(at)attribute]] (HTML => HTML)`
+- `{URL}#TEXT (Plain text => Plain text)`
+- More info on this in `./src/defaults/apis.js`.
+
 ```javascript
   ...
   redditArticles: {
     interval: 86400,
-    url: `https://www.reddit.com/.rss`,
+    url: `https://www.reddit.com/.rss#RSS`, // <-- Appended #RSS
     transform: {
       articles: {
         '{{#each feed.entry}}': {
@@ -174,6 +187,35 @@ Output:
     },
     ...
   ]
+}
+```
+
+</details>
+
+<details>
+<summary>Scrape HTML content from any website</summary>
+
+A lot of websites does not have a JSON API and it is therefore handy to be able to fetch spesific data from an element in a HTML document.
+
+The syntax for retrieving HTML is like this:
+
+- `{URL}#HTML[:query-selector[(at)attribute]] (HTML => HTML)`
+
+```diff
+  ...
+  komplett: {
+    interval: 60,
++    url: `https://www.komplett.no/product/823822/tv-lyd-bilde/hodetelefoner/hodetelefoner/bose-qc-25-hodetelefon-apple#HTML:.product-main-info-stockstatus > div > div > span`,
++    cors: true,
+  },
+  ...
+```
+
+Output:
+
+```javascript
+{
+  state: '20+ stk. på lager.',
 }
 ```
 

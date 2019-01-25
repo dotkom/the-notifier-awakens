@@ -390,30 +390,25 @@ export const defaultAffiliationSettings = {
   },
   dotkom: {
     name: 'DotKom',
-    layouts: {},
-    css: `
-    .Components {
-      grid-template: "Clock" "GitHub" / 1fr;
-    }
-
-    @media (min-width: 512px) {
-      .Components {
-        grid-template: "Clock GitHub" / 1fr 1fr;
-      }
-    }`,
     components: [
       'Clock',
+      //{
+      //  template: 'GitHub',
+      //  user: '{{affiliation}}',
+      //  apis: {
+      //    repos: 'github.users.{{affiliation}}',
+      //  },
+      //},
+      //{
+      //  template: 'Articles',
+      //  apis: {
+      //    articles: 'vgArticles:articles',
+      //  },
+      //},
       {
-        template: 'GitHub',
-        user: '{{affiliation}}',
+        template: 'Office',
         apis: {
-          repos: 'github.users.{{affiliation}}',
-        },
-      },
-      {
-        template: 'Articles',
-        apis: {
-          articles: 'vgArticles:articles',
+          status: 'komplett',
         },
       },
     ],

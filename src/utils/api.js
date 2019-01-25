@@ -228,7 +228,8 @@ export const API = {
             ? element.getAttribute(attribute)
             : element.innerText;
         callback(scrapeData);
-        API.addRequestToCache(url, `HTML:${selector}`, scrapeData);
+        if (useCache)
+          API.addRequestToCache(url, `HTML:${selector}`, scrapeData);
       })
       .catch(error);
   },
