@@ -80,6 +80,10 @@ apikey: {
     Boolean telling the API to output results into the console.log before
     any transformation. Nice for development of transforms.
 
+  @param {boolean?} printTransform
+    Boolean telling the API to output results into the console.log after
+    a transformation. Nice for development of transforms.
+
   @param {boolean?} cache
     Boolean telling the API to keep results from spesific request. Sometimes
     when scraping articles you would want to keep the data for a long time.
