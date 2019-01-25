@@ -168,7 +168,12 @@ export const defaultApis = {
     transform: {
       servant: '{{servant}}',
       meeting: {
-        message: '{{meeting.meetings[0].message}}',
+        '{{#if meeting.meetings[0].message}}': {
+          message: '{{meeting.meetings[0].message}}',
+        },
+        '{{#else}}': {
+          message: '{{meeting.message}}',
+        },
       },
     },
   },
