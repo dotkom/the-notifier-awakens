@@ -21,7 +21,7 @@ apikey: {
 // 'example.com/2/anotherone/1' // Can be accessed using 'apikey.data.second.id.data.first.id' from component.apis.
 // 'example.com/1/anotherone/2' // Can be accessed using 'apikey.data.first.id.data.second.id' from component.apis.
 // 'example.com/2/anotherone/2' // Can be accessed using 'apikey.data.second.id.data.second.id' from component.apis.
-
+//
 // None of the URLs will be sent before a component uses any of
 // the spesific ids, example: 'apikey.data.second.id.data.first.id'.
 ```
