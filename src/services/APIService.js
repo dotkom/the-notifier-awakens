@@ -123,6 +123,9 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
                     .transformWith(api.transform)
                     .root();
                   const { scrape } = api;
+                  if ('printTransform' in api && api.printTransform) {
+                    console.log(`Transformert fra ${key}:`, transformedData);
+                  }
                   this.callback(key, transformedData, useCache, scrape);
                 } else {
                   this.callback(key, data, useCache);
