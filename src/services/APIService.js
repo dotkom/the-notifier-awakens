@@ -116,7 +116,12 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
               } else {
                 this.workingApis[key] = true;
                 if ('print' in api && api.print) {
-                  console.log(`Fra ${key}:`, data);
+                  console.log(
+                    `Fra %c${key}%c:`,
+                    'color: #f80',
+                    'color: unset',
+                    data,
+                  );
                 }
                 if ('transform' in api) {
                   const transformedData = ST.select(data)
@@ -124,7 +129,12 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
                     .root();
                   const { scrape } = api;
                   if ('printTransform' in api && api.printTransform) {
-                    console.log(`Transformert fra ${key}:`, transformedData);
+                    console.log(
+                      `Transformert fra %c${key}%c:`,
+                      'color: #f80',
+                      'color: unset',
+                      transformedData,
+                    );
                   }
                   this.callback(key, transformedData, useCache, scrape);
                 } else {
