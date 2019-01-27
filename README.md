@@ -244,12 +244,92 @@ To use the data from the API's you need a component to pass the data into. Compo
   ...
 ```
 
-### 3. Fix layout
+Components can have 2 different formats:
+
+<details open>
+<summary>Using existing template (preferred)</summary>
+
+This option is most preferred as you can choose between a large variety of templates written in React. This exposes the true power of the web with animations and data handling.
+
+<details open>
+<summary>Example of `Events` template usage</summary>
+
+```javascript
+[
+  ...
+  {
+    template: 'Events',
+    apis: {
+      events: '{{affiliation}}Events:events', // {{affiliation}} is injected from settings
+    },
+  },
+  ...
+]
+```
+
+</details>
+
+<details>
+<summary>Example of `Bus` template usage</summary>
+
+```javascript
+[
+  ...
+  {
+    template: 'Bus',
+    name: '{{bus:glos}}', // The bus name displayed on the screen. If none have been chosen, then bus name will be set to 'glos' as default
+    count: '{{busCount}}', // Control amount of departures from settings
+    apis: {
+      fromCity: 'tarbus.stops.{{bus:glos}}.fromCity:departures',
+      toCity: 'tarbus.stops.{{bus:glos}}.toCity:departures',
+    },
+  },
+  ...
+]
+```
+
+</details>
+
+</details>
+
+<details open>
+<summary>Self made template</summary>
+
+You can also create your own components with data from any API.
+
+```javascript
+[
+  ...
+  {
+    template: '<h1>Klokke: {{variable|time HH:mm:ss}}</h1>', // Using pipe syntax to format the time from milliseconds to HH:mm:ss
+    apis: {
+      variable: 'time', // Makes it possible to listen for time changes
+    },
+  },
+  ...
+]
+```
+
+Shorthand (Will not update regularly as it does not listen to a time API):
+
+```javascript
+[
+  ...
+  '<h1>Klokke: {{clock|time HH:mm}}</h1>',
+  ...
+]
+```
+
+</details>
+
+### 3. Manage affiliation (lineforening)
+
+This includes changing the global layout, style and
 
 Most times you want to specify a layout. This can eighter be fixed using plain CSS or the inbuilt app grid systemᵗᵐ. Here is an example from both:
 
 <details open>
-<summary>The app grid systemᵗᵐ (preferred)</summary>
+<summary>The Notifier Grid Systemᵗᵐ (preferred)</summary>
 
 ```diff
   ...
@@ -260,7 +340,7 @@ Most times you want to specify a layout. This can eighter be fixed using plain C
 +     512: ['Clock GitHub'], // From 512px and out
 +   },
     components: [
-      'Clock', // Can shorten components using strings if only defaults are used
+      'Clock',
       {
         template: 'GitHub',
         ...

@@ -34,7 +34,7 @@ export default class Office extends Component {
 
     return (
       <>
-        <h1>Onlinekontoret</h1>
+        <h1>{this.props.title || 'Kontoret'}</h1>
         <div className="kontor">
           <h2 className="kontor-heading">Kontoransvarlig</h2>
           <div className="kontor-liste">{list}</div>

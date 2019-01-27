@@ -160,6 +160,22 @@ apikey: {
 ```
  */
 export const defaultApis = {
+  time: {
+    interval: 1,
+    url: '#TIME',
+  },
+  seconds: {
+    interval: 1,
+    url: '#TIME',
+  },
+  mintes: {
+    interval: 60,
+    url: '#TIME',
+  },
+  hours: {
+    interval: 3600,
+    url: '#TIME',
+  },
   affiliation: {
     interval: 60,
     url: `${API_URL}/affiliation/{{org.*}}`,
@@ -199,7 +215,7 @@ export const defaultApis = {
     interval: 10,
     url: 'https://atbapi.tar.io/api/v1/departures/{{stops.*.fromCity,toCity}}',
     stops: {
-      glossyd: { fromCity: '16010265', toCity: '16011265' },
+      glos: { fromCity: '16010265', toCity: '16011265' },
       samf: { fromCity: '16010476', toCity: '16011476' },
       prof: { fromCity: '16010376', toCity: '16011376' },
     },
@@ -220,7 +236,7 @@ export const defaultApis = {
     offline: true,
     url: 'https://bartebuss.no/api/unified/{{stops.*.fromCity,toCity}}',
     stops: {
-      glossyd: { fromCity: '16010265', toCity: '16011265' },
+      glos: { fromCity: '16010265', toCity: '16011265' },
       samf: { fromCity: '16010476', toCity: '16011476' },
     },
   },
@@ -256,7 +272,7 @@ export const defaultApis = {
       }`,
     },
     stops: {
-      glossyd: { fromCity: '75707', toCity: '75708' },
+      glos: { fromCity: '75707', toCity: '75708' },
       samf: { fromCity: '73103', toCity: '73101' },
       prof: { fromCity: '71204', toCity: '71195' },
     },

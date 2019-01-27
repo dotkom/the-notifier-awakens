@@ -303,6 +303,9 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
       case 'TEXT':
         API.getTextRequest(coreUrl, req, callback, error, useCache);
         break;
+      case 'TIME':
+        callback(Date.now());
+        break;
       default:
         API.getRequest(url, req, callback, error, useCache);
         break;
