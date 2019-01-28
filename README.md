@@ -271,23 +271,29 @@ To use the data from the API's you need a component to pass the data into. Compo
     name: 'DotKom',
     components: [
 
+      // Shorthand existing template
 +     'Clock',
 
-+     '<h1>{{affiliation}}</h1>',
-
-+     {
-+       template: '<h1>Time: {{seconds|time}}',
-+       apis: {
-+         seconds: 'seconds',
-+       },
-+     },
-
+      // Extended existing template
 +     {
 +       template: 'GitHub',
 +       apis: {
 +         repos: 'github.users.dotkom',
 +       },
 +     },
+
+      // Shorthand self made template (with pipe transformations)
++     '<h1>{{affiliation|upper|back  er kult}}!</h1>',
+      // Output: <h1>DOTKOM er kult!</h1>
+
+      // Extended self made template
++     {
++       template: '<h1>Time: {{seconds|time HH:mm:ss}}',
++       apis: {
++         seconds: 'seconds',
++       },
++     },
+      // Output: <h1>Time: 16:42:00</h1>
 
     ],
   },
