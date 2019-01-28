@@ -302,12 +302,11 @@ To use the data from the API's you need a component to pass the data into. Compo
 
 Components can have two different formats:
 
-<details>
-<summary>*Using existing template (preferred)*</summary>
+### Using existing template (preferred)
 
 This option is most preferred as you can choose between a large variety of templates written in React. This exposes the true power of the web with animations and data handling.
 
-<details open>
+<details>
 <summary>Example of `Events` template usage</summary>
 
 ```javascript
@@ -346,12 +345,12 @@ This option is most preferred as you can choose between a large variety of templ
 
 </details>
 
-</details>
-
-<details>
-<summary><b>Self made template</b></summary>
+### Self made template
 
 You can also create your own components with data from any API.
+
+<details>
+<summary>Example</summary>
 
 ```javascript
 [
