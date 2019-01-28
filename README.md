@@ -42,9 +42,7 @@ First the app starts a fetch schedule described by `./src/defaults/apis.js`. A f
   ...
 ```
 
-The code above will generate a URL that can be accessed using `github.users.dotkom`.
-
-The fetch call above is not called unless a component asks for it. (More on that in the next section about components.)
+The code above will generate a URL that can be accessed using `github.users.dotkom`. The fetch call is not called unless a component asks for `github.users.dotkom`. More on how components can use this in the [next section](#2-manage-components).
 
 Complete example:
 
