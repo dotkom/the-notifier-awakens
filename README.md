@@ -27,13 +27,13 @@ yarn start # Start development
 
 ### 1. Fetch data
 
-First the app starts a fetch schedule described by `./src/defaults/apis.js`. A fetch sequence looks like this (more details in `./src/defaults/apis.js`):
+First the app starts a fetch schedule described by `./src/defaults/apis.js`. A fetch sequence can look like this (more details in `./src/defaults/apis.js`):
 
 ```javascript
   ...
   github: {
     interval: 60, // Fetch every 60th second
-    print: true, // Print results into the browser console
+    print: true, // (Optional) Print results into the browser console
     url: `https://api.github.com/users/{{users.*}}/repos`, // Create multiple URLs from users. Currently 'dotkom' is the only user
     users: {
       dotkom: 'dotkom',
@@ -45,6 +45,47 @@ First the app starts a fetch schedule described by `./src/defaults/apis.js`. A f
 The code above will generate a URL that can be accessed using `github.users.dotkom`.
 
 The fetch call above is not called unless a component asks for it. (More on that in the next section about components.)
+
+Complete example:
+
+```javascript
+  ...
+  linjeforening: {
+    interval: 1000, // Fetch every 1000th second
+    delay: 10, // Start fetch after 10 seconds
+    url: 'https://events.com/api/v1/events?start=[[now.datetime]]', // Any URL, can use datestamps from current time
+
+    // Random structures can be used for permutations or requests/urls. See the body below or the url from previous example
+    somedata: {
+      business: '210',
+      social: '121',
+      open: '111',
+    }
+
+    // Tranform API data using STJS (read more about transforms in the examples below)
+    transform: {
+      events: {
+        '{{#each results}}': {
+          startDate: '{{event_start}}',
+          endDate: '{{event_end}}',
+          title: '{{title}}',
+          image: '[[{{link}}#HTML:#eventImage > img@src]]',
+        },
+      },
+    }
+    scrape: ['events.*.image'], // Tell app to scrape images from the
+    cache: true, // You probably want to cache the images above
+
+    request: { body: '{"type":"{{somedata.*}}"' }, // Using permuations
+    body: { type: '{{somedata.*}}' }, // Same as above, just simpler
+    cors: true, // Some sites does not allow CORS, but enabling this will allow everything
+
+    print: true, // You probably want to output requests when debugging
+    printTransform: true, // Output after transform of data is also useful
+  },
+```
+
+The full example can be used through `linjeforening.somedata.business`, `linjeforening.somedata.social` and `linjeforening.somedata.open`.
 
 More examples:
 
