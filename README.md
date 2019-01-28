@@ -290,7 +290,7 @@ To use the data from the API's you need a component to pass the data into. Compo
 +     {
 +       template: '<h1>Time: {{seconds|time HH:mm:ss}}',
 +       apis: {
-+         seconds: 'seconds',
++         seconds: 'seconds', // Listen to changes in seconds
 +       },
 +     },
       // Output: <h1>Time: 16:42:00</h1>
