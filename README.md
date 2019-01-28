@@ -288,7 +288,7 @@ To use the data from the API's you need a component to pass the data into. Compo
 
       // Extended self made template
 +     {
-+       template: '<h1>Time: {{seconds|time HH:mm:ss}}',
++       template: '<h1>Time: {{seconds|time HH:mm:ss}}</h1>',
 +       apis: {
 +         seconds: 'seconds', // Listen to changes in seconds
 +       },
