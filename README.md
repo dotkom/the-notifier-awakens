@@ -270,24 +270,34 @@ To use the data from the API's you need a component to pass the data into. Compo
   dotkom: { // Select affiliation in `./src/defaults/settings.js`
     name: 'DotKom',
     components: [
+
++     'Clock',
+
++     '<h1>{{affiliation}}</h1>',
+
 +     {
-+       template: 'Clock',
++       template: '<h1>Time: {{seconds|time}}',
++       apis: {
++         seconds: 'seconds',
++       },
 +     },
+
 +     {
 +       template: 'GitHub',
 +       apis: {
-+         repos: 'github.user.dotkom',
++         repos: 'github.users.dotkom',
 +       },
 +     },
+
     ],
   },
   ...
 ```
 
-Components can have 2 different formats:
+Components can have two different formats:
 
-<details open>
-<summary>Using existing template (preferred)</summary>
+<details>
+<summary><h3>Using existing template (preferred)</h3></summary>
 
 This option is most preferred as you can choose between a large variety of templates written in React. This exposes the true power of the web with animations and data handling.
 
@@ -332,8 +342,8 @@ This option is most preferred as you can choose between a large variety of templ
 
 </details>
 
-<details open>
-<summary>Self made template</summary>
+<details>
+<summary><h3>Self made template</h3></summary>
 
 You can also create your own components with data from any API.
 
