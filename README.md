@@ -16,16 +16,16 @@ it strength and power one could
 not even imagine was possible
 in 2014...
 
-## Development
+# Development
 
 ```bash
 yarn # Install dependencies
 yarn start # Start development
 ```
 
-## How it works
+# How it works
 
-### 1. Fetch data
+## 1. Fetch data
 
 First the app starts a fetch schedule described by `./src/defaults/apis.js`. A fetch sequence can look like this (more details in `./src/defaults/apis.js`):
 
@@ -261,7 +261,7 @@ Output:
 
 </details>
 
-### 2. Manage components
+## 2. Manage components
 
 To use the data from the API's you need a component to pass the data into. Components for each affiliation (linjeforening) is described in `./src/defaults/affiliations.js`. Each affiliation can have a set of components:
 
@@ -377,7 +377,7 @@ Shorthand (Will not update regularly as it does not listen to a time API):
 
 </details>
 
-### 3. Manage affiliation (lineforening)
+## 3. Manage affiliation (lineforening)
 
 This includes changing the global layout, style and
 
