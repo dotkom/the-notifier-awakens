@@ -55,7 +55,7 @@ Complete example:
     delay: 10, // Start fetch after 10 seconds
     url: 'https://events.com/api/v1/events?start=[[now.datetime]]', // Any URL, can use datestamps from current time
 
-    // Random structures can be used for permutations or requests/urls. See the body below or the url from previous example
+    // Random objects can be used for permutations in requests/urls. See the body below or the url from previous example
     somedata: {
       business: '210',
       social: '121',
