@@ -297,7 +297,7 @@ To use the data from the API's you need a component to pass the data into. Compo
 Components can have two different formats:
 
 <details>
-<h3>Using existing template (preferred)</h3>
+<summary><b>Using existing template (preferred)</b></summary>
 
 This option is most preferred as you can choose between a large variety of templates written in React. This exposes the true power of the web with animations and data handling.
 
@@ -343,7 +343,7 @@ This option is most preferred as you can choose between a large variety of templ
 </details>
 
 <details>
-<summary><h3>Self made template</h3></summary>
+<summary><b>Self made template</b></summary>
 
 You can also create your own components with data from any API.
 
