@@ -345,12 +345,29 @@ generateURLs(api, 'bus') =>
   static generateURLs(api, apiName) {
     const { url } = api;
     let postfix = '';
-    if ('method' in api) {
+    const addPostfix = method => {
       const body =
         typeof api.body === 'object'
           ? JSON.stringify(api.body)
           : api.body || '';
-      postfix = `#${api.method.toUpperCase()}#${body}`;
+      postfix = `#${method.toUpperCase()}#${body}`;
+    };
+    if ('method' in api && api.method !== 'GET') {
+      addPostfix(api.method);
+    }
+    if (
+      'request' in api &&
+      'method' in api.request &&
+      api.request.method !== 'GET'
+    ) {
+      addPostfix(api.request.method);
+    }
+    if (url.endsWith('#POST')) {
+      const body =
+        typeof api.body === 'object'
+          ? JSON.stringify(api.body)
+          : api.body || '';
+      postfix = `#${body}`;
     }
     const urlWithPostfix = url + postfix;
     const params = getStringParams(urlWithPostfix);

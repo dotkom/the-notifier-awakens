@@ -242,8 +242,7 @@ export const defaultApis = {
   },
   enturbus: {
     interval: 10,
-    method: 'POST',
-    url: `https://api.entur.org/journeyplanner/2.0/index/graphql`,
+    url: `https://api.entur.org/journeyplanner/2.0/index/graphql#POST`,
     request: {
       headers: {
         'ET-Client-Name': 'onlinentnu-notifier-dev',

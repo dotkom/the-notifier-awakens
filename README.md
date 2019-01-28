@@ -69,15 +69,16 @@ Complete example:
           startDate: '{{event_start}}',
           endDate: '{{event_end}}',
           title: '{{title}}',
-          image: '[[{{link}}#HTML:#eventImage > img@src]]',
+          image: 'https://events.com[[{{link}}#HTML:#eventImage > img@src]]', // [[What to scrape:selector@attribute]]
         },
       },
     }
-    scrape: ['events.*.image'], // Tell app to scrape images from the
-    cache: true, // You probably want to cache the images above
+    scrape: ['events.*.image'], // Tell app to scrape images from the transform above
+    cache: true, // You probably want to cache the images (src attribute values) above
 
-    request: { body: '{"type":"{{somedata.*}}"' }, // Using permuations
-    body: { type: '{{somedata.*}}' }, // Same as above, just simpler
+    method: 'POST', // All request methods are allowed
+    request: { body: '{"type":"{{somedata.*}}"' }, // Modify the request with headers and stuff. Can use permuations on body
+    body: { type: '{{somedata.*}}' }, // Same as above, just simpler if only body is needed
     cors: true, // Some sites does not allow CORS, but enabling this will allow everything
 
     print: true, // You probably want to output requests when debugging
