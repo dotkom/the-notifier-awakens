@@ -1,6 +1,6 @@
 export const defaultSettings = {
-  affiliation: 'dotkom',
-  bus: 'prof',
+  affiliation: 'online',
+  bus: 'glos',
   bus2: 'prof',
   eventType: 'splash',
   showCoffeePots: true,

@@ -229,7 +229,9 @@ export default class ComponentController {
       }
 
       let modularCSS = `
-.${directTemplate ? template : component.template} {
+${component.id ? `.${component.id}, ` : ''}.${
+        directTemplate ? template : component.template
+      } {
   grid-area: ${component.id ||
     (directTemplate ? template : component.template)};
   padding: ${component.padding || '32px'};
@@ -244,7 +246,9 @@ export default class ComponentController {
         <Style key={i}>
           {modularCSS}
           <div
-            className={`${component.id ||
+            className={`${
+              component.id ? `${component.template} ` : ''
+            }${component.id ||
               (directTemplate ? template : component.template)} component`}
           >
             <Component
