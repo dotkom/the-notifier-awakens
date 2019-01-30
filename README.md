@@ -44,7 +44,8 @@ First the app starts a fetch schedule described by `./src/defaults/apis.js`. A f
 
 The code above will generate a URL that can be accessed using `github.users.dotkom`. The fetch call is not called unless a component asks for `github.users.dotkom`. More on how components can use this in the [next section](#2-manage-components).
 
-Complete example:
+<details>
+<summary>Complete example</summary>
 
 ```javascript
   ...
@@ -83,6 +84,8 @@ Complete example:
     printTransform: true, // Output after transform of data is also useful
   },
 ```
+
+</details>
 
 The full example can be used through `linjeforening.somedata.business`, `linjeforening.somedata.social` and `linjeforening.somedata.open`.
 
@@ -408,7 +411,7 @@ Most times you want to specify a layout. This can eighter be fixed using plain C
 </details>
 
 <details>
-<summary>Equivalent example in plain CSS</summary>
+<summary>Equivalent example with affiliation CSS</summary>
 
 ```diff
   ...

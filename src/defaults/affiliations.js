@@ -410,15 +410,15 @@ export const defaultAffiliationSettings = {
       //    status: 'komplett',
       //  },
       //},
-      {
-        template: 'Bus',
-        name: '{{bus:glos}}', // The bus name displayed on the screen. If none have been chosen, then bus name will be set to 'glos' as default
-        count: '{{busCount}}', // Control amount of departures from settings
-        apis: {
-          fromCity: 'tarbus.stops.{{bus:glos}}.fromCity:departures',
-          toCity: 'tarbus.stops.{{bus:glos}}.toCity:departures',
-        },
-      },
+      //{
+      //  template: 'Bus',
+      //  name: '{{bus:glos}}', // The bus name displayed on the screen. If none have been chosen, then bus name will be set to 'glos' as default
+      //  count: '{{busCount}}', // Control amount of departures from settings
+      //  apis: {
+      //    fromCity: 'tarbus.stops.{{bus:glos}}.fromCity:departures',
+      //    toCity: 'tarbus.stops.{{bus:glos}}.toCity:departures',
+      //  },
+      //},
       {
         template: '<h1>Klokke: {{time|time HH:mm:ss}}</h1>',
         apis: { time: 'time' },
