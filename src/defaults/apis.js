@@ -306,7 +306,7 @@ export const defaultApis = {
   onlineEvents: {
     interval: 1000,
     url:
-      'https://online.ntnu.no/api/v1/events/?ordering=event_start&event_start__gte=[[now.date]]&page_size=[[events:5]]',
+      'https://online.ntnu.no/api/v1/events/?ordering=event_start&event_start__gte=[[now.date]]&page_size=[[eventCount:5]]',
     transform: {
       events: {
         '{{#each results}}': {
@@ -335,7 +335,7 @@ export const defaultApis = {
   abakusEvents: {
     interval: 100,
     url:
-      'https://lego.abakus.no/api/v1/events/?date_after=[[now.date]]&page_size=[[events:5]]',
+      'https://lego.abakus.no/api/v1/events/?date_after=[[now.date]]&page_size=[[eventCount:5]]',
     transform: {
       events: {
         '{{#each results}}': {

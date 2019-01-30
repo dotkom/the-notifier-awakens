@@ -476,8 +476,8 @@ export const defaultAffiliationSettings = {
         name: '{{bus:glos}}',
         count: '{{busCount}}',
         apis: {
-          fromCity: 'tarbus.stops.{{bus:glos}}.fromCity:departures',
-          toCity: 'tarbus.stops.{{bus:glos}}.toCity:departures',
+          fromCity: '{{busApi}}.stops.{{bus:glos}}.fromCity:departures',
+          toCity: '{{busApi}}.stops.{{bus:glos}}.toCity:departures',
         },
       },
       {
@@ -486,8 +486,8 @@ export const defaultAffiliationSettings = {
         name: '{{bus2}}',
         count: '{{busCount}}',
         apis: {
-          fromCity: 'tarbus.stops.{{bus2:prof}}.fromCity:departures',
-          toCity: 'tarbus.stops.{{bus2:prof}}.toCity:departures',
+          fromCity: '{{busApi}}.stops.{{bus2:prof}}.fromCity:departures',
+          toCity: '{{busApi}}.stops.{{bus2:prof}}.toCity:departures',
         },
       },
       {
@@ -502,6 +502,7 @@ export const defaultAffiliationSettings = {
       {
         template: 'Events',
         type: '{{eventType}}',
+        count: '{{eventCount}}',
         apis: {
           events: 'onlineEvents:events',
         },

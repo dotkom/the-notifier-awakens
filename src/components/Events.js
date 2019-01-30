@@ -5,7 +5,8 @@ import * as locale from 'date-fns/locale/nb';
 export default class Events extends Component {
   render() {
     let EventsUI = null;
-    switch (this.props.type) {
+    const { events = [], type = 'splash', count = -1 } = this.props;
+    switch (type) {
       case 'splash':
         EventsUI = EventsFromSplash;
         break;
@@ -15,10 +16,10 @@ export default class Events extends Component {
       default:
         EventsUI = EventsFromSplash;
     }
-    const { events = [] } = this.props;
     const now = Date.now();
     const eventsMapped = events
       .filter(e => now <= new Date(e.endDate || e.startDate).getTime())
+      .slice(0, count)
       .map(e => {
         const startDateTime = e.startDate;
         const startDateFormatted = isToday(startDateTime)
