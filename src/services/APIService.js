@@ -205,7 +205,8 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
     const { delay = 0 } = this.apis[apiName];
     this.apis[apiName].delay = delay + 1;
     if (key in this.failedApis) {
-      this.failedApis[key]++;
+      // Commented out because it is more important that it fails instead of giving up API
+      //this.failedApis[key]++;
     } else {
       this.failedApis[key] = 1;
     }
