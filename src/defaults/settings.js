@@ -7,5 +7,5 @@ export const defaultSettings = {
   showCoffeePots: true,
   showClock: true,
   eventCount: 7,
-  busCount: 8,
+  busCount: 6,
 };
