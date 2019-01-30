@@ -157,6 +157,9 @@ injectValuesIntoString('{{five:def}}test{{four:ault}}', obj, '', '{{', '}}') => 
  * @param {string} start Start of match
  * @param {string} end End of match
  * @param {string} defaultMatch How to split default values
+ * @param {function} pipeFunction Pipe functions
+ * @param {string} pipeMatch How to split into pipes
+ * @param {string} pipeParamMatch How to split into pipe parameters
  *
  * @returns {string} Generated string
  */
@@ -167,6 +170,9 @@ export const injectValuesIntoString = (
   start = '{{',
   end = '}}',
   defaultMatch = ':',
+  pipeFunction = null,
+  pipeMatch = '|',
+  pipeParamMatch = ' ',
 ) => {
   const params = getStringParams(string, start, end);
 
@@ -187,12 +193,49 @@ export const injectValuesIntoString = (
       } else {
         value = values[param];
       }
-    } else if (~param.indexOf(defaultMatch)) {
+    } else if (
+      defaultMatch &&
+      ~param.indexOf(defaultMatch) &&
+      (param.indexOf(defaultMatch) < param.indexOf(pipeMatch) ||
+        !~param.indexOf(pipeMatch))
+    ) {
       const [extractedParam, defaultVal] = param.split(defaultMatch);
       if (extractedParam in values) {
-        value = values[extractedParam];
+        value =
+          typeof values[extractedParam] === 'function'
+            ? values[extractedParam]()
+            : values[extractedParam];
+        if (pipeFunction !== null && pipeMatch && ~param.indexOf(pipeMatch)) {
+          const [, ...pipes] = param.split(pipeMatch);
+          value = pipes.reduce((acc, pipe) => {
+            const [pipeName, ...pipeParams] = pipe.split(pipeParamMatch);
+            return pipeFunction(pipeName, pipeParams, acc);
+          }, value);
+        }
       } else {
-        value = defaultVal;
+        if (pipeFunction !== null && pipeMatch && ~param.indexOf(pipeMatch)) {
+          value = defaultVal.split(pipeMatch)[0];
+        } else {
+          value = defaultVal;
+        }
+      }
+    } else if (
+      pipeFunction !== null &&
+      pipeMatch &&
+      ~param.indexOf(pipeMatch)
+    ) {
+      const [extractedParam, ...pipes] = param.split(pipeMatch);
+      if (extractedParam in values) {
+        value =
+          typeof values[extractedParam] === 'function'
+            ? values[extractedParam]()
+            : values[extractedParam];
+        value = pipes.reduce((acc, pipe) => {
+          const [pipeName, ...pipeParams] = pipe.split(pipeParamMatch);
+          return pipeFunction(pipeName, pipeParams, acc);
+        }, value);
+      } else {
+        value = fallbackValue;
       }
     } else if (fallbackValue !== null) {
       value = fallbackValue;

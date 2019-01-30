@@ -110,4 +110,48 @@ it('Inject values into placeholders in string', () => {
   expect(
     injectValuesIntoString('{{five:def}}test{{four:ault}}', obj, ''),
   ).toEqual('deftest4');
+  expect(
+    injectValuesIntoString(
+      '{{five|nottothis}}test{{four|nice|hey}}',
+      obj,
+      '',
+      '{{',
+      '}}',
+      ':',
+      pipe => pipe,
+    ),
+  ).toEqual('testhey');
+  expect(
+    injectValuesIntoString(
+      '{{five:default|tothis|hey}}test{{four|nice}}',
+      obj,
+      '',
+      '{{',
+      '}}',
+      ':',
+      pipe => pipe,
+    ),
+  ).toEqual('defaulttestnice');
+  expect(
+    injectValuesIntoString(
+      '{{four:default|tothis|hey}}test{{five|nice}}',
+      obj,
+      '',
+      '{{',
+      '}}',
+      ':',
+      pipe => pipe,
+    ),
+  ).toEqual('heytest');
+  expect(
+    injectValuesIntoString(
+      '{{four|to:this}}test',
+      obj,
+      '',
+      '{{',
+      '}}',
+      ':',
+      pipe => pipe,
+    ),
+  ).toEqual('to:thistest');
 });

@@ -5,6 +5,8 @@ import * as Components from '../components';
 import { get } from 'object-path';
 import { injectValuesIntoString } from '../utils';
 import { IfPropIsOnline } from './IfPropIsOnline';
+import { format } from 'date-fns';
+import * as locale from 'date-fns/locale/nb';
 
 /**
  * The component controller passes data into components and
@@ -18,6 +20,7 @@ export default class ComponentController {
     this.components = components;
     this.settings = settings;
     this.translations = translations;
+    this.pipes = this.pipes.bind(this);
   }
 
   updateSettings(settings) {
@@ -36,8 +39,15 @@ export default class ComponentController {
     return word;
   }
 
-  injectSettings(value) {
-    return injectValuesIntoString(value, this.settings, '', '{{', '}}');
+  injectSettings(value, fallbackValue = null, defaultMatch = ':') {
+    return injectValuesIntoString(
+      value,
+      this.settings,
+      fallbackValue,
+      '{{',
+      '}}',
+      defaultMatch,
+    );
   }
 
   update(key, data) {}
@@ -84,13 +94,100 @@ export default class ComponentController {
     return prop;
   }
 
+  pipes(pipe, params = [], input) {
+    switch (pipe) {
+      case 'date':
+        if (params.length > 0) {
+          return format(input, params.join(' '), { locale });
+        } else {
+          return format(input, 'DD MMM YYYY', { locale });
+        }
+      case 'time':
+        if (params.length > 0) {
+          return format(input, params.join(' '), { locale });
+        } else {
+          return format(input, 'HH:mm', { locale });
+        }
+      case 'datetime':
+        if (params.length > 0) {
+          return format(input, params.join(' '), { locale });
+        } else {
+          return format(input, 'DD MMM YYYY (HH:mm)', { locale });
+        }
+      case 'translate':
+        return this.translate(input);
+      case 'lower':
+        return input.toLowerCase();
+      case 'upper':
+        return input.toUpperCase();
+      case 'front':
+        return params.join(' ') + input;
+      case 'back':
+        return input + params.join(' ');
+      case 'count':
+        if (params.length > 0) {
+          if (params.length > 1) {
+            return input.slice(parseInt(params[0]), parseInt(params[1])).length;
+          }
+          return input.slice(parseInt(params[0])).length;
+        }
+        return input.length;
+      case 'slice':
+        if (params.length > 0) {
+          if (params.length > 1) {
+            return input.slice(parseInt(params[0]), parseInt(params[1]));
+          }
+          return input.slice(parseInt(params[0]));
+        }
+        return input;
+      case 'ifeq':
+        if (params.length > 0 && input === params[0]) {
+          return params.length > 1 ? params.slice(1).join(' ') : input;
+        }
+        return '';
+      case 'ifcontains':
+        if (params.length > 0 && ~input.indexOf(params[0])) {
+          return params.length > 1 ? params.slice(1).join(' ') : input;
+        }
+        return '';
+      case 'ifmatches':
+        if (params.length > 0 && new RegExp(input).test(params[0])) {
+          return params.length > 1 ? params.slice(1).join(' ') : input;
+        }
+        return '';
+      case 'ifeqelse':
+        if (params.length > 0) {
+          if (input === params[0]) {
+            return params.length > 1 ? params[1] : '';
+          } else {
+            return params.length > 2 ? params[2] : '';
+          }
+        }
+        return '';
+      case 'ifnoteq':
+        if (params.length > 0 && input !== params[0]) {
+          return params.length > 1 ? params.slice(1).join(' ') : input;
+        }
+        return '';
+      default:
+        return input;
+    }
+  }
+
   renderComponents(apiService, data = {}) {
     return this.components.map((component, i) => {
-      const template = component.template.split('-')[0];
+      const directTemplate = component.template.indexOf('<') === 0;
+      let template = directTemplate
+        ? 'CustomComponent'
+        : component.template.split('-')[0];
       const props = Object.entries(component).reduce((acc, [key, val]) => {
         if (typeof val === 'string') {
           return Object.assign({}, acc, {
-            [key]: this.injectSettings(val),
+            [key]: this.injectSettings(
+              val,
+              null,
+              key !== 'template' ? ':' : '',
+            ),
           });
         }
         return acc;
@@ -103,7 +200,7 @@ export default class ComponentController {
       const Component = Components[template];
       const dataProps = Object.entries(component.apis || {}).reduce(
         (acc, [key, path]) => {
-          const pathParsed = this.injectSettings(path);
+          const pathParsed = this.injectSettings(path, '');
           const [apiPath, pathInRequest] = pathParsed.split(':');
           if (apiPath in data) {
             const dataFromApi = data[apiPath];
@@ -119,9 +216,22 @@ export default class ComponentController {
         props,
       );
 
+      if (directTemplate) {
+        dataProps.template = injectValuesIntoString(
+          dataProps.template,
+          Object.assign({}, this.settings, dataProps),
+          '',
+          '{{',
+          '}}',
+          ':',
+          this.pipes,
+        );
+      }
+
       let modularCSS = `
-.${component.template} {
-  grid-area: ${component.id || component.template};
+.${directTemplate ? template : component.template} {
+  grid-area: ${component.id ||
+    (directTemplate ? template : component.template)};
   padding: ${component.padding || '32px'};
   overflow: ${component.overflow || 'hidden'};
 }
@@ -133,7 +243,10 @@ export default class ComponentController {
       return (
         <Style key={i}>
           {modularCSS}
-          <div className={`${component.template} component`}>
+          <div
+            className={`${component.id ||
+              (directTemplate ? template : component.template)} component`}
+          >
             <Component
               translate={e => this.translate(e)}
               isPropOffline={prop =>

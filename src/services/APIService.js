@@ -116,7 +116,12 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
               } else {
                 this.workingApis[key] = true;
                 if ('print' in api && api.print) {
-                  console.log(`Fra ${key}:`, data);
+                  console.log(
+                    `Fra %c${key}%c:`,
+                    'color: #f80',
+                    'color: unset',
+                    data,
+                  );
                 }
                 if ('transform' in api) {
                   const transformedData = ST.select(data)
@@ -124,7 +129,12 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
                     .root();
                   const { scrape } = api;
                   if ('printTransform' in api && api.printTransform) {
-                    console.log(`Transformert fra ${key}:`, transformedData);
+                    console.log(
+                      `Transformert fra %c${key}%c:`,
+                      'color: #f80',
+                      'color: unset',
+                      transformedData,
+                    );
                   }
                   this.callback(key, transformedData, useCache, scrape);
                 } else {
@@ -293,6 +303,9 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
       case 'TEXT':
         API.getTextRequest(coreUrl, req, callback, error, useCache);
         break;
+      case 'TIME':
+        callback(Date.now());
+        break;
       default:
         API.getRequest(url, req, callback, error, useCache);
         break;
@@ -332,12 +345,29 @@ generateURLs(api, 'bus') =>
   static generateURLs(api, apiName) {
     const { url } = api;
     let postfix = '';
-    if ('method' in api) {
+    const addPostfix = method => {
       const body =
         typeof api.body === 'object'
           ? JSON.stringify(api.body)
           : api.body || '';
-      postfix = `#${api.method.toUpperCase()}#${body}`;
+      postfix = `#${method.toUpperCase()}#${body}`;
+    };
+    if ('method' in api && api.method !== 'GET') {
+      addPostfix(api.method);
+    }
+    if (
+      'request' in api &&
+      'method' in api.request &&
+      api.request.method !== 'GET'
+    ) {
+      addPostfix(api.request.method);
+    }
+    if (url.endsWith('#POST')) {
+      const body =
+        typeof api.body === 'object'
+          ? JSON.stringify(api.body)
+          : api.body || '';
+      postfix = `#${body}`;
     }
     const urlWithPostfix = url + postfix;
     const params = getStringParams(urlWithPostfix);

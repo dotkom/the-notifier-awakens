@@ -5,3 +5,4 @@ export { default as Logo } from './Logo';
 export { default as Events } from './Events';
 export { default as Articles } from './Articles';
 export { default as GitHub } from './GitHub';
+export { default as CustomComponent } from './CustomComponent';

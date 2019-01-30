@@ -16,24 +16,24 @@ it strength and power one could
 not even imagine was possible
 in 2014...
 
-## Development
+# Development
 
 ```bash
 yarn # Install dependencies
 yarn start # Start development
 ```
 
-## How it works
+# How it works
 
-### 1. Fetch data
+## 1. Fetch data
 
-First the app starts a fetch schedule described by `./src/defaults/apis.js`. A fetch sequence looks like this (more details in `./src/defaults/apis.js`):
+First the app starts a fetch schedule described by `./src/defaults/apis.js`. A fetch sequence can look like this (more details in `./src/defaults/apis.js`):
 
 ```javascript
   ...
   github: {
     interval: 60, // Fetch every 60th second
-    print: true, // Print results into the browser console
+    print: true, // (Optional) Print results into the browser console
     url: `https://api.github.com/users/{{users.*}}/repos`, // Create multiple URLs from users. Currently 'dotkom' is the only user
     users: {
       dotkom: 'dotkom',
@@ -42,9 +42,52 @@ First the app starts a fetch schedule described by `./src/defaults/apis.js`. A f
   ...
 ```
 
-The code above will generate a URL that can be accessed using `github.users.dotkom`.
+The code above will generate a URL that can be accessed using `github.users.dotkom`. The fetch call is not called unless a component asks for `github.users.dotkom`. More on how components can use this in the [next section](#2-manage-components).
 
-The fetch call above is not called unless a component asks for it. (More on that in the next section about components.)
+<details>
+<summary>Complete example</summary>
+
+```javascript
+  ...
+  linjeforening: {
+    interval: 1000, // Fetch every 1000th second
+    delay: 10, // Start fetch after 10 seconds
+    url: 'https://events.com/api/v1/events?start=[[now.datetime]]', // Any URL, can use datestamps from current time
+
+    // Random objects can be used for permutations in requests/urls. See the body below or the url from previous example
+    somedata: {
+      business: '210',
+      social: '121',
+      open: '111',
+    }
+
+    // Tranform API data using STJS (read more about transforms in the examples below)
+    transform: {
+      events: {
+        '{{#each results}}': {
+          startDate: '{{event_start}}',
+          endDate: '{{event_end}}',
+          title: '{{title}}',
+          image: 'https://events.com[[{{link}}#HTML:#eventImage > img@src]]', // [[What to scrape:selector@attribute]]
+        },
+      },
+    }
+    scrape: ['events.*.image'], // Tell app to scrape images from the transform above
+    cache: true, // You probably want to cache the images (src attribute values) above
+
+    method: 'POST', // All request methods are allowed
+    request: { body: '{"type":"{{somedata.*}}"' }, // Modify the request with headers and stuff. Can use permuations on body
+    body: { type: '{{somedata.*}}' }, // Same as above, just simpler if only body is needed
+    cors: true, // Some sites does not allow CORS, but enabling this will allow everything
+
+    print: true, // You probably want to output requests when debugging
+    printTransform: true, // Output after transform of data is also useful
+  },
+```
+
+</details>
+
+The full example can be used through `linjeforening.somedata.business`, `linjeforening.somedata.social` and `linjeforening.somedata.open`.
 
 More examples:
 
@@ -221,7 +264,7 @@ Output:
 
 </details>
 
-### 2. Manage components
+## 2. Manage components
 
 To use the data from the API's you need a component to pass the data into. Components for each affiliation (linjeforening) is described in `./src/defaults/affiliations.js`. Each affiliation can have a set of components:
 
@@ -230,26 +273,121 @@ To use the data from the API's you need a component to pass the data into. Compo
   dotkom: { // Select affiliation in `./src/defaults/settings.js`
     name: 'DotKom',
     components: [
-+     {
-+       template: 'Clock',
-+     },
+
+      // Shorthand existing template
++     'Clock',
+
+      // Extended existing template
 +     {
 +       template: 'GitHub',
 +       apis: {
-+         repos: 'github.user.dotkom',
++         repos: 'github.users.dotkom',
 +       },
 +     },
+
+      // Shorthand self made template (with pipe transformations)
++     '<h1>{{affiliation|upper|back  er kult}}!</h1>',
+      // Output: <h1>DOTKOM er kult!</h1>
+
+      // Extended self made template
++     {
++       template: '<h1>Time: {{seconds|time HH:mm:ss}}</h1>',
++       apis: {
++         seconds: 'seconds', // Listen to changes in seconds
++       },
++     },
+      // Output: <h1>Time: 16:42:00</h1>
+
     ],
   },
   ...
 ```
 
-### 3. Fix layout
+Components can have two different formats:
+
+### Using existing template (preferred)
+
+This option is most preferred as you can choose between a large variety of templates written in React. This exposes the true power of the web with animations and data handling.
+
+<details>
+<summary>Example of `Events` template usage</summary>
+
+```javascript
+[
+  ...
+  {
+    template: 'Events',
+    apis: {
+      events: '{{affiliation}}Events:events', // {{affiliation}} is injected from settings
+    },
+  },
+  ...
+]
+```
+
+</details>
+
+<details>
+<summary>Example of `Bus` template usage</summary>
+
+```javascript
+[
+  ...
+  {
+    template: 'Bus',
+    name: '{{bus:glos}}', // The bus name displayed on the screen. If none have been chosen, then bus name will be set to 'glos' as default
+    count: '{{busCount}}', // Control amount of departures from settings
+    apis: {
+      fromCity: 'tarbus.stops.{{bus:glos}}.fromCity:departures',
+      toCity: 'tarbus.stops.{{bus:glos}}.toCity:departures',
+    },
+  },
+  ...
+]
+```
+
+</details>
+
+### Self made template
+
+You can also create your own components with data from any API.
+
+<details>
+<summary>Example</summary>
+
+```javascript
+[
+  ...
+  {
+    template: '<h1>Klokke: {{variable|time HH:mm:ss}}</h1>', // Using pipe syntax to format the time from milliseconds to HH:mm:ss
+    apis: {
+      variable: 'time', // Makes it possible to listen for time changes
+    },
+  },
+  ...
+]
+```
+
+Shorthand (Will not update regularly as it does not listen to a time API):
+
+```javascript
+[
+  ...
+  '<h1>Klokke: {{clock|time HH:mm}}</h1>',
+  ...
+]
+```
+
+</details>
+
+## 3. Manage affiliation (lineforening)
+
+This includes changing the global layout, style and
 
 Most times you want to specify a layout. This can eighter be fixed using plain CSS or the inbuilt app grid systemᵗᵐ. Here is an example from both:
 
 <details open>
-<summary>The app grid systemᵗᵐ (preferred)</summary>
+<summary>The Notifier Grid Systemᵗᵐ (preferred)</summary>
 
 ```diff
   ...
@@ -260,7 +398,7 @@ Most times you want to specify a layout. This can eighter be fixed using plain C
 +     512: ['Clock GitHub'], // From 512px and out
 +   },
     components: [
-      'Clock', // Can shorten components using strings if only defaults are used
+      'Clock',
       {
         template: 'GitHub',
         ...
@@ -273,7 +411,7 @@ Most times you want to specify a layout. This can eighter be fixed using plain C
 </details>
 
 <details>
-<summary>Equivalent example in plain CSS</summary>
+<summary>Equivalent example with affiliation CSS</summary>
 
 ```diff
   ...

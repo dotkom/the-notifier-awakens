@@ -161,8 +161,8 @@ export const defaultAffiliationSettings = {
         template: 'Bus',
         name: '{{bus}}',
         apis: {
-          fromCity: 'tarbus.stops.{{bus:glossyd}}.fromCity:departures',
-          toCity: 'tarbus.stops.{{bus:glossyd}}.toCity:departures',
+          fromCity: 'tarbus.stops.{{bus:glos}}.fromCity:departures',
+          toCity: 'tarbus.stops.{{bus:glos}}.toCity:departures',
         },
       },
       {
@@ -391,7 +391,6 @@ export const defaultAffiliationSettings = {
   dotkom: {
     name: 'DotKom',
     components: [
-      'Clock',
       //{
       //  template: 'GitHub',
       //  user: '{{affiliation}}',
@@ -405,12 +404,38 @@ export const defaultAffiliationSettings = {
       //    articles: 'vgArticles:articles',
       //  },
       //},
+      //{
+      //  template: 'Office',
+      //  apis: {
+      //    status: 'komplett',
+      //  },
+      //},
+      //{
+      //  template: 'Bus',
+      //  name: '{{bus:glos}}', // The bus name displayed on the screen. If none have been chosen, then bus name will be set to 'glos' as default
+      //  count: '{{busCount}}', // Control amount of departures from settings
+      //  apis: {
+      //    fromCity: 'tarbus.stops.{{bus:glos}}.fromCity:departures',
+      //    toCity: 'tarbus.stops.{{bus:glos}}.toCity:departures',
+      //  },
+      //},
       {
-        template: 'Office',
+        template: '<h1>Klokke: {{time|time HH:mm:ss}}</h1>',
+        apis: { time: 'time' },
+      },
+      {
+        template:
+          '<h1>Neste buss til {{bus:glos|translate}}: <span class="bus">{{number:Laster inn...}} {{name|front - (|back )}} {{time|time}}</span></h1>',
+        id: 'Bus',
+        css: '.bus { color: red; }',
         apis: {
-          status: 'komplett',
+          name: 'enturbus.stops.{{bus:glos}}.fromCity:departures.0.name',
+          number: 'enturbus.stops.{{bus:glos}}.fromCity:departures.0.number',
+          time:
+            'enturbus.stops.{{bus:glos}}.fromCity:departures.0.registeredTime',
         },
       },
+      'Clock',
     ],
   },
   online: {
@@ -448,11 +473,11 @@ export const defaultAffiliationSettings = {
       },
       {
         template: 'Bus',
-        name: '{{bus}}',
+        name: '{{bus:glos}}',
         count: '{{busCount}}',
         apis: {
-          fromCity: 'tarbus.stops.{{bus:glossyd}}.fromCity:departures',
-          toCity: 'tarbus.stops.{{bus:glossyd}}.toCity:departures',
+          fromCity: 'tarbus.stops.{{bus:glos}}.fromCity:departures',
+          toCity: 'tarbus.stops.{{bus:glos}}.toCity:departures',
         },
       },
       {
@@ -467,6 +492,7 @@ export const defaultAffiliationSettings = {
       },
       {
         template: 'Office',
+        title: 'Onlinekontoret',
         apis: {
           servants: 'affiliation.org.{{affiliation}}:servant.servants',
           message: 'affiliation.org.{{affiliation}}:servant.message',
