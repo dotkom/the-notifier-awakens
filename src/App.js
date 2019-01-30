@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Style from 'style-it';
 import { get, set } from 'object-path';
+import * as Sentry from '@sentry/browser';
 
 import './App.css';
 
@@ -15,6 +16,12 @@ import {
 } from './defaults';
 import { DEBUG } from './constants';
 import { injectValuesIntoString } from './utils';
+
+if (process.env.REACT_APP_SENTRY) {
+  Sentry.init({
+    dsn: process.env.REACT_APP_SENTRY,
+  });
+}
 
 class App extends Component {
   constructor() {
