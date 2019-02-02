@@ -23,6 +23,30 @@ export const pipes = {
       return format(input, 'DD MMM YYYY (HH:mm)', { locale });
     }
   },
+  '+': (input, params) => {
+    if (params.length > 0) {
+      return parseInt(input) + parseInt(params[0]) + '';
+    }
+    return parseInt(input) + 1 + '';
+  },
+  '-': (input, params) => {
+    if (params.length > 0) {
+      return parseInt(input) - parseInt(params[0]) + '';
+    }
+    return parseInt(input) - 1 + '';
+  },
+  '*': (input, params) => {
+    if (params.length > 0) {
+      return parseInt(input) * parseInt(params[0]) + '';
+    }
+    return input;
+  },
+  '/': (input, params) => {
+    if (params.length > 0) {
+      return parseInt(input) / parseInt(params[0]) + '';
+    }
+    return input;
+  },
   lower: (input, params) => {
     return input.toLowerCase();
   },

@@ -253,7 +253,7 @@ export const defaultApis = {
       query: `{
         quay(id: "NSR:Quay:{{stops.*.fromCity,toCity}}") {
           name
-          estimatedCalls(numberOfDepartures: 20) {
+          estimatedCalls(numberOfDepartures: [[busCount|* 2]]) {
             aimedDepartureTime
             expectedDepartureTime
             realtime

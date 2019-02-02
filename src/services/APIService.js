@@ -3,6 +3,7 @@ import {
   getStringParams,
   findObjectPaths,
   injectValuesIntoString,
+  pipeTransform,
 } from '../utils';
 import { get } from 'object-path';
 import ST from 'stjs';
@@ -87,7 +88,15 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
       },
       this.settings,
     );
-    return injectValuesIntoString(url, functions, null, start, end);
+    return injectValuesIntoString(
+      url,
+      functions,
+      null,
+      start,
+      end,
+      ':',
+      pipeTransform,
+    );
   }
 
   /**
