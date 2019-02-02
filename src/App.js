@@ -337,7 +337,7 @@ ${this.generateLayoutCSS(layouts)}
   ${color ? `background-color: ${color};` : ''}
 }
 
-.component {
+.Component {
   ${DEBUG ? 'border: 1px solid rgba(255, 0, 0, .5);' : ''}
 }
 
