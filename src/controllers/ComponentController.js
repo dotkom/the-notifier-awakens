@@ -98,7 +98,7 @@ export default class ComponentController {
 
   renderComponents(apiService, data = {}) {
     return this.components.map((component, i) => {
-      const directTemplate = component.template.indexOf('<') === 0;
+      const directTemplate = !!~component.template.indexOf('<');
       let template = directTemplate
         ? 'CustomComponent'
         : component.template.split('-')[0];

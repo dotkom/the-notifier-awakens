@@ -424,8 +424,12 @@ export const defaultAffiliationSettings = {
         apis: { time: 'time' },
       },
       {
-        template:
-          '<h1>Neste buss til {{bus:glos|translate}}: <span class="bus">{{number:Laster inn...}} {{name|front - (|back )}} {{time|time}}</span></h1>',
+        template: `
+          <h1>Neste buss til {{bus:glos|translate}}:
+            <span class="bus">
+              {{number:Laster inn...}} {{name|front - (|back )}} {{time|time HH:mm}}
+            </span>
+          </h1>`,
         id: 'Bus',
         css: '.bus { color: red; }',
         apis: {

@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format, addDays, addHours, addYears } from 'date-fns';
 import * as locale from 'date-fns/locale/nb';
 
 export const pipes = {
@@ -6,21 +6,42 @@ export const pipes = {
     if (params.length > 0) {
       return format(input, params.join(' '), { locale });
     } else {
-      return format(input, 'DD MMM YYYY', { locale });
+      return format(input, 'YYYY-MM-DD', { locale });
     }
   },
   time: (input, params) => {
     if (params.length > 0) {
       return format(input, params.join(' '), { locale });
     } else {
-      return format(input, 'HH:mm', { locale });
+      return format(input, 'HH:mm:ss', { locale });
     }
   },
   datetime: (input, params) => {
     if (params.length > 0) {
       return format(input, params.join(' '), { locale });
     } else {
-      return format(input, 'DD MMM YYYY (HH:mm)', { locale });
+      return format(input, 'YYYY-MM-DD HH:mm:ss', { locale });
+    }
+  },
+  addday: (input, params) => {
+    if (params.length > 0) {
+      return addDays(input, parseInt(params[0]));
+    } else {
+      return addDays(input, 1);
+    }
+  },
+  addhour: (input, params) => {
+    if (params.length > 0) {
+      return addHours(input, parseInt(params[0]));
+    } else {
+      return addHours(input, 1);
+    }
+  },
+  addyear: (input, params) => {
+    if (params.length > 0) {
+      return addYears(input, parseInt(params[0]));
+    } else {
+      return addYears(input, 1);
     }
   },
   '+': (input, params) => {
