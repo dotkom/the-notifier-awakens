@@ -3,10 +3,8 @@ import Style from 'style-it';
 
 import * as Components from '../components';
 import { get } from 'object-path';
-import { injectValuesIntoString } from '../utils';
+import { injectValuesIntoString, pipes, pipeTransform } from '../utils';
 import { IfPropIsOnline } from './IfPropIsOnline';
-import { format } from 'date-fns';
-import * as locale from 'date-fns/locale/nb';
 
 /**
  * The component controller passes data into components and
@@ -20,7 +18,11 @@ export default class ComponentController {
     this.components = components;
     this.settings = settings;
     this.translations = translations;
-    this.pipes = this.pipes.bind(this);
+    this.pipes = Object.assign({}, pipes, {
+      translate: (input, params) => {
+        return this.translate(input);
+      },
+    });
   }
 
   updateSettings(settings) {
@@ -94,86 +96,6 @@ export default class ComponentController {
     return prop;
   }
 
-  pipes(pipe, params = [], input) {
-    switch (pipe) {
-      case 'date':
-        if (params.length > 0) {
-          return format(input, params.join(' '), { locale });
-        } else {
-          return format(input, 'DD MMM YYYY', { locale });
-        }
-      case 'time':
-        if (params.length > 0) {
-          return format(input, params.join(' '), { locale });
-        } else {
-          return format(input, 'HH:mm', { locale });
-        }
-      case 'datetime':
-        if (params.length > 0) {
-          return format(input, params.join(' '), { locale });
-        } else {
-          return format(input, 'DD MMM YYYY (HH:mm)', { locale });
-        }
-      case 'translate':
-        return this.translate(input);
-      case 'lower':
-        return input.toLowerCase();
-      case 'upper':
-        return input.toUpperCase();
-      case 'front':
-        return params.join(' ') + input;
-      case 'back':
-        return input + params.join(' ');
-      case 'count':
-        if (params.length > 0) {
-          if (params.length > 1) {
-            return input.slice(parseInt(params[0]), parseInt(params[1])).length;
-          }
-          return input.slice(parseInt(params[0])).length;
-        }
-        return input.length;
-      case 'slice':
-        if (params.length > 0) {
-          if (params.length > 1) {
-            return input.slice(parseInt(params[0]), parseInt(params[1]));
-          }
-          return input.slice(parseInt(params[0]));
-        }
-        return input;
-      case 'ifeq':
-        if (params.length > 0 && input === params[0]) {
-          return params.length > 1 ? params.slice(1).join(' ') : input;
-        }
-        return '';
-      case 'ifcontains':
-        if (params.length > 0 && ~input.indexOf(params[0])) {
-          return params.length > 1 ? params.slice(1).join(' ') : input;
-        }
-        return '';
-      case 'ifmatches':
-        if (params.length > 0 && new RegExp(input).test(params[0])) {
-          return params.length > 1 ? params.slice(1).join(' ') : input;
-        }
-        return '';
-      case 'ifeqelse':
-        if (params.length > 0) {
-          if (input === params[0]) {
-            return params.length > 1 ? params[1] : '';
-          } else {
-            return params.length > 2 ? params[2] : '';
-          }
-        }
-        return '';
-      case 'ifnoteq':
-        if (params.length > 0 && input !== params[0]) {
-          return params.length > 1 ? params.slice(1).join(' ') : input;
-        }
-        return '';
-      default:
-        return input;
-    }
-  }
-
   renderComponents(apiService, data = {}) {
     return this.components.map((component, i) => {
       const directTemplate = component.template.indexOf('<') === 0;
@@ -224,16 +146,16 @@ export default class ComponentController {
           '{{',
           '}}',
           ':',
-          this.pipes,
+          (pipe, params, input) =>
+            pipeTransform(pipe, params, input, this.pipes),
         );
       }
 
+      const templateName = directTemplate ? template : component.template;
+
       let modularCSS = `
-${component.id ? `.${component.id}, ` : ''}.${
-        directTemplate ? template : component.template
-      } {
-  grid-area: ${component.id ||
-    (directTemplate ? template : component.template)};
+.${templateName} {
+  grid-area: ${component.id || templateName};
   padding: ${component.padding || '32px'};
   overflow: ${component.overflow || 'hidden'};
 }
@@ -242,15 +164,15 @@ ${component.id ? `.${component.id}, ` : ''}.${
         modularCSS += dataProps.css;
       }
 
+      let className = `Component ${templateName}`;
+      if (component.id) {
+        className += ` ${component.id}`;
+      }
+
       return (
         <Style key={i}>
           {modularCSS}
-          <div
-            className={`${
-              component.id ? `${component.template} ` : ''
-            }${component.id ||
-              (directTemplate ? template : component.template)} component`}
-          >
+          <div className={className}>
             <Component
               translate={e => this.translate(e)}
               isPropOffline={prop =>

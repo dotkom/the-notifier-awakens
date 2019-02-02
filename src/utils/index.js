@@ -1,10 +1,11 @@
 import { API } from './api';
 import Storage from './storage';
+import { pipes, pipeTransform } from './pipes';
 import {
   getStringParams,
   findObjectPaths,
   injectValuesIntoString,
-} from './algorithms'
+} from './algorithms';
 
 export {
   API,
@@ -12,4 +13,6 @@ export {
   getStringParams,
   findObjectPaths,
   injectValuesIntoString,
+  pipes,
+  pipeTransform,
 };
