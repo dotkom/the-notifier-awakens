@@ -41,15 +41,14 @@ export default class APIService {
    */
   start(time = 0) {
     this.time = time;
-    this.oldClockTime = new Date().getTime();
+    this.oldClockTime = Date.now();
 
     this.interval = setInterval(() => {
-      const newClockTime = new Date().getTime();
+      const newClockTime = Date.now();
       this.elapsedClockTime = newClockTime - this.oldClockTime;
 
       if (this.elapsedClockTime >= 1000) {
-        this.oldClockTime = newClockTime;
-        this.elapsedClockTime = 0;
+        this.oldClockTime = newClockTime - new Date().getMilliseconds() + 500;
         this.tick(this.time++);
       }
     }, 100);
