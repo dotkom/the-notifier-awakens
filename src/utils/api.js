@@ -199,11 +199,12 @@ export const API = {
    */
   getHTMLRequest(
     url,
-    selector,
     req,
+    selector = '',
     callback = () => {},
     error = () => {},
     useCache = false,
+    returns = 'text',
   ) {
     if (useCache) {
       const cacheData = API.getRequestFromCache(url, `HTML:${selector}`);
@@ -219,17 +220,37 @@ export const API = {
       .then(html => {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
-        const [querySelector = ':root', attribute = ''] = selector.split('@');
+        let [querySelector = ':root', attribute = ''] = selector.split('@');
+        if (querySelector === '') {
+          querySelector = ':root';
+        }
         const element = doc.querySelector(querySelector);
-        const scrapeData =
-          element === null
-            ? ''
-            : attribute
-            ? element.getAttribute(attribute)
-            : element.innerText;
-        callback(scrapeData);
-        if (useCache)
-          API.addRequestToCache(url, `HTML:${selector}`, scrapeData);
+        let scrapeData = '';
+        let avoidReturn = false;
+        if (element !== null) {
+          if (attribute) {
+            scrapeData = element.getAttribute(attribute);
+          } else {
+            if (returns === 'html') {
+              scrapeData = element.innerHTML;
+            } else if (returns === 'document') {
+              avoidReturn = true;
+              parseString(element.outerHTML, (_, parsedResult) => {
+                scrapeData = parsedResult;
+                callback(scrapeData);
+                if (useCache)
+                  API.addRequestToCache(url, `HTML:${selector}`, scrapeData);
+              });
+            } else {
+              scrapeData = element.innerText;
+            }
+          }
+        }
+        if (!avoidReturn) {
+          callback(scrapeData);
+          if (useCache)
+            API.addRequestToCache(url, `HTML:${selector}`, scrapeData);
+        }
       })
       .catch(error);
   },

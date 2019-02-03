@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@sentry/browser": "^4.5.3",
+    "fecha": "^3.0.2",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-scripts": "2.0.4"

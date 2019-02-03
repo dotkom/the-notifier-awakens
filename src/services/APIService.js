@@ -5,8 +5,9 @@ import {
   injectValuesIntoString,
   pipeTransform,
 } from '../utils';
-import { get } from 'object-path';
+import { get, set } from 'object-path';
 import ST from 'stjs';
+import fecha from 'fecha';
 
 /**
  * The API service schedules API requests and passes the
@@ -108,7 +109,7 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
     Object.keys(this.apis).forEach(apiName => {
       const api = this.apis[apiName];
       const { interval, delay = 0, offline = false } = api;
-      if (!offline && (time - delay) % interval === 0) {
+      if (!offline && (time - delay) % interval === 0 && time >= delay) {
         const urls = APIService.generateURLs(api, apiName);
         Object.entries(urls).forEach(([key, url]) => {
           if (
@@ -131,11 +132,17 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
                     data,
                   );
                 }
+                const { scrape, transformDates } = api;
                 if ('transform' in api) {
-                  const transformedData = ST.select(data)
+                  let transformedData = ST.select(data)
                     .transformWith(api.transform)
                     .root();
-                  const { scrape } = api;
+                  if (transformDates) {
+                    transformedData = this.transformDates(
+                      transformedData,
+                      transformDates,
+                    );
+                  }
                   if ('printTransform' in api && api.printTransform) {
                     console.log(
                       `Transformert fra %c${key}%c:`,
@@ -146,7 +153,14 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
                   }
                   this.callback(key, transformedData, useCache, scrape);
                 } else {
-                  this.callback(key, data, useCache);
+                  let transformedData = data;
+                  if (transformDates) {
+                    transformedData = this.transformDates(
+                      transformedData,
+                      transformDates,
+                    );
+                  }
+                  this.callback(key, transformedData, useCache);
                 }
               }
             };
@@ -284,6 +298,19 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
     }
   }
 
+  transformDates(data, datesToTransform) {
+    for (const [path, dateFormat] of Object.entries(datesToTransform)) {
+      const selectors = findObjectPaths(data, path);
+      for (const selector of selectors) {
+        const date = get(data, selector);
+        const newDate = fecha.parse(date, dateFormat);
+        set(data, selector, newDate);
+      }
+    }
+
+    return data;
+  }
+
   request(url, req, callback, error, useCache = false) {
     const [coreUrl, type = 'GET', body = ''] = url.split('#');
     switch (type.split(':')[0]) {
@@ -298,15 +325,23 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
         API.getRSSRequest(coreUrl, req, callback, error, useCache);
         break;
       case 'HTML':
-        const htmlSelector = type.split(':')[1] || req.htmlSelector;
+        const returnsDoc = 'document';
+      // eslint-disable-next-line
+      case 'HTML2HTML':
+        const returnsHTML = returnsDoc || 'html';
+      // eslint-disable-next-line
+      case 'HTML2TEXT':
+        const postfix = body.length ? `#${body}` : '';
+        const htmlSelector = (type + postfix).split(':')[1] || req.htmlSelector;
         delete req.htmlSelector;
         API.getHTMLRequest(
           coreUrl,
-          htmlSelector,
           req,
+          htmlSelector,
           callback,
           error,
           useCache,
+          returnsHTML || 'text',
         );
         break;
       case 'TEXT':

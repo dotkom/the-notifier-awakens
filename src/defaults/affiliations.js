@@ -360,8 +360,11 @@ export const defaultAffiliationSettings = {
   },
   mannhullet: {
     name: 'Mannhullet',
-    color: 'blue',
-    components: [],
+    color: 'deepblue',
+    layouts: {
+      0: ['Events'],
+    },
+    components: ['Events'],
   },
   nabla: {
     name: 'Nabla',

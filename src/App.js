@@ -30,7 +30,7 @@ class App extends Component {
     const {
       components = [],
       layouts,
-      style = 'online',
+      style = affiliation,
       css = '',
       color = defaultSettings.color || '',
     } = defaultAffiliationSettings[affiliation];
