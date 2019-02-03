@@ -492,7 +492,7 @@ export const defaultAffiliationSettings = {
       {
         template: 'Bus',
         name: '{{bus:glos}}',
-        count: '{{busCount}}',
+        count: '{{busCount:6}}',
         apis: {
           fromCity:
             '{{busApi:enturbus}}.stops.{{bus:glos}}.fromCity:departures',
@@ -502,8 +502,8 @@ export const defaultAffiliationSettings = {
       {
         template: 'Bus',
         id: 'Bus2',
-        name: '{{bus2}}',
-        count: '{{busCount}}',
+        name: '{{bus2:prof}}',
+        count: '{{busCount:6}}',
         apis: {
           fromCity:
             '{{busApi:enturbus}}.stops.{{bus2:prof}}.fromCity:departures',
