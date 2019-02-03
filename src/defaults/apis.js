@@ -308,7 +308,7 @@ export const defaultApis = {
     interval: 1000,
     url: 'https://www.mannhullet.no/arrangement/list#HTML:#container table',
     transformDates: {
-      'events.*.startDate': 'HH:mm DD/MM YYYY',
+      'events.*.startDate,endDate': 'HH:mm DD/MM YYYY',
     },
     transform: {
       events: {
