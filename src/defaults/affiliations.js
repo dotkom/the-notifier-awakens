@@ -362,9 +362,20 @@ export const defaultAffiliationSettings = {
     name: 'Mannhullet',
     color: 'deepblue',
     layouts: {
-      0: ['Events'],
+      0: ['Events', 'Bus'],
     },
-    components: ['Events'],
+    components: [
+      'Events',
+      {
+        template: 'Bus',
+        name: '{{bus:magn}}',
+        count: '{{busCount:4}}',
+        apis: {
+          fromCity: '{{busApi:tarbus}}.stops.{{bus:magn}}.fromCity:departures',
+          toCity: '{{busApi:tarbus}}.stops.{{bus:magn}}.toCity:departures',
+        },
+      },
+    ],
   },
   nabla: {
     name: 'Nabla',

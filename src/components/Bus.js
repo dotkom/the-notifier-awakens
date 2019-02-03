@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './Bus.css';
 import { format, differenceInMinutes } from 'date-fns';
 import * as locale from 'date-fns/locale/nb';
 import { DEBUG } from '../constants';
