@@ -6,16 +6,39 @@ export default class Clock extends Component {
   constructor() {
     super();
     this.state = {
-      time: new Date(),
+      time: format(new Date(), 'HH:mm'),
     };
   }
-  componentDidMount() {
-    setInterval(() => {
-      this.setState({ time: new Date() });
-    }, 10000);
+
+  shouldComponentUpdate(_, nextState) {
+    if (nextState.time !== this.state.time) {
+      return true;
+    }
+
+    return false;
   }
+
+  componentDidMount() {
+    if (!this.props.time) {
+      this.interval = setInterval(() => {
+        this.setState({ time: format(new Date(), 'HH:mm') });
+      }, 10000);
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.time !== nextProps.time) {
+      this.setState({ time: format(nextProps.time, 'HH:mm') });
+    }
+  }
+
   render() {
-    let time = format(new Date(), 'HH:mm');
     return (
       <div>
         <svg width="250" height="200">
@@ -28,7 +51,7 @@ export default class Clock extends Component {
             fontFamily="Righteous"
             fontSize="80px"
           >
-            {time}
+            {this.state.time}
           </text>
         </svg>
       </div>
