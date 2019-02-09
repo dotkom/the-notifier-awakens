@@ -10,4 +10,6 @@ export const defaultTranslations = {
   tarbus: 'tarbus.no',
   enturbus: 'entur.no',
   dotkom: 'dotKom',
+  affiliation: 'Lineforening',
+  chooseVisibility: 'Velg hva som vises',
 };
