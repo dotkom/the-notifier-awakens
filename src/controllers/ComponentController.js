@@ -149,6 +149,9 @@ export default class ComponentController extends Component {
   padding: ${component.padding || '32px'};
   overflow: ${component.overflow || 'hidden'};
 }
+.${templateName}:hover {
+  overflow: auto;
+}
 `;
       if ('css' in dataProps) {
         modularCSS += dataProps.css;
