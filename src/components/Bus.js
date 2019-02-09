@@ -3,6 +3,7 @@ import './Bus.css';
 import { format, differenceInMinutes } from 'date-fns';
 import * as locale from 'date-fns/locale/nb';
 import { DEBUG } from '../constants';
+import { Loading } from './';
 
 class Bus extends Component {
   constructor() {
@@ -103,7 +104,7 @@ class Bus extends Component {
               else={apiName => `Klarte ikke å hente data fra ${apiName}`}
               props={this.props}
               prop={['toCity', 'fromCity']}
-              loading={(i, j) => `Laster${'.'.repeat(Math.min(i, j) + 1)}`}
+              loading={<Loading />}
             >
               <div className="bus-list">{fromCity}</div>
               <div className="bus-list">{toCity}</div>
@@ -122,7 +123,7 @@ class Bus extends Component {
                 else={apiName => `Klarte ikke å hente data fra ${apiName}`}
                 props={this.props}
                 prop={['toCity', 'fromCity']}
-                loading={(i, j) => `Laster${'.'.repeat(Math.min(i, j) + 1)}`}
+                loading={<Loading />}
               >
                 <div className="bus-list">{fromCity2}</div>
                 <div className="bus-list">{toCity2}</div>
