@@ -16,6 +16,22 @@
   opacity: 0.8;
 }
 
+.menu-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  height: 50px;
+  transition-property: opacity, height;
+  transition-duration: 0.2s;
+}
+.menu-bar:hover {
+  opacity: 1;
+  height: 100px;
+}
+
 .Components {
   width: 100%;
   min-height: 100%;

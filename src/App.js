@@ -360,6 +360,16 @@ ${this.state.css}`;
       <Style>
         {globalCSS}
         <div className="App">
+          <div className="menu-bar">
+            Menu
+            <button
+              onClick={() =>
+                this.setState({ ...this.state, settingsOpen: true })
+              }
+            >
+              Alternativer
+            </button>
+          </div>
           <Style>
             {`.Settings {
   ${this.state.settingsOpen ? '' : 'display: none;'}
