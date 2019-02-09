@@ -3,7 +3,7 @@ const online = `
     background-color: #001533;
   }
 
-  .App {
+  .Components {
     background: #001533;
     background-image: url(https://online.ntnu.no/static/img/knowit.svg), url(/onlineplanet.svg);
     background-repeat: no-repeat;
