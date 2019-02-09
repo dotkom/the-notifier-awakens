@@ -195,7 +195,7 @@ export const defaultAffiliationSettings = {
   },
   abakus: {
     name: 'Abakus',
-    color: 'red',
+    color: 'darkred',
     layouts: [['Events', 'Events-1']],
     components: [
       'Events',
@@ -487,6 +487,7 @@ export const defaultAffiliationSettings = {
       },
       {
         template: 'Clock',
+        apis: { time: 'seconds' },
         css: ', {text-align: center;}',
       },
       {
