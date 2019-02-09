@@ -6,6 +6,6 @@ export const defaultSettings = {
   eventType: 'splash',
   showCoffeePots: true,
   showClock: true,
-  eventCount: 7,
+  eventCount: 6,
   busCount: 6,
 };
