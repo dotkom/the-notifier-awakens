@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { format, isToday } from 'date-fns';
 import * as locale from 'date-fns/locale/nb';
+import { Loading } from './';
 
 export default class Events extends Component {
   render() {
@@ -62,15 +63,25 @@ class EventsFromSplash extends Component {
       timeColor = 'rgba(160, 160, 160, .8)',
       IfPropIsOnline,
     } = this.props;
+    let prevStartDate = '';
     const eventList = events.slice(1).map((e, i) => {
       const { startDateFormatted, startTimeFormatted, title } = e;
       const style = {};
+      let skipDate = false;
+      if (prevStartDate !== startDateFormatted || i === 0) {
+        skipDate = true;
+        prevStartDate = startDateFormatted;
+      }
 
       return (
         <div key={i} className="event event-splash" style={style}>
-          <span className="title">{title}</span>
-          <span className="start-date">{startDateFormatted}</span>
-          <span className="start-time">{startTimeFormatted}</span>
+          <span className="start-date">
+            {skipDate ? startDateFormatted : ''}
+          </span>
+          <span className="time-element">
+            <span className="start-time">{startTimeFormatted}</span>
+            <span className="title">{title}</span>
+          </span>
         </div>
       );
     });
@@ -79,7 +90,7 @@ class EventsFromSplash extends Component {
 
     return (
       <>
-        <style scoped>
+        <style>
           {`
           .event-list {
             display: flex;
@@ -107,11 +118,22 @@ class EventsFromSplash extends Component {
           .main-start-datetime {
             margin: 10px 0 0 50px;
           }
-          .main-start-datetime::before {
-            content: '- ';
-          }
           .event {
             display: flex;
+            flex-wrap: nowrap;
+          }
+          @media (max-width: 640px) {
+            .event {
+              flex-wrap: wrap;
+            }
+            .time-element {
+              width: 100%;
+            }
+          }
+          .time-element {
+            order: 2;
+            display: flex;
+            flex-flow: row nowrap;
           }
           .title {
             order: 3;
@@ -136,6 +158,9 @@ class EventsFromSplash extends Component {
           .start-date:first-letter {
             text-transform: capitalize;
           }
+          .start-date:empty {
+            padding: 0;
+          }
           .start-date {
             order: 1;
             flex: 0 0 215px;
@@ -157,7 +182,7 @@ class EventsFromSplash extends Component {
           prop="events"
           props={this.props}
           else={apiName => `Kunne ikke koble til ${apiName}`}
-          loading={i => `Henter arrangementer...${'.'.repeat(i)}`}
+          loading={<Loading />}
         >
           <div className="main-event">
             <span className="main-title">{firstEvent.title}</span>
