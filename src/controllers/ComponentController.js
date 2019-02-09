@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Style from 'style-it';
 
 import * as Components from '../components';
@@ -13,11 +13,9 @@ import { IfPropIsOnline } from './IfPropIsOnline';
  * @param {array} componentsData List of component data.
  * @param {array} components List of components that should be rendered.
  */
-export default class ComponentController {
-  constructor(components, settings = {}, translations = {}) {
-    this.components = components;
-    this.settings = settings;
-    this.translations = translations;
+export default class ComponentController extends Component {
+  constructor(props) {
+    super(props);
     this.pipes = Object.assign({}, pipes, {
       translate: (input, params) => {
         return this.translate(input);
@@ -25,17 +23,9 @@ export default class ComponentController {
     });
   }
 
-  updateSettings(settings) {
-    this.settings = settings;
-  }
-
-  updateTranslations(translations) {
-    this.translations = translations;
-  }
-
   translate(word) {
-    if (word in this.translations) {
-      return this.translations[word];
+    if (word in this.props.translations) {
+      return this.props.translations[word];
     }
 
     return word;
@@ -44,7 +34,7 @@ export default class ComponentController {
   injectSettings(value, fallbackValue = null, defaultMatch = ':') {
     return injectValuesIntoString(
       value,
-      this.settings,
+      this.props.settings,
       fallbackValue,
       '{{',
       '}}',
@@ -55,7 +45,7 @@ export default class ComponentController {
   update(key, data) {}
 
   getComponents() {
-    return this.components;
+    return this.props.components;
   }
 
   isPropOffline(apiService, component, prop) {
@@ -96,8 +86,8 @@ export default class ComponentController {
     return prop;
   }
 
-  renderComponents(apiService, data = {}) {
-    return this.components.map((component, i) => {
+  render() {
+    return (this.props.components || []).map((component, i) => {
       const directTemplate = !!~component.template.indexOf('<');
       let template = directTemplate
         ? 'CustomComponent'
@@ -124,8 +114,8 @@ export default class ComponentController {
         (acc, [key, path]) => {
           const pathParsed = this.injectSettings(path, '');
           const [apiPath, pathInRequest] = pathParsed.split(':');
-          if (apiPath in data) {
-            const dataFromApi = data[apiPath];
+          if (apiPath in this.props.data) {
+            const dataFromApi = this.props.data[apiPath];
             const dataToKey = pathInRequest
               ? get(dataFromApi, pathInRequest, '')
               : dataFromApi;
@@ -141,7 +131,7 @@ export default class ComponentController {
       if (directTemplate) {
         dataProps.template = injectValuesIntoString(
           dataProps.template,
-          Object.assign({}, this.settings, dataProps),
+          Object.assign({}, this.props.settings, dataProps),
           '',
           '{{',
           '}}',
@@ -175,14 +165,16 @@ export default class ComponentController {
           <div className={className}>
             <Component
               translate={e => this.translate(e)}
+              updateSettings={this.props.updateSettings}
+              settings={this.props.settings}
               isPropOffline={prop =>
-                this.isPropOffline(apiService, component, prop)
+                this.isPropOffline(this.props.apiService, component, prop)
               }
               isPropOnline={prop =>
-                this.isPropOnline(apiService, component, prop)
+                this.isPropOnline(this.props.apiService, component, prop)
               }
               getPropFailCount={prop =>
-                this.getPropFailCount(apiService, component, prop)
+                this.getPropFailCount(this.props.apiService, component, prop)
               }
               getApiName={prop => this.getApiName(component, prop)}
               IfPropIsOnline={IfPropIsOnline}
