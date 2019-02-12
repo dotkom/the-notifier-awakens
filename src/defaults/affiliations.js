@@ -488,7 +488,6 @@ export const defaultAffiliationSettings = {
       {
         template: 'Clock',
         apis: { time: 'seconds' },
-        css: ', {text-align: center;}',
       },
       {
         template: 'Bus',
