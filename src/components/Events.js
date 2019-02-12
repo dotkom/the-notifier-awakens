@@ -134,6 +134,7 @@ class EventsFromSplash extends Component {
             order: 2;
             display: flex;
             flex-flow: row nowrap;
+            flex: 1;
           }
           .title {
             order: 3;
