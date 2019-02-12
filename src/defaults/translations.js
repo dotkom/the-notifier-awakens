@@ -11,5 +11,6 @@ export const defaultTranslations = {
   enturbus: 'entur.no',
   dotkom: 'dotKom',
   affiliation: 'Lineforening',
+  settings: 'Alternativer',
   chooseVisibility: 'Velg hva som vises',
 };
