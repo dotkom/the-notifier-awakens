@@ -105,14 +105,22 @@ export const pipes = {
     return '';
   },
   ifcontains: (input, params) => {
-    if (params.length > 0 && ~input.indexOf(params[0])) {
-      return params.length > 1 ? params.slice(1).join(' ') : input;
+    if (params.length > 0) {
+      if (~input.indexOf(params[0])) {
+        return params.length > 1 ? params[1] : input;
+      } else if (params.length > 2) {
+        return params[2];
+      }
     }
     return '';
   },
   ifmatches: (input, params) => {
-    if (params.length > 0 && new RegExp(input).test(params[0])) {
-      return params.length > 1 ? params.slice(1).join(' ') : input;
+    if (params.length > 0) {
+      if (new RegExp(params[0]).test(input)) {
+        return params.length > 1 ? params[1] : input;
+      } else if (params.length > 2) {
+        return params[2];
+      }
     }
     return '';
   },
@@ -129,6 +137,12 @@ export const pipes = {
   ifnoteq: (input, params) => {
     if (params.length > 0 && input !== params[0]) {
       return params.length > 1 ? params.slice(1).join(' ') : input;
+    }
+    return '';
+  },
+  then: (input, params) => {
+    if (params.length > 0) {
+      return params[0];
     }
     return '';
   },
