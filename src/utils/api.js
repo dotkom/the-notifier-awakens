@@ -232,7 +232,7 @@ export const API = {
             scrapeData = element.getAttribute(attribute);
           } else {
             if (returns === 'html') {
-              scrapeData = element.innerHTML;
+              scrapeData = element.outerHTML;
             } else if (returns === 'document') {
               avoidReturn = true;
               parseString(element.outerHTML, (_, parsedResult) => {
