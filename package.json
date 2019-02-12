@@ -15,6 +15,7 @@
     "fecha": "^3.0.2",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
+    "react-icons": "^3.3.0",
     "react-scripts": "2.0.4"
   },
   "scripts": {
