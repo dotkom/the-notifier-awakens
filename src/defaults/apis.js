@@ -232,6 +232,13 @@ export const defaultApis = {
       },
     },
   },
+  timetable: {
+    interval: 10000,
+    cache: true,
+    url:
+      'https://ntnu.1024.no/[[now|date YYYY]]/[[now|date M|ifmatches [1-6] var host]]/{{users.*}}/#HTML2HTML:#schedule',
+    users: {},
+  },
   bartebuss: {
     interval: 10,
     offline: true,
@@ -240,6 +247,22 @@ export const defaultApis = {
       glos: { fromCity: '16010265', toCity: '16011265' },
       samf: { fromCity: '16010476', toCity: '16011476' },
     },
+  },
+  droneCI: {
+    interval: 100,
+    url: 'https://{{hosts.*}}/api/repos/{{users.*}}/{{repos.*}}/builds',
+    transform: {
+      '{{#each this}}': {
+        user: '{{author}}',
+        image: '{{author_avatar}}',
+        message: '{{message}}',
+        status: '{{status}}',
+        link: '{{link_url}}',
+      },
+    },
+    hosts: {},
+    users: {},
+    repos: {},
   },
   enturbus: {
     interval: 10,
