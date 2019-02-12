@@ -16,7 +16,7 @@ import {
 } from './defaults';
 import { DEBUG } from './constants';
 import { injectValuesIntoString } from './utils';
-import { Settings } from './components';
+import { Settings, Icon } from './components';
 
 if (process.env.REACT_APP_SENTRY) {
   Sentry.init({
@@ -361,14 +361,15 @@ ${this.state.css}`;
         {globalCSS}
         <div className="App">
           <div className="menu-bar">
-            Menu
-            <button
+            <div
+              className="open-settings"
               onClick={() =>
                 this.setState({ ...this.state, settingsOpen: true })
               }
+              title={this.translate('settings')}
             >
-              Alternativer
-            </button>
+              <Icon name="Settings" />
+            </div>
           </div>
           <Style>
             {`.Settings {
