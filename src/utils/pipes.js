@@ -141,7 +141,7 @@ export const pipes = {
     return '';
   },
   then: (input, params) => {
-    if (params.length > 0) {
+    if (input && params.length > 0) {
       return params[0];
     }
     return '';
