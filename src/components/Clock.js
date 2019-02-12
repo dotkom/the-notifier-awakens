@@ -40,8 +40,8 @@ export default class Clock extends Component {
 
   render() {
     return (
-      <div>
-        <svg width="250" height="200">
+      <>
+        <svg width="250" height="100">
           <text
             x="50%"
             y="50%"
@@ -54,7 +54,7 @@ export default class Clock extends Component {
             {this.state.time}
           </text>
         </svg>
-      </div>
+      </>
     );
   }
 }
