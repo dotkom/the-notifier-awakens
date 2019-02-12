@@ -116,9 +116,12 @@ export default class ComponentController extends Component {
           const [apiPath, pathInRequest] = pathParsed.split(':');
           if (apiPath in this.props.data) {
             const dataFromApi = this.props.data[apiPath];
-            const dataToKey = pathInRequest
+            let dataToKey = pathInRequest
               ? get(dataFromApi, pathInRequest, '')
               : dataFromApi;
+            if (key === pathInRequest && dataToKey === '') {
+              dataToKey = dataFromApi;
+            }
             return Object.assign({}, acc, {
               [key]: dataToKey,
             });
