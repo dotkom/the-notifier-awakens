@@ -7,4 +7,7 @@ export { default as Articles } from './Articles';
 export { default as GitHub } from './GitHub';
 export { default as Settings } from './Settings';
 export { default as Loading } from './Loading';
+export { default as CIStatus } from './CIStatus';
+export { default as Icon } from './Icon';
+export { default as Timetable } from './Timetable';
 export { default as CustomComponent } from './CustomComponent';
