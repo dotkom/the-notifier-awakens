@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './Bus.css';
 import { format, differenceInMinutes } from 'date-fns';
 import * as locale from 'date-fns/locale/nb';
-import { DEBUG } from '../constants';
 import { Loading } from './';
 
 class Bus extends Component {
@@ -62,7 +61,7 @@ class Bus extends Component {
           time = format(e.time, 'HH:mm');
         }
 
-        if (DEBUG) time += '; ' + format(e.time, 'HH:mm');
+        // if (DEBUG) time += '; ' + format(e.time, 'HH:mm');
 
         const style = isClose ? { color: '#ffb800' } : {};
 
