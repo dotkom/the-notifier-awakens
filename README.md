@@ -456,16 +456,20 @@ You can achieve everything with plain CSS, but The Notifier Grid Systemᵗᵐ is
     layouts: {
 
       0: [
-          'Clock',
-+         'Clock-2', // Identified through the dash (-)
-+         'ThirdClock', // Identified through "id" property
-+         'GitHub \ 1' // Make GitHub component use 1fr of the space (aka. rest of the screen, if any)
+        'Clock',
++       'Clock-2', // Identified through the dash (-)
++       'ThirdClock', // Identified through "id" property
++       'GitHub \ 1' // Make GitHub component use 1fr of the space (aka. rest of the screen, if any)
       ],
 
       512: [
-          'Clock Clock-2',
-+         'ThirdClock GitHub / 1fr', // Using 1fr, auto or minmax(...) is allowed
-+         'GitHub / 2', // Use 2fr
+
+        // Justify colums
++       '/ 1fr 2fr', // 1 fraction for first column and 2 fractions for second column
+
+        'Clock Clock-2',
++       'ThirdClock GitHub / 1fr', // Using 1fr, auto or minmax(...) is allowed
++       'GitHub / 2', // Use 2fr
       ],
 
       // You can also just use plain CSS Grid template syntax
