@@ -459,7 +459,7 @@ export const defaultAffiliationSettings = {
   online: {
     name: 'Online',
     layouts: {
-      0: ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events', 'Articles'],
+      0: ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events'],
       720: [
         'Logo Logo Logo Logo Logo Logo',
         'Office Office Office Clock Clock Clock',
@@ -468,11 +468,23 @@ export const defaultAffiliationSettings = {
         '. . . . . .',
         'Events Events Events Events Events .',
       ],
+      721: `
+        "Logo Logo Logo Logo Logo Logo"
+        "Office Office Office Clock Clock Clock"
+        ". . . . . ."
+        "Bus Bus Bus Bus2 Bus2 Bus2"
+        ". . . . . ."
+        "Events Events Events Events Events ."
+        / repeat(6, 1fr)
+      `,
       1400: [
         'Logo Logo Office Clock',
+        '. . . .',
+        '. . Events Events / 1',
         'Bus Bus Events Events',
         'Bus2 Bus2 Events Events',
-        '. Articles Articles .',
+        '. . Events Events / 1',
+        '. . . .',
       ],
       2000: [
         'Logo Logo Office Clock',

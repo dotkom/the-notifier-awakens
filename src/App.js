@@ -164,8 +164,10 @@ class App extends Component {
    * Examples:
 ```javascript
 getGridTemplateFromLayoutArray(['a b', 'a b']) => '"a b" "a b" / 1fr 1fr'
-getGridTemplateFromLayoutArray(['a a', '. b b']) => '"a a ." ". b b" / 1fr 1fr 1fr'
-getGridTemplateFromLayoutArray(['a', 'a b b']) => '"a . ." "a b b" / 1fr 1fr 1fr'
+getGridTemplateFromLayoutArray(['a a', '. b b ']) => '"a a ." ". b b" / 1fr 1fr 1fr'
+getGridTemplateFromLayoutArray(['a ', 'a b  b']) => '"a . ." "a b b" / 1fr 1fr 1fr'
+getGridTemplateFromLayoutArray(['a / auto', 'a b  b / 2 ']) => '"a . ." auto "a b b" 2fr / 1fr 1fr 1fr'
+getGridTemplateFromLayoutArray(['a / auto', 'a b  b / 2 ']) => '"a . ." auto "a b b" 2fr / 1fr 1fr 1fr'
 ```
    * 
    * @param {array} layout Array with placed components.
@@ -173,19 +175,37 @@ getGridTemplateFromLayoutArray(['a', 'a b b']) => '"a . ." "a b b" / 1fr 1fr 1fr
    * @returns {string} A string for grid-template.
    */
   getGridTemplateFromLayoutArray(layout) {
-    const cols = layout.reduce(
-      (acc, row) => Math.max(acc, row.split(' ').length),
-      0,
-    );
-    const wrappedInQuotes = layout
-      .map(
-        e =>
-          `"${e + ' .'.repeat((cols - (e.split(' ').length % cols)) % cols)}"` +
-          (/^[. ]+$/.test(e) ? ' 1fr' : ''),
-      )
-      .join(' ');
+    if (typeof layout === 'string') {
+      return layout.replace(/[\n\r]/g, ' ');
+    }
 
-    return `${wrappedInQuotes} /${' 1fr'.repeat(cols)}`;
+    const rows = layout.map(row => {
+      const [componentPart, sizePart = ''] = row.replace(/ +/g, ' ').split('/');
+      const trimmedRow = componentPart.trim();
+      const trimmedSize = sizePart.trim();
+      const sizing = trimmedSize
+        ? /^[0-9]+$/.test(trimmedSize)
+          ? `${trimmedSize}fr`
+          : trimmedSize
+        : '';
+      return {
+        colCount: trimmedRow.split(' ').length,
+        components: trimmedRow,
+        sizing,
+      };
+    });
+    const maxCols = Math.max(...rows.map(row => row.colCount));
+    const wrappedInQuotes = rows.map(row => {
+      if (/^[. ]*$/.test(row.components)) {
+        const sizing = row.sizing ? ` ${row.sizing}` : ' 1fr';
+        return `"${'. '.repeat(maxCols).slice(0, -1)}"${sizing}`;
+      } else {
+        const spacesNotUsed = (maxCols - (row.colCount % maxCols)) % maxCols;
+        const sizing = row.sizing ? ` ${row.sizing}` : '';
+        return `"${row.components + ' .'.repeat(spacesNotUsed)}"${sizing}`;
+      }
+    });
+    return `${wrappedInQuotes.join(' ')} /${' 1fr'.repeat(maxCols)}`;
   }
 
   /**
