@@ -461,22 +461,14 @@ export const defaultAffiliationSettings = {
     layouts: {
       0: ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events'],
       720: [
-        'Logo Logo Logo Logo Logo Logo',
-        'Office Office Office Clock Clock Clock',
-        '. . . . . .',
-        'Bus Bus Bus Bus2 Bus2 Bus2',
-        '. . . . . .',
-        'Events Events Events Events Events .',
+        '/ . . . 200px',
+        'Logo Logo Logo Logo',
+        'Office Office Clock Clock',
+        '. . . .',
+        'Bus Bus Bus2 Bus2',
+        '. . . .',
+        'Events Events Events .',
       ],
-      721: `
-        "Logo Logo Logo Logo Logo Logo"
-        "Office Office Office Clock Clock Clock"
-        ". . . . . ."
-        "Bus Bus Bus Bus2 Bus2 Bus2"
-        ". . . . . ."
-        "Events Events Events Events Events ."
-        / repeat(6, 1fr)
-      `,
       1400: [
         'Logo Logo Office Clock',
         '. . . .',
@@ -488,8 +480,9 @@ export const defaultAffiliationSettings = {
       ],
       2000: [
         'Logo Logo Office Clock',
+        '. . .',
         'Bus Bus2 Events Events',
-        '. . Events Events',
+        '. . .',
       ],
     },
     components: [
