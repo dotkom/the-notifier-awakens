@@ -464,8 +464,8 @@ You can achieve everything with plain CSS, but The Notifier Grid Systemᵗᵐ is
 
       512: [
 
-        // Justify colums
-+       '/ 1fr 2fr', // 1 fraction for first column and 2 fractions for second column
+        // Justify colums using "/" at the start of a layout
++       '/ 1fr 400px', // 1 fraction for first column and 400px for second column
 
         'Clock Clock-2',
 +       'ThirdClock GitHub / 1fr', // Using 1fr, auto or minmax(...) is allowed
@@ -478,6 +478,20 @@ You can achieve everything with plain CSS, but The Notifier Grid Systemᵗᵐ is
 +       "GitHub" 2fr
 +       / repeat(3, 1fr)
 +     `,
+
+      2048: [
++       // Use "|" to fill area between two columns with 1fr
++       '/ 400px 400px | 400px',
+
+        // Adding a value to the filled area is also possible: '/ 400px 400px |100px 400px'
+
+        'Clock Clock-2 ThirdClock', // Adds a '.' (space) with size of 1fr between Clock-2 and ThirdClock
+        'GitHub GitHub GitHub', // Stretch GitHub over 1fr, not adding a blank space
+
+        // Actually generated: 'Clock Clock-2 . ThirdClock'
+        //                     'GitHub GitHub GitHub GitHub'
+        //                     '/ 400px 400px 1fr 400px'
+      ]
 
     },
     components: [
