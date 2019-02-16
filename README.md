@@ -85,9 +85,9 @@ The code above will generate a URL that can be accessed using `github.users.dotk
   },
 ```
 
-</details>
-
 The full example can be used through `linjeforening.somedata.business`, `linjeforening.somedata.social` and `linjeforening.somedata.open`.
+
+</details>
 
 More examples:
 
@@ -148,7 +148,10 @@ When dealing with other formats than JSON, you can specify this by appending the
 - `{URL}#GET (JSON => JSON)`
 - `{URL}#POST[#body] (JSON => JSON)`
 - `{URL}#RSS (XML => JSON)`
-- `{URL}#HTML[:query-selector[(at)attribute]] (HTML => HTML)`
+- `{URL}#HTML[:query-selector[(at)attribute]] (HTML => JSON)`
+- `{URL}#HTML2JSON[:query-selector[(at)attribute]] (HTML => JSON)`
+- `{URL}#HTML2HTML[:query-selector[(at)attribute]] (HTML => outerHTML)`
+- `{URL}#HTML2TEXT[:query-selector[(at)attribute]] (HTML => innerText)`
 - `{URL}#TEXT (Plain text => Plain text)`
 - More info on this in `./src/defaults/apis.js`.
 

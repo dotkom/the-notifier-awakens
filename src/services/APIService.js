@@ -339,6 +339,8 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
       case 'HTML':
         const returnsDoc = 'document';
       // eslint-disable-next-line
+      case 'HTML2JSON':
+      // eslint-disable-next-line
       case 'HTML2HTML':
         const returnsHTML = returnsDoc || 'html';
       // eslint-disable-next-line
