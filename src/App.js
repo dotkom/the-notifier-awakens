@@ -169,6 +169,7 @@ getGridTemplateFromLayoutArray(['a ', 'a b  b']) => '"a . ." "a b b" / 1fr 1fr 1
 getGridTemplateFromLayoutArray(['a / auto', 'a b  b / 2 ']) => '"a . ." auto "a b b" 2fr / 1fr 1fr 1fr'
 getGridTemplateFromLayoutArray(['a / auto', 'a b  b / 2 ']) => '"a . ." auto "a b b" 2fr / 1fr 1fr 1fr'
 ```
+   * See ./App.test.js for more examples.
    * 
    * @param {array} layout Array with placed components.
    * 
@@ -179,33 +180,102 @@ getGridTemplateFromLayoutArray(['a / auto', 'a b  b / 2 ']) => '"a . ." auto "a 
       return layout.replace(/[\n\r]/g, ' ');
     }
 
-    const rows = layout.map(row => {
-      const [componentPart, sizePart = ''] = row.replace(/ +/g, ' ').split('/');
-      const trimmedRow = componentPart.trim();
-      const trimmedSize = sizePart.trim();
-      const sizing = trimmedSize
-        ? /^[0-9]+$/.test(trimmedSize)
-          ? `${trimmedSize}fr`
-          : trimmedSize
-        : '';
-      return {
-        colCount: trimmedRow.split(' ').length,
-        components: trimmedRow,
-        sizing,
-      };
-    });
-    const maxCols = Math.max(...rows.map(row => row.colCount));
-    const wrappedInQuotes = rows.map(row => {
+    const rows = layout
+      .filter(row => row.indexOf('/') !== 0)
+      .map(row => {
+        const [componentPart, sizePart = ''] = row
+          .replace(/ +/g, ' ')
+          .split('/');
+        const trimmedRow = componentPart.trim();
+        const trimmedSize = sizePart.trim();
+        const sizing = trimmedSize
+          ? /^[0-9]+$/.test(trimmedSize)
+            ? `${trimmedSize}fr`
+            : trimmedSize
+          : '';
+        return {
+          colCount: trimmedRow.split(' ').length,
+          components: trimmedRow,
+          sizing,
+        };
+      });
+    let maxCols = Math.max(...rows.map(row => row.colCount));
+    let generatedRows = rows.map(row => {
       if (/^[. ]*$/.test(row.components)) {
         const sizing = row.sizing ? ` ${row.sizing}` : ' 1fr';
-        return `"${'. '.repeat(maxCols).slice(0, -1)}"${sizing}`;
+        return {
+          components: '. '.repeat(maxCols).slice(0, -1),
+          sizing,
+        };
       } else {
         const spacesNotUsed = (maxCols - (row.colCount % maxCols)) % maxCols;
         const sizing = row.sizing ? ` ${row.sizing}` : '';
-        return `"${row.components + ' .'.repeat(spacesNotUsed)}"${sizing}`;
+        return {
+          components: row.components + ' .'.repeat(spacesNotUsed),
+          sizing,
+        };
       }
     });
-    return `${wrappedInQuotes.join(' ')} /${' 1fr'.repeat(maxCols)}`;
+    const colSizingPart = layout.find(row => row.indexOf('/') === 0);
+    let cols;
+    if (colSizingPart) {
+      const trimmedCol = colSizingPart
+        .replace(/^\//, '')
+        .replace(/ +/g, ' ')
+        .replace(/\./g, '1fr')
+        .trim();
+      if (~trimmedCol.indexOf('|')) {
+        let currentCount = 0;
+        const splits = trimmedCol
+          .split(/\|[^ ]*/)
+          .map(split => {
+            const trimmedSplit = split.trim();
+            const count =
+              trimmedSplit === '' ? 0 : trimmedSplit.split(' ').length;
+            currentCount += count;
+            return currentCount;
+          })
+          .slice(0, -1);
+        maxCols += splits.length;
+        generatedRows = generatedRows.map(({ components, sizing }) => {
+          const newComponents = components
+            .split(' ')
+            .reduce(
+              (acc, component, i) => {
+                const inject = splits.includes(i)
+                  ? [acc.prev !== component ? '.' : component, component]
+                  : [component];
+                return {
+                  prev: component,
+                  components: acc.components.concat(inject),
+                };
+              },
+              {
+                prev: '',
+                components: [],
+              },
+            )
+            .components.concat(Array(splits.length).fill('.'))
+            .slice(0, maxCols)
+            .join(' ');
+          return {
+            components: newComponents,
+            sizing,
+          };
+        });
+      }
+      const colCount = trimmedCol === '' ? 0 : trimmedCol.split(' ').length;
+      cols = (
+        trimmedCol.replace(/\|( |$)/g, '1fr$1').replace(/\|([^ ]*)/, '$1') +
+        ' 1fr'.repeat(Math.max(0, maxCols - colCount))
+      ).trim();
+    } else {
+      cols = ' 1fr'.repeat(maxCols).slice(1);
+    }
+    const wrappedInQuotes = generatedRows.map(row => {
+      return `"${row.components}"${row.sizing}`;
+    });
+    return `${wrappedInQuotes.join(' ')} / ${cols}`;
   }
 
   /**
