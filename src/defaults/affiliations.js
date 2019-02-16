@@ -461,7 +461,7 @@ export const defaultAffiliationSettings = {
     layouts: {
       0: ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events'],
       720: [
-        '/ . . . 200px',
+        '/ 200px . . 200px',
         'Logo Logo Logo Logo',
         'Office Office Clock Clock',
         '. . . .',
