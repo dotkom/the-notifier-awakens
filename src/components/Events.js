@@ -127,7 +127,7 @@ class EventsFromSplash extends Component {
               flex-wrap: wrap;
             }
             .time-element {
-              width: 100%;
+              min-width: 100%;
             }
           }
           .time-element {
