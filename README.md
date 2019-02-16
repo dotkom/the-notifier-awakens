@@ -484,8 +484,8 @@ You can achieve everything with plain CSS, but The Notifier Grid Systemᵗᵐ is
       // You can also just use plain CSS Grid template syntax
 +     1024: `
 +       "Clock Clock-2 ThirdClock"
-+       "GitHub" 2fr
-+       / repeat(3, 1fr)
++       "GitHub GitHub GitHub" 2fr
++       / 1fr 1fr 1fr
 +     `,
 
       2048: [
