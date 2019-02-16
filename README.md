@@ -89,7 +89,7 @@ The full example can be used through `linjeforening.somedata.business`, `linjefo
 
 </details>
 
-More examples:
+### More examples:
 
 <details>
 <summary>Plain REST example</summary>
