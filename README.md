@@ -494,7 +494,7 @@ You can achieve everything with plain CSS, but The Notifier Grid Systemᵗᵐ is
 
         // Adding a value to the filled area is also possible: '/ 400px 400px |100px 400px'
 
-        'Clock Clock-2 ThirdClock', // Adds a '.' (space) with size of 1fr between Clock-2 and ThirdClock
+        'Clock Clock-2 ThirdClock', // Adds a "." (space) with size of 1fr between Clock-2 and ThirdClock
         'GitHub GitHub GitHub', // Stretch GitHub over 1fr, not adding a blank space
 
         // Actually generated: 'Clock Clock-2 . ThirdClock'
