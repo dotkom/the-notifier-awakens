@@ -5,6 +5,15 @@
   min-height: 100vh;
 }
 
+.App::before {
+  content: '';
+  display: block;
+  position: fixed;
+  cursor: none;
+  width: 1px;
+  height: 100vh;
+}
+
 .menu-button {
   font-size: 2em;
   padding: 10px 10px 0 0;
@@ -37,18 +46,10 @@
   height: 100px;
 }
 
-.menu-bar:before {
-  content: '';
-  display: inline-block;
-  vertical-align: middle;
-  cursor: none;
-  width: 100px;
-  height: 100%;
-}
-
 .open-settings {
   cursor: pointer;
   font-size: 2.5em;
+  margin: 1rem;
   display: flex;
 }
 
