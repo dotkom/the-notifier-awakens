@@ -135,8 +135,19 @@ class App extends Component {
             [typeToLower]: `${affiliation}${type}:${typeToLower}`,
           },
         };
+      } else if (typeof component === 'object') {
+        const type = component.template.split('-')[0];
+        const typeToLower = type.toLowerCase();
+        return {
+          ...component,
+          apis: {
+            [typeToLower]: `${affiliation}${type}:${typeToLower}`,
+            ...component.apis,
+          },
+        };
       }
-      return component;
+
+      throw new Error(`Cannot create element from a ${typeof component}`);
     });
   }
 
