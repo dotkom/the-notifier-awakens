@@ -166,12 +166,15 @@ export default class ComponentController extends Component {
         className += ` ${component.id}`;
       }
 
+      const { dark = true } = this.props.affiliation;
+
       return (
         <Style key={i}>
           {modularCSS}
           <div className={className}>
             <Component
               {...this.props.affiliation}
+              dark={dark}
               translate={e => this.translate(e)}
               updateSettings={this.props.updateSettings}
               settings={this.props.settings}
