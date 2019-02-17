@@ -536,10 +536,6 @@ export const defaultAffiliationSettings = {
         template: 'Events',
         type: '{{eventType}}',
         count: '{{eventCount}}',
-        apis: {
-          events: 'onlineEvents:events',
-        },
-        css: '.Events { padding-bottom: 0; }',
       },
     ],
   },

@@ -100,6 +100,7 @@ class EventsFromSplash extends Component {
             flex-direction: column;
             max-width: 800px;
             margin: auto;
+            margin-bottom: -32px;
             color: ${textColor};
           }
           .main-event {
