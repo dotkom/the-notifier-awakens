@@ -4,9 +4,10 @@ import './Logo.css';
 export default class Logo extends Component {
   render() {
     return (
-      <div
+      <img
         className="logo-container"
-        style={{ backgroundImage: `url(${this.props.url})` }}
+        alt={`Logo for ${this.props.translate(this.props.affiliation)}`}
+        src={this.props.url}
       />
     );
   }
