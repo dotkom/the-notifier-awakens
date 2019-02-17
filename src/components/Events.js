@@ -56,11 +56,14 @@ export default class Events extends Component {
 
 class EventsFromSplash extends Component {
   render() {
+    const { dark = true } = this.props;
     const {
       events = [],
-      lineColor = '#ddd',
-      dateColor = '#f80',
-      timeColor = 'rgba(160, 160, 160, .8)',
+      lineColor = dark ? '#ddd' : '#888',
+      dateColor = dark ? '#f80' : '#f80',
+      timeColor = dark ? 'rgba(160, 160, 160, .8)' : '#888',
+      textColor = dark ? '#ccc' : '#666',
+      titleColor = dark ? '#fff' : '#222',
       IfPropIsOnline,
     } = this.props;
     let prevStartDate = '';
@@ -97,6 +100,7 @@ class EventsFromSplash extends Component {
             flex-direction: column;
             max-width: 800px;
             margin: auto;
+            color: ${textColor};
           }
           .main-event {
             max-width: 800px;
@@ -110,12 +114,13 @@ class EventsFromSplash extends Component {
           }
           .main-title {
             font-size: 2em;
-            color: #fff;
+            color: ${titleColor};
           }
           .main-start-datetime:first-letter {
             text-transform: capitalize;
           }
           .main-start-datetime {
+            color: ${timeColor};
             margin: 10px 0 0 50px;
           }
           .event {

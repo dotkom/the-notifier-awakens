@@ -486,6 +486,9 @@ ${this.state.css}`;
               components={this.state.components}
               translations={this.state.translations}
               settings={this.state.settings}
+              affiliation={
+                defaultAffiliationSettings[this.state.settings.affiliation]
+              }
               updateSettings={this.updateSettings}
               apiService={this.APIService}
               data={data}

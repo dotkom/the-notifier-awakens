@@ -151,6 +151,7 @@ export default class ComponentController extends Component {
   grid-area: ${component.id || templateName};
   padding: ${component.padding || '32px'};
   overflow: ${component.overflow || 'hidden'};
+  box-sizing: border-box;
 }
 .${templateName}:hover {
   overflow: auto;
@@ -170,6 +171,7 @@ export default class ComponentController extends Component {
           {modularCSS}
           <div className={className}>
             <Component
+              {...this.props.affiliation}
               translate={e => this.translate(e)}
               updateSettings={this.props.updateSettings}
               settings={this.props.settings}
@@ -184,6 +186,7 @@ export default class ComponentController extends Component {
               }
               getApiName={prop => this.getApiName(component, prop)}
               IfPropIsOnline={IfPropIsOnline}
+              affiliation={this.props.settings.affiliation}
               {...dataProps}
             />
           </div>

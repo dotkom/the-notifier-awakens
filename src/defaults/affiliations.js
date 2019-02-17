@@ -196,14 +196,22 @@ export const defaultAffiliationSettings = {
   abakus: {
     name: 'Abakus',
     color: 'darkred',
-    layouts: [['Events', 'Events-1']],
+    dark: false,
+    layouts: {
+      0: ['Logo', 'Clock', '.', 'Events'],
+      800: ['/ 1fr 300px', 'Logo Clock / 200px', '.', 'Events Events'],
+    },
+    css: ', {background: linear-gradient(0deg, #f4f4f4, #eae9e8);}',
     components: [
-      'Events',
       {
-        template: 'Events-1',
-        apis: {
-          events: 'onlineEvents:events',
-        },
+        template: 'Logo',
+        url: 'https://abakus.no/7df72c5a291dc020b1d5d191ba50d871.png',
+      },
+      { template: 'Clock', apis: { time: 'seconds' } },
+      {
+        template: 'Events',
+        dark: false,
+        apis: { events: '{{affiliation}}Events:events' },
       },
     ],
   },
@@ -462,7 +470,7 @@ export const defaultAffiliationSettings = {
       0: ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events'],
       720: [
         '/ 200px . . 200px',
-        'Logo Logo Logo Logo',
+        'Logo Logo Logo',
         'Office Office Clock Clock',
         '. . . .',
         'Bus Bus Bus2 Bus2',

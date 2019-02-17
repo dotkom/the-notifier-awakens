@@ -47,7 +47,7 @@ export default class Clock extends Component {
             y="50%"
             alignmentBaseline="middle"
             textAnchor="middle"
-            fill="white"
+            fill={this.props.dark ? 'white' : '#222'}
             fontFamily="Righteous"
             fontSize="80px"
           >
