@@ -22,6 +22,11 @@ export default class ComponentController extends Component {
         return this.translate(input);
       },
     });
+
+    props.updateSettings({
+      ...props.settings,
+      affiliation: props.match.params.affiliation,
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -29,7 +34,6 @@ export default class ComponentController extends Component {
       this.props.updateSettings({
         ...this.props.settings,
         affiliation: nextProps.match.params.affiliation,
-        changedUrl: false,
       });
     }
   }

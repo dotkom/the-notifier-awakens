@@ -112,9 +112,8 @@ class App extends Component {
       settings.css,
       this.state,
     );
-    const changedUrl = settings.changedUrl === false ? true : true;
     this.APIService.updateSettings(defaultApis, settings, newState.components);
-    this.setState({ ...this.state, ...newState, settings, changedUrl });
+    this.setState({ ...this.state, ...newState, settings });
   }
 
   closeSettings() {
@@ -509,7 +508,6 @@ ${this.state.css}`;
                     <div className="Components">
                       <ComponentController
                         {...props}
-                        changedUrl={this.state.changedUrl}
                         components={this.state.components}
                         translations={this.state.translations}
                         settings={this.state.settings}
