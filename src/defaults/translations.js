@@ -1,7 +1,4 @@
 export const defaultTranslations = {
-  online: 'Online',
-  abakus: 'Abakus',
-  delta: 'Delta',
   glos: 'Gløshaugen',
   glossyd: 'Gløshaugen syd',
   magn: 'M. Berrføtts',
@@ -9,7 +6,6 @@ export const defaultTranslations = {
   prof: 'Professor Brochs gate',
   tarbus: 'tarbus.no',
   enturbus: 'entur.no',
-  dotkom: 'dotKom',
   affiliation: 'Lineforening',
   settings: 'Alternativer',
   chooseVisibility: 'Velg hva som vises',
