@@ -1,0 +1,17 @@
+.ChooseAffiliation {
+  text-align: center;
+}
+
+.affiliation-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.item {
+  cursor: pointer;
+}
+
+.item:hover {
+  opacity: 0.5;
+}

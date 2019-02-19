@@ -10,4 +10,6 @@ export { default as Loading } from './Loading';
 export { default as CIStatus } from './CIStatus';
 export { default as Icon } from './Icon';
 export { default as Timetable } from './Timetable';
+export { default as ChooseAffiliation } from './ChooseAffiliation';
+export { default as HTML } from './HTML';
 export { default as CustomComponent } from './CustomComponent';
