@@ -387,6 +387,29 @@ export const defaultApis = {
       },
     },
   },
+  hcEvents: {
+    interval: 10000,
+    url: 'https://chemie.no/#HTML:#social',
+    cors: true,
+    cache: true,
+    transformDates: {
+      'events.*.startDate': 'DD MMMM - HH:mm',
+    },
+    transform: {
+      events: {
+        '{{#each this.div.a.slice(0, 5)}}': {
+          startDate: '{{p[1]}}',
+          title: '{{p[0]}}',
+        },
+      },
+    },
+  },
+  hcEventsHTML: {
+    interval: 10000,
+    cors: true,
+    cache: true,
+    url: 'https://chemie.no/#HTML2HTML:#social',
+  },
   /* XML
   bergEvents: {
     interval: 100,
