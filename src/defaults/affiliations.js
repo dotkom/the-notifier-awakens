@@ -188,7 +188,7 @@ export const defaultAffiliationSettings = {
       },
     ],
   },
-  choose: {
+  '': {
     name: 'Velg linjeforening',
     color: '#002c7c',
     layouts: {
