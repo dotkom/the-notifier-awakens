@@ -1,9 +1,26 @@
 import { API_ROOT } from '../constants';
 import { parseString } from 'xml2js';
+import * as htmlparser from 'fast-xml-parser';
 import Storage from './storage';
 
 export const cache = new Storage(null, 'cache');
 export const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
+const selfClosingTags = [
+  'area',
+  'base',
+  'br',
+  'col',
+  'embed',
+  'hr',
+  'img',
+  'input',
+  'link',
+  'meta',
+  'param',
+  'source',
+  'track',
+  'wbr',
+].join('|');
 
 export const API = {
   /**
@@ -175,7 +192,7 @@ export const API = {
         return;
       }
     }
-    const prefix = req.cors || true ? CORS_PROXY : '';
+    const prefix = req.cors === true ? CORS_PROXY : '';
     delete req.cors;
     return fetch(API.transformURL(prefix + url), req)
       .then(res => res.text())
@@ -206,14 +223,32 @@ export const API = {
     useCache = false,
     returns = 'text',
   ) {
+    let returnType = 'HTML';
+    switch (returns) {
+      case 'document':
+        returnType = 'HTML2JSON';
+        break;
+      case 'text':
+        returnType = 'HTML2TEXT';
+        break;
+      case 'html':
+        returnType = 'HTML2HTML';
+        break;
+      default:
+        returnType = 'HTML2JSON';
+        break;
+    }
     if (useCache) {
-      const cacheData = API.getRequestFromCache(url, `HTML:${selector}`);
+      const cacheData = API.getRequestFromCache(
+        url,
+        `${returnType}:${selector}`,
+      );
       if (cacheData || cacheData === '') {
         callback(cacheData);
         return;
       }
     }
-    const prefix = req.cors || true ? CORS_PROXY : '';
+    const prefix = req.cors === true ? CORS_PROXY : '';
     delete req.cors;
     return fetch(API.transformURL(prefix + url), req)
       .then(res => res.text())
@@ -234,13 +269,20 @@ export const API = {
             if (returns === 'html') {
               scrapeData = element.outerHTML;
             } else if (returns === 'document') {
-              avoidReturn = true;
-              parseString(element.outerHTML, (_, parsedResult) => {
-                scrapeData = parsedResult;
-                callback(scrapeData);
-                if (useCache)
-                  API.addRequestToCache(url, `HTML:${selector}`, scrapeData);
-              });
+              scrapeData = htmlparser.parse(
+                element.outerHTML.replace(
+                  new RegExp(`<(${selfClosingTags})>`, 'g'),
+                  '<$1 />',
+                ),
+              );
+              callback(scrapeData);
+              if (useCache) {
+                API.addRequestToCache(
+                  url,
+                  `${returnType}:${selector}`,
+                  scrapeData,
+                );
+              }
             } else {
               scrapeData = element.innerText;
             }
@@ -249,7 +291,7 @@ export const API = {
         if (!avoidReturn) {
           callback(scrapeData);
           if (useCache)
-            API.addRequestToCache(url, `HTML:${selector}`, scrapeData);
+            API.addRequestToCache(url, `${returnType}:${selector}`, scrapeData);
         }
       })
       .catch(error);
@@ -278,7 +320,7 @@ export const API = {
         return;
       }
     }
-    const prefix = req.cors || true ? CORS_PROXY : '';
+    const prefix = req.cors === true ? CORS_PROXY : '';
     delete req.cors;
     return fetch(API.transformURL(prefix + url), req)
       .then(res => res.text())

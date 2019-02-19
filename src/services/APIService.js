@@ -9,6 +9,24 @@ import { get, set } from 'object-path';
 import ST from 'stjs';
 import fecha from 'fecha';
 
+fecha.i18n = {
+  ...fecha.i18n,
+  monthNames: [
+    'Januar',
+    'Februar',
+    'Mars',
+    'April',
+    'Mai',
+    'Juni',
+    'Juli',
+    'August',
+    'September',
+    'Oktober',
+    'November',
+    'Desember',
+  ],
+};
+
 /**
  * The API service schedules API requests and passes the
  * data from the requests to a callback function.
@@ -170,9 +188,19 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
               this.handleFail(key, apiName);
             };
             const urlTransformed = this.transform(url);
+            const browserHeaders = {
+              'User-Agent': navigator.userAgent,
+            };
             this.request(
               urlTransformed,
-              Object.assign({ cors: api.cors }, api.request),
+              {
+                cors: api.cors,
+                ...api.request,
+                headers: {
+                  ...((api.request || {}).headers || {}),
+                  ...(api.browser ? browserHeaders : {}),
+                },
+              },
               callback,
               error,
               useCache,
@@ -226,10 +254,12 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
   }
 
   handleFail(key, apiName) {
+    // Commented out because it is more important that it fails instead of giving up API
     const { delay = 0 } = this.apis[apiName];
-    this.apis[apiName].delay = delay + 1;
+    if (delay < 10) {
+      this.apis[apiName].delay = delay * delay + 1;
+    }
     if (key in this.failedApis) {
-      // Commented out because it is more important that it fails instead of giving up API
       //this.failedApis[key]++;
     } else {
       this.failedApis[key] = 1;
@@ -337,9 +367,9 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
         API.getRSSRequest(coreUrl, req, callback, error, useCache);
         break;
       case 'HTML':
-        const returnsDoc = 'document';
       // eslint-disable-next-line
       case 'HTML2JSON':
+        const returnsDoc = 'document';
       // eslint-disable-next-line
       case 'HTML2HTML':
         const returnsHTML = returnsDoc || 'html';
