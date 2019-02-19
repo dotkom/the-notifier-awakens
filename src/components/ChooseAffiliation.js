@@ -16,13 +16,13 @@ export default class ChooseAffiliation extends Component {
 
   chooseAffiliation(affiliation) {
     if (affiliation in this.affiliations) {
-      this.updateSettings('affiliation', affiliation);
+      this.props.changeAffiliation(affiliation);
     }
   }
 
   render() {
     const affiliations = Object.entries(this.affiliations)
-      .filter(([key]) => key !== 'debug' && key !== 'choose')
+      .filter(([key]) => key && key !== 'debug')
       .map(([key, { name = '' }], i) => (
         <div
           key={i}

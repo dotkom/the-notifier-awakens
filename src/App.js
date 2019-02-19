@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Style from 'style-it';
 import { get, set } from 'object-path';
 import * as Sentry from '@sentry/browser';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 
 import './App.css';
 
@@ -25,9 +26,9 @@ if (process.env.REACT_APP_SENTRY) {
 }
 
 class App extends Component {
-  constructor() {
-    super();
-    const { affiliation = 'choose', css: globalCSS = '' } = defaultSettings;
+  constructor(props) {
+    super(props);
+    const { affiliation = '', css: globalCSS = '' } = defaultSettings;
 
     this.updateData = this.updateData.bind(this);
     this.updateSettings = this.updateSettings.bind(this);
@@ -39,12 +40,6 @@ class App extends Component {
       this.updateData,
       defaultSettings,
       this.state.components,
-    );
-
-    this.ComponentController = new ComponentController(
-      this.state.components,
-      defaultSettings,
-      defaultTranslations,
     );
 
     this.startAPIs();
@@ -66,6 +61,7 @@ class App extends Component {
 
     return {
       data: {},
+      affiliation,
       components: autofilledComponents,
       layouts,
       style,
@@ -116,8 +112,9 @@ class App extends Component {
       settings.css,
       this.state,
     );
+    const changedUrl = settings.changedUrl === false ? true : true;
     this.APIService.updateSettings(defaultApis, settings, newState.components);
-    this.setState({ ...this.state, ...newState, settings });
+    this.setState({ ...this.state, ...newState, settings, changedUrl });
   }
 
   closeSettings() {
@@ -461,19 +458,32 @@ ${this.state.css}`;
       <Style>
         {globalCSS}
         <div className="App">
-          <div className="menu-bar">
-            <div
-              className="open-settings"
-              onClick={() =>
-                this.setState({ ...this.state, settingsOpen: true })
-              }
-              title={this.translate('settings')}
-            >
-              <Icon name="Settings" />
-            </div>
-          </div>
-          <Style>
-            {`.Settings {
+          <Router>
+            <Route
+              path="/:affiliation(.*)"
+              render={props => {
+                if (
+                  !(
+                    props.match.params.affiliation in defaultAffiliationSettings
+                  )
+                ) {
+                  return <Redirect to="/" />;
+                }
+                return (
+                  <>
+                    <div className="menu-bar">
+                      <div
+                        className="open-settings"
+                        onClick={() =>
+                          this.setState({ ...this.state, settingsOpen: true })
+                        }
+                        title={this.translate('settings')}
+                      >
+                        <Icon name="Settings" />
+                      </div>
+                    </div>
+                    <Style>
+                      {`.Settings {
   ${this.state.settingsOpen ? '' : 'display: none;'}
   position: absolute;
   z-index: 999;
@@ -483,28 +493,37 @@ ${this.state.css}`;
   right: 0;
   background: rgba(0, 0, 0, 0.7);
 }`}
-            <div className="Settings">
-              <Settings
-                translate={e => this.translate(e)}
-                updateSettings={this.updateSettings}
-                closeSettings={() => this.closeSettings()}
-                settings={this.state.settings}
-              />
-            </div>
-          </Style>
-          <div className="Components">
-            <ComponentController
-              components={this.state.components}
-              translations={this.state.translations}
-              settings={this.state.settings}
-              affiliation={
-                defaultAffiliationSettings[this.state.settings.affiliation]
-              }
-              updateSettings={this.updateSettings}
-              apiService={this.APIService}
-              data={data}
+                      <div className="Settings">
+                        <Settings
+                          translate={e => this.translate(e)}
+                          updateSettings={this.updateSettings}
+                          closeSettings={() => this.closeSettings()}
+                          settings={this.state.settings}
+                          affiliation={this.state.settings.affiliation}
+                          changeAffiliation={affiliation =>
+                            props.history.push(affiliation)
+                          }
+                        />
+                      </div>
+                    </Style>
+                    <div className="Components">
+                      <ComponentController
+                        {...props}
+                        changedUrl={this.state.changedUrl}
+                        components={this.state.components}
+                        translations={this.state.translations}
+                        settings={this.state.settings}
+                        affiliation={this.state.settings.affiliation}
+                        updateSettings={this.updateSettings}
+                        apiService={this.APIService}
+                        data={data}
+                      />
+                    </div>
+                  </>
+                );
+              }}
             />
-          </div>
+          </Router>
         </div>
       </Style>
     );

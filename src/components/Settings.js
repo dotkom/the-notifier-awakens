@@ -17,7 +17,7 @@ export default class Settings extends Component {
 
   chooseAffiliation(affiliation) {
     if (affiliation in this.affiliations) {
-      this.updateSettings('affiliation', affiliation);
+      this.props.changeAffiliation(affiliation);
     }
   }
 

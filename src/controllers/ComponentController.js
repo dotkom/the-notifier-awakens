@@ -5,6 +5,7 @@ import * as Components from '../components';
 import { get } from 'object-path';
 import { injectValuesIntoString, pipes, pipeTransform } from '../utils';
 import { IfPropIsOnline } from './IfPropIsOnline';
+import { defaultAffiliationSettings } from '../defaults';
 
 /**
  * The component controller passes data into components and
@@ -21,6 +22,20 @@ export default class ComponentController extends Component {
         return this.translate(input);
       },
     });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.location.pathname !== this.props.location.pathname) {
+      this.props.updateSettings({
+        ...this.props.settings,
+        affiliation: nextProps.match.params.affiliation,
+        changedUrl: false,
+      });
+    }
+  }
+
+  changeAffiliation(affiliation) {
+    this.props.history.push(affiliation);
   }
 
   translate(word) {
@@ -166,14 +181,16 @@ export default class ComponentController extends Component {
         className += ` ${component.id}`;
       }
 
-      const { dark = true } = this.props.affiliation;
+      const { dark = true } = defaultAffiliationSettings[
+        this.props.affiliation
+      ];
 
       return (
         <Style key={i}>
           {modularCSS}
           <div className={className}>
             <Component
-              {...this.props.affiliation}
+              {...defaultAffiliationSettings[this.props.affiliation]}
               dark={dark}
               translate={e => this.translate(e)}
               updateSettings={this.props.updateSettings}
@@ -189,7 +206,10 @@ export default class ComponentController extends Component {
               }
               getApiName={prop => this.getApiName(component, prop)}
               IfPropIsOnline={IfPropIsOnline}
-              affiliation={this.props.settings.affiliation}
+              affiliation={this.props.affiliation}
+              changeAffiliation={affiliation =>
+                this.changeAffiliation(affiliation)
+              }
               {...dataProps}
             />
           </div>
