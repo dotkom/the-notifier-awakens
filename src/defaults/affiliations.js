@@ -188,6 +188,15 @@ export const defaultAffiliationSettings = {
       },
     ],
   },
+  choose: {
+    name: 'Velg linjeforening',
+    color: '#002c7c',
+    layouts: {
+      0: ['ChooseAffiliation'],
+      600: ['/ | minmax(600px,1fr) |', 'ChooseAffiliation / 1fr'],
+    },
+    components: ['ChooseAffiliation'],
+  },
   aarhonen: {
     name: 'H.M. Aarhønen',
     color: 'purple',
@@ -318,8 +327,8 @@ export const defaultAffiliationSettings = {
   },
   hc: {
     name: 'Høiskolens Chemikerforening',
-    color: 'yellow',
-    components: [],
+    color: '#003d54',
+    components: ['Events'],
   },
   hybrida: {
     name: 'Hybrida',

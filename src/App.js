@@ -27,7 +27,7 @@ if (process.env.REACT_APP_SENTRY) {
 class App extends Component {
   constructor() {
     super();
-    const { affiliation = 'debug', css: globalCSS = '' } = defaultSettings;
+    const { affiliation = 'choose', css: globalCSS = '' } = defaultSettings;
 
     this.updateData = this.updateData.bind(this);
     this.updateSettings = this.updateSettings.bind(this);
