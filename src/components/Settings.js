@@ -30,12 +30,14 @@ export default class Settings extends Component {
           <h2>{this.props.translate('affiliation')}</h2>
         </label>
         <select
-          defaultValue={affiliation}
+          value={affiliation}
           onChange={e => this.chooseAffiliation(e.target.value)}
         >
-          {Object.keys(this.affiliations || {}).map((a, i) => (
-            <option value={a} key={i}>
-              {this.props.translate(a)}
+          {Object.entries(this.affiliations || {})
+            .filter(([key]) => key !== 'debug')
+            .map(([key, { name = '' }], i) => (
+              <option value={key} key={i}>
+                {this.props.translate(name || key)}
             </option>
           ))}
         </select>
