@@ -1,5 +1,5 @@
 export const defaultSettings = {
-  affiliation: 'online',
+  affiliation: 'choose',
   //busApi: 'enturbus',
   //bus: 'glos',
   //bus2: 'prof',
