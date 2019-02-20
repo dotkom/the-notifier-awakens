@@ -15,3 +15,7 @@
 .item:hover {
   opacity: 0.5;
 }
+
+.item.no-components {
+  opacity: 0.5;
+}

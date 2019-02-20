@@ -23,13 +23,16 @@ export default class ChooseAffiliation extends Component {
   render() {
     const affiliations = Object.entries(this.affiliations)
       .filter(([key]) => key && key !== 'debug')
-      .map(([key, { name = '' }], i) => (
+      .sort(([, a], [, b]) => a.name.localeCompare(b.name))
+      .sort(([, a], [, b]) => !a.components.length - !b.components.length)
+      .map(([key, { name = '', components = [] }], i) => (
         <div
           key={i}
-          className="item"
+          className={`item${components.length ? '' : ' no-components'}`}
           onClick={() => this.chooseAffiliation(key)}
         >
           {name || key}
+          {components.length ? ` (${components.length})` : ''}
         </div>
       ));
 

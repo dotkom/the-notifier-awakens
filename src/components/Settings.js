@@ -33,13 +33,17 @@ export default class Settings extends Component {
           value={affiliation}
           onChange={e => this.chooseAffiliation(e.target.value)}
         >
+          <option value="">
+            {this.props.translate(this.affiliations[''].name)}
+          </option>
           {Object.entries(this.affiliations || {})
-            .filter(([key]) => key !== 'debug')
+            .filter(([key]) => key && key !== 'debug')
+            .sort(([, a], [, b]) => a.name.localeCompare(b.name))
             .map(([key, { name = '' }], i) => (
               <option value={key} key={i}>
                 {this.props.translate(name || key)}
-            </option>
-          ))}
+              </option>
+            ))}
         </select>
       </div>
     );
@@ -53,6 +57,7 @@ export default class Settings extends Component {
         <div className="section">
           {affiliationInput}
           <h2>{this.props.translate('chooseVisibility')}</h2>
+          <iframe src="/" width="100%" height="100%" title="Mini display" />
         </div>
       </>
     );
