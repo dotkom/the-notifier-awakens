@@ -35,6 +35,33 @@ h6 {
   font-weight: normal;
 }
 
+input[type='text'],
+input:not([type]) {
+  appearance: none;
+  background-color: rgba(0, 0, 0, 0.16);
+  border: none;
+  padding: 0.5em 0.6em;
+  box-sizing: border-box;
+  font-size: 1em;
+  color: #ddd;
+  outline: none;
+  flex: 1 0 auto;
+}
+
+.form-group {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  margin: 1em;
+}
+
+.form-group > label {
+  flex: 1 0 auto;
+  font-size: 1.2em;
+  color: #fff;
+  text-align: left;
+}
+
 .loading {
   width: 100%;
   height: 100%;

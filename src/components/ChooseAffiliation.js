@@ -7,6 +7,9 @@ export default class ChooseAffiliation extends Component {
     super(props);
     this.updateSettings = this.updateSettings.bind(this);
     this.affiliations = defaultAffiliationSettings;
+    this.state = {
+      searchFilter: '',
+    };
   }
 
   updateSettings(key, value) {
@@ -20,9 +23,20 @@ export default class ChooseAffiliation extends Component {
     }
   }
 
+  filterSearch(searchFilter) {
+    this.setState({ ...this.state, searchFilter });
+  }
+
   render() {
     const affiliations = Object.entries(this.affiliations)
-      .filter(([key]) => key && key !== 'debug')
+      .filter(
+        ([key, { name }]) =>
+          key &&
+          key !== 'debug' &&
+          new RegExp(`(^| )${this.state.searchFilter.toLowerCase()}`).test(
+            name.toLowerCase(),
+          ),
+      )
       .sort(([, a], [, b]) => a.name.localeCompare(b.name))
       .sort(([, a], [, b]) => !a.components.length - !b.components.length)
       .map(([key, { name = '', components = [] }], i) => (
@@ -39,6 +53,13 @@ export default class ChooseAffiliation extends Component {
     return (
       <>
         <h1>Velg linjeforening</h1>
+        <div className="form-group">
+          <input
+            placeholder="Søk i linjeforeninger..."
+            type="text"
+            onChange={e => this.filterSearch(e.target.value)}
+          />
+        </div>
         <div className="affiliation-list">{affiliations}</div>
       </>
     );
