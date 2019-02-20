@@ -1,11 +1,11 @@
 export const defaultSettings = {
-  affiliation: 'online',
+  affiliation: '',
   //busApi: 'enturbus',
   //bus: 'glos',
   //bus2: 'prof',
   eventType: 'splash',
   showCoffeePots: true,
   showClock: true,
-  eventCount: 7,
+  eventCount: 6,
   busCount: 6,
 };

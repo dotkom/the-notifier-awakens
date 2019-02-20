@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { format, isToday } from 'date-fns';
 import * as locale from 'date-fns/locale/nb';
+import { Loading } from './';
 
 export default class Events extends Component {
   render() {
@@ -55,22 +56,35 @@ export default class Events extends Component {
 
 class EventsFromSplash extends Component {
   render() {
+    const { dark = true } = this.props;
     const {
       events = [],
-      lineColor = '#ddd',
-      dateColor = '#f80',
-      timeColor = 'rgba(160, 160, 160, .8)',
+      lineColor = dark ? '#ddd' : '#888',
+      dateColor = dark ? '#f80' : '#f80',
+      timeColor = dark ? 'rgba(160, 160, 160, .8)' : '#888',
+      textColor = dark ? '#ccc' : '#666',
+      titleColor = dark ? '#fff' : '#222',
       IfPropIsOnline,
     } = this.props;
+    let prevStartDate = '';
     const eventList = events.slice(1).map((e, i) => {
       const { startDateFormatted, startTimeFormatted, title } = e;
       const style = {};
+      let skipDate = false;
+      if (prevStartDate !== startDateFormatted || i === 0) {
+        skipDate = true;
+        prevStartDate = startDateFormatted;
+      }
 
       return (
         <div key={i} className="event event-splash" style={style}>
-          <span className="title">{title}</span>
-          <span className="start-date">{startDateFormatted}</span>
-          <span className="start-time">{startTimeFormatted}</span>
+          <span className="start-date">
+            {skipDate ? startDateFormatted : ''}
+          </span>
+          <span className="time-element">
+            <span className="start-time">{startTimeFormatted}</span>
+            <span className="title">{title}</span>
+          </span>
         </div>
       );
     });
@@ -79,13 +93,15 @@ class EventsFromSplash extends Component {
 
     return (
       <>
-        <style scoped>
+        <style>
           {`
           .event-list {
             display: flex;
             flex-direction: column;
             max-width: 800px;
             margin: auto;
+            margin-bottom: -32px;
+            color: ${textColor};
           }
           .main-event {
             max-width: 800px;
@@ -99,19 +115,32 @@ class EventsFromSplash extends Component {
           }
           .main-title {
             font-size: 2em;
-            color: #fff;
+            color: ${titleColor};
           }
           .main-start-datetime:first-letter {
             text-transform: capitalize;
           }
           .main-start-datetime {
+            color: ${timeColor};
             margin: 10px 0 0 50px;
-          }
-          .main-start-datetime::before {
-            content: '- ';
           }
           .event {
             display: flex;
+            flex-wrap: nowrap;
+          }
+          @media (max-width: 640px) {
+            .event {
+              flex-wrap: wrap;
+            }
+            .time-element {
+              min-width: 100%;
+            }
+          }
+          .time-element {
+            order: 2;
+            display: flex;
+            flex-flow: row nowrap;
+            flex: 1;
           }
           .title {
             order: 3;
@@ -136,6 +165,9 @@ class EventsFromSplash extends Component {
           .start-date:first-letter {
             text-transform: capitalize;
           }
+          .start-date:empty {
+            padding: 0;
+          }
           .start-date {
             order: 1;
             flex: 0 0 215px;
@@ -157,7 +189,7 @@ class EventsFromSplash extends Component {
           prop="events"
           props={this.props}
           else={apiName => `Kunne ikke koble til ${apiName}`}
-          loading={i => `Henter arrangementer...${'.'.repeat(i)}`}
+          loading={<Loading />}
         >
           <div className="main-event">
             <span className="main-title">{firstEvent.title}</span>

@@ -9,6 +9,24 @@ import { get, set } from 'object-path';
 import ST from 'stjs';
 import fecha from 'fecha';
 
+fecha.i18n = {
+  ...fecha.i18n,
+  monthNames: [
+    'Januar',
+    'Februar',
+    'Mars',
+    'April',
+    'Mai',
+    'Juni',
+    'Juli',
+    'August',
+    'September',
+    'Oktober',
+    'November',
+    'Desember',
+  ],
+};
+
 /**
  * The API service schedules API requests and passes the
  * data from the requests to a callback function.
@@ -63,6 +81,8 @@ export default class APIService {
    */
   stop() {
     clearInterval(this.interval);
+
+    return this.time;
   }
 
   /**
@@ -168,9 +188,19 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
               this.handleFail(key, apiName);
             };
             const urlTransformed = this.transform(url);
+            const browserHeaders = {
+              'User-Agent': navigator.userAgent,
+            };
             this.request(
               urlTransformed,
-              Object.assign({ cors: api.cors }, api.request),
+              {
+                cors: api.cors,
+                ...api.request,
+                headers: {
+                  ...((api.request || {}).headers || {}),
+                  ...(api.browser ? browserHeaders : {}),
+                },
+              },
               callback,
               error,
               useCache,
@@ -224,10 +254,12 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
   }
 
   handleFail(key, apiName) {
+    // Commented out because it is more important that it fails instead of giving up API
     const { delay = 0 } = this.apis[apiName];
-    this.apis[apiName].delay = delay + 1;
+    if (delay < 10) {
+      this.apis[apiName].delay = delay * delay + 1;
+    }
     if (key in this.failedApis) {
-      // Commented out because it is more important that it fails instead of giving up API
       //this.failedApis[key]++;
     } else {
       this.failedApis[key] = 1;
@@ -272,8 +304,18 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
     return this.apis;
   }
 
-  updateSettings(settings) {
+  updateSettings(apis, settings, components = []) {
+    this.stop();
+    this.apis = apis;
     this.settings = settings;
+    this.usedApis = {};
+    this.failedApis = {};
+    this.workingApis = {};
+
+    if (components.length) {
+      this.updateUsedApis(components);
+    }
+    this.start();
   }
 
   scrape(path, data, callback, useCache) {
@@ -325,6 +367,8 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
         API.getRSSRequest(coreUrl, req, callback, error, useCache);
         break;
       case 'HTML':
+      // eslint-disable-next-line
+      case 'HTML2JSON':
         const returnsDoc = 'document';
       // eslint-disable-next-line
       case 'HTML2HTML':

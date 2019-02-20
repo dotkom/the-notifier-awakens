@@ -1,0 +1,20 @@
+.Settings {
+  background: rgba(0, 0, 0, 0);
+  position: fixed !important;
+  --scale: 0.5;
+}
+
+.iframe-wrapper {
+  overflow: hidden;
+  width: calc(100vw * var(--scale));
+  height: calc(100vh * var(--scale));
+}
+
+iframe {
+  width: calc(100% / var(--scale));
+  height: calc(100% / var(--scale));
+  transform: scale(var(--scale));
+  transform-origin: 0 0;
+  border: none;
+  outline: none;
+}

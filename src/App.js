@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Style from 'style-it';
 import { get, set } from 'object-path';
 import * as Sentry from '@sentry/browser';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 
 import './App.css';
 
@@ -16,6 +17,7 @@ import {
 } from './defaults';
 import { DEBUG } from './constants';
 import { injectValuesIntoString } from './utils';
+import { Settings, Icon } from './components';
 
 if (process.env.REACT_APP_SENTRY) {
   Sentry.init({
@@ -24,9 +26,26 @@ if (process.env.REACT_APP_SENTRY) {
 }
 
 class App extends Component {
-  constructor() {
-    super();
-    const { affiliation = 'debug', css: globalCSS = '' } = defaultSettings;
+  constructor(props) {
+    super(props);
+    const { affiliation = '', css: globalCSS = '' } = defaultSettings;
+
+    this.updateData = this.updateData.bind(this);
+    this.updateSettings = this.updateSettings.bind(this);
+
+    this.state = this.updateState(affiliation, globalCSS);
+
+    this.APIService = new APIService(
+      defaultApis,
+      this.updateData,
+      defaultSettings,
+      this.state.components,
+    );
+
+    this.startAPIs();
+  }
+
+  updateState(affiliation, globalCSS = '', prevState = {}) {
     const {
       components = [],
       layouts,
@@ -40,22 +59,9 @@ class App extends Component {
       affiliation,
     );
 
-    this.updateData = this.updateData.bind(this);
-
-    this.APIService = new APIService(
-      defaultApis,
-      this.updateData,
-      defaultSettings,
-      autofilledComponents,
-    );
-    this.ComponentController = new ComponentController(
-      autofilledComponents,
-      defaultSettings,
-      defaultTranslations,
-    );
-
-    this.state = {
+    return {
       data: {},
+      affiliation,
       components: autofilledComponents,
       layouts,
       style,
@@ -63,21 +69,15 @@ class App extends Component {
       css,
       color,
       settings: defaultSettings,
+      translations: defaultTranslations,
+      settingsOpen:
+        'settingsOpen' in prevState ? prevState.settingsOpen : false,
     };
-
-    this.startAPIs();
   }
 
   updateData(key, data, useCache = false, scrape = []) {
-    this.ComponentController.update(key, data);
-    const newData = Object.assign({}, this.state.data, {
-      [key]: data,
-    });
-    this.setState(
-      Object.assign({}, this.state, {
-        data: newData,
-      }),
-    );
+    const newData = { ...this.state.data, [key]: data };
+    this.setState({ ...this.state, data: newData });
 
     if (scrape.length) {
       for (const path of scrape) {
@@ -97,14 +97,8 @@ class App extends Component {
               null,
             );
             set(data, selector, newValue);
-            const newData = Object.assign({}, this.state.data, {
-              [key]: data,
-            });
-            this.setState(
-              Object.assign({}, this.state, {
-                data: newData,
-              }),
-            );
+            const newData = { ...this.state.data, [key]: data };
+            this.setState({ ...this.state, data: newData });
           },
           useCache,
         );
@@ -113,13 +107,17 @@ class App extends Component {
   }
 
   updateSettings(settings) {
-    this.APIService.updateSettings(settings);
-    this.ComponentController.updateSettings(settings);
-    this.setState(
-      Object.assign({}, this.state, {
-        settings,
-      }),
+    const newState = this.updateState(
+      settings.affiliation,
+      settings.css,
+      this.state,
     );
+    this.APIService.updateSettings(defaultApis, settings, newState.components);
+    this.setState({ ...this.state, ...newState, settings });
+  }
+
+  closeSettings() {
+    this.setState({ ...this.state, settingsOpen: false });
   }
 
   autofillComponents(components, affiliation) {
@@ -133,16 +131,35 @@ class App extends Component {
             [typeToLower]: `${affiliation}${type}:${typeToLower}`,
           },
         };
+      } else if (typeof component === 'object') {
+        const type = component.template.split('-')[0];
+        const typeToLower = type.toLowerCase();
+        return {
+          ...component,
+          apis: {
+            [typeToLower]: `${affiliation}${type}:${typeToLower}`,
+            ...component.apis,
+          },
+        };
       }
-      return component;
+
+      throw new Error(`Cannot create element from a ${typeof component}`);
     });
   }
 
-  startAPIs() {
-    this.APIService.start();
+  translate(word) {
+    if (word in this.state.translations) {
+      return this.state.translations[word];
+    }
+
+    return word;
+  }
+
+  startAPIs(time = 0) {
+    this.APIService.start(time);
   }
   stopAPIs() {
-    this.APIService.stop();
+    return this.APIService.stop();
   }
   updateAPIs() {
     this.APIService.update();
@@ -154,28 +171,118 @@ class App extends Component {
    * Examples:
 ```javascript
 getGridTemplateFromLayoutArray(['a b', 'a b']) => '"a b" "a b" / 1fr 1fr'
-getGridTemplateFromLayoutArray(['a a', '. b b']) => '"a a ." ". b b" / 1fr 1fr 1fr'
-getGridTemplateFromLayoutArray(['a', 'a b b']) => '"a . ." "a b b" / 1fr 1fr 1fr'
+getGridTemplateFromLayoutArray(['a a', '. b b ']) => '"a a ." ". b b" / 1fr 1fr 1fr'
+getGridTemplateFromLayoutArray(['a ', 'a b  b']) => '"a . ." "a b b" / 1fr 1fr 1fr'
+getGridTemplateFromLayoutArray(['a / auto', 'a b  b / 2 ']) => '"a . ." auto "a b b" 2fr / 1fr 1fr 1fr'
+getGridTemplateFromLayoutArray(['a / auto', 'a b  b / 2 ']) => '"a . ." auto "a b b" 2fr / 1fr 1fr 1fr'
 ```
+   * See ./App.test.js for more examples.
    * 
    * @param {array} layout Array with placed components.
    * 
    * @returns {string} A string for grid-template.
    */
   getGridTemplateFromLayoutArray(layout) {
-    const cols = layout.reduce(
-      (acc, row) => Math.max(acc, row.split(' ').length),
-      0,
-    );
-    const wrappedInQuotes = layout
-      .map(
-        e =>
-          `"${e + ' .'.repeat((cols - (e.split(' ').length % cols)) % cols)}"` +
-          (/^[. ]+$/.test(e) ? ' 1fr' : ''),
-      )
-      .join(' ');
+    if (typeof layout === 'string') {
+      return layout.replace(/[\n\r]/g, ' ');
+    }
 
-    return `${wrappedInQuotes} /${' 1fr'.repeat(cols)}`;
+    const rows = layout
+      .filter(row => row.indexOf('/') !== 0)
+      .map(row => {
+        const [componentPart, sizePart = ''] = row
+          .replace(/ +/g, ' ')
+          .split('/');
+        const trimmedRow = componentPart.trim();
+        const trimmedSize = sizePart.trim();
+        const sizing = trimmedSize
+          ? /^[0-9]+$/.test(trimmedSize)
+            ? `${trimmedSize}fr`
+            : trimmedSize
+          : '';
+        return {
+          colCount: trimmedRow.split(' ').length,
+          components: trimmedRow,
+          sizing,
+        };
+      });
+    let maxCols = Math.max(...rows.map(row => row.colCount));
+    let generatedRows = rows.map(row => {
+      if (/^[. ]*$/.test(row.components)) {
+        const sizing = row.sizing ? ` ${row.sizing}` : ' 1fr';
+        return {
+          components: '. '.repeat(maxCols).slice(0, -1),
+          sizing,
+        };
+      } else {
+        const spacesNotUsed = (maxCols - (row.colCount % maxCols)) % maxCols;
+        const sizing = row.sizing ? ` ${row.sizing}` : '';
+        return {
+          components: row.components + ' .'.repeat(spacesNotUsed),
+          sizing,
+        };
+      }
+    });
+    const colSizingPart = layout.find(row => row.indexOf('/') === 0);
+    let cols;
+    if (colSizingPart) {
+      const trimmedCol = colSizingPart
+        .replace(/^\//, '')
+        .replace(/ +/g, ' ')
+        .replace(/\./g, '1fr')
+        .trim();
+      if (~trimmedCol.indexOf('|')) {
+        let currentCount = 0;
+        const splits = trimmedCol
+          .split(/\|[^ ]*/)
+          .map(split => {
+            const trimmedSplit = split.trim();
+            const count =
+              trimmedSplit === '' ? 0 : trimmedSplit.split(' ').length;
+            currentCount += count;
+            return currentCount;
+          })
+          .slice(0, -1);
+        maxCols += splits.length;
+        generatedRows = generatedRows.map(({ components, sizing }) => {
+          const newComponents = components
+            .split(' ')
+            .reduce(
+              (acc, component, i) => {
+                const inject = splits.includes(i)
+                  ? [acc.prev !== component ? '.' : component, component]
+                  : [component];
+                return {
+                  prev: component,
+                  components: acc.components.concat(inject),
+                };
+              },
+              {
+                prev: '',
+                components: [],
+              },
+            )
+            .components.concat(Array(splits.length).fill('.'))
+            .slice(0, maxCols)
+            .join(' ');
+          return {
+            components: newComponents,
+            sizing,
+          };
+        });
+      }
+      const colCount = trimmedCol === '' ? 0 : trimmedCol.split(' ').length;
+      cols = (
+        trimmedCol.replace(/\|( |$)/g, '1fr$1').replace(/\|([^ ]*)/, '$1') +
+        ' 1fr'.repeat(Math.max(0, maxCols - colCount))
+      ).trim();
+    } else {
+      cols = ' 1fr'.repeat(maxCols).slice(1);
+    }
+    const wrappedInQuotes = generatedRows.map(row => {
+      return `"${row.components}"${row.sizing}`;
+    });
+    return `${wrappedInQuotes.join(' ')} / ${cols}`;
   }
 
   /**
@@ -312,10 +419,6 @@ generateLayoutCSS(layouts) => `
 
   render() {
     const { data, layouts, color } = this.state;
-    const componentsRendered = this.ComponentController.renderComponents(
-      this.APIService,
-      data,
-    );
 
     let globalCSS = `
 ${this.generateLayoutCSS(layouts)}
@@ -341,6 +444,11 @@ ${this.generateLayoutCSS(layouts)}
   ${DEBUG ? 'border: 1px solid rgba(255, 0, 0, .5);' : ''}
 }
 
+.Components {
+  transition: filter .2s;
+  ${this.state.settingsOpen ? `filter: blur(5px) brightness(.5);` : ''}
+}
+
 ${this.state.globalCSS}
 
 ${this.state.css}`;
@@ -349,7 +457,71 @@ ${this.state.css}`;
       <Style>
         {globalCSS}
         <div className="App">
-          <div className="Components">{componentsRendered}</div>
+          <Router>
+            <Route
+              path="/:affiliation(.*)"
+              render={props => {
+                if (
+                  !(
+                    props.match.params.affiliation in defaultAffiliationSettings
+                  )
+                ) {
+                  return <Redirect to="/" />;
+                }
+                return (
+                  <>
+                    <div className="menu-bar">
+                      <div
+                        className="open-settings"
+                        onClick={() =>
+                          this.setState({ ...this.state, settingsOpen: true })
+                        }
+                        title={this.translate('settings')}
+                      >
+                        <Icon name="Settings" />
+                      </div>
+                    </div>
+                    <Style>
+                      {`.Settings {
+  ${this.state.settingsOpen ? '' : 'display: none;'}
+  position: absolute;
+  z-index: 999;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+}`}
+                      <div className="Settings">
+                        <Settings
+                          translate={e => this.translate(e)}
+                          updateSettings={this.updateSettings}
+                          closeSettings={() => this.closeSettings()}
+                          settings={this.state.settings}
+                          affiliation={props.match.params.affiliation}
+                          changeAffiliation={affiliation =>
+                            props.history.push(affiliation)
+                          }
+                        />
+                      </div>
+                    </Style>
+                    <div className="Components">
+                      <ComponentController
+                        {...props}
+                        components={this.state.components}
+                        translations={this.state.translations}
+                        settings={this.state.settings}
+                        affiliation={props.match.params.affiliation}
+                        updateSettings={this.updateSettings}
+                        apiService={this.APIService}
+                        data={data}
+                      />
+                    </div>
+                  </>
+                );
+              }}
+            />
+          </Router>
         </div>
       </Style>
     );

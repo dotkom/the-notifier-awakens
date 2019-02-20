@@ -1,7 +1,7 @@
 .Logo > .logo-container {
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: bottom left;
-  min-height: 18vw;
-  margin: 16px;
+  object-fit: contain;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px;
 }

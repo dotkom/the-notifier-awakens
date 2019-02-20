@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Style from 'style-it';
 
 import * as Components from '../components';
 import { get } from 'object-path';
 import { injectValuesIntoString, pipes, pipeTransform } from '../utils';
 import { IfPropIsOnline } from './IfPropIsOnline';
+import { defaultAffiliationSettings } from '../defaults';
 
 /**
  * The component controller passes data into components and
@@ -13,29 +14,37 @@ import { IfPropIsOnline } from './IfPropIsOnline';
  * @param {array} componentsData List of component data.
  * @param {array} components List of components that should be rendered.
  */
-export default class ComponentController {
-  constructor(components, settings = {}, translations = {}) {
-    this.components = components;
-    this.settings = settings;
-    this.translations = translations;
+export default class ComponentController extends Component {
+  constructor(props) {
+    super(props);
     this.pipes = Object.assign({}, pipes, {
       translate: (input, params) => {
         return this.translate(input);
       },
     });
+
+    props.updateSettings({
+      ...props.settings,
+      affiliation: props.match.params.affiliation,
+    });
   }
 
-  updateSettings(settings) {
-    this.settings = settings;
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.location.pathname !== this.props.location.pathname) {
+      this.props.updateSettings({
+        ...this.props.settings,
+        affiliation: nextProps.match.params.affiliation,
+      });
+    }
   }
 
-  updateTranslations(translations) {
-    this.translations = translations;
+  changeAffiliation(affiliation) {
+    this.props.history.push(affiliation);
   }
 
   translate(word) {
-    if (word in this.translations) {
-      return this.translations[word];
+    if (word in this.props.translations) {
+      return this.props.translations[word];
     }
 
     return word;
@@ -44,7 +53,7 @@ export default class ComponentController {
   injectSettings(value, fallbackValue = null, defaultMatch = ':') {
     return injectValuesIntoString(
       value,
-      this.settings,
+      this.props.settings,
       fallbackValue,
       '{{',
       '}}',
@@ -55,7 +64,7 @@ export default class ComponentController {
   update(key, data) {}
 
   getComponents() {
-    return this.components;
+    return this.props.components;
   }
 
   isPropOffline(apiService, component, prop) {
@@ -96,8 +105,8 @@ export default class ComponentController {
     return prop;
   }
 
-  renderComponents(apiService, data = {}) {
-    return this.components.map((component, i) => {
+  render() {
+    return (this.props.components || []).map((component, i) => {
       const directTemplate = !!~component.template.indexOf('<');
       let template = directTemplate
         ? 'CustomComponent'
@@ -124,11 +133,14 @@ export default class ComponentController {
         (acc, [key, path]) => {
           const pathParsed = this.injectSettings(path, '');
           const [apiPath, pathInRequest] = pathParsed.split(':');
-          if (apiPath in data) {
-            const dataFromApi = data[apiPath];
-            const dataToKey = pathInRequest
+          if (apiPath in this.props.data) {
+            const dataFromApi = this.props.data[apiPath];
+            let dataToKey = pathInRequest
               ? get(dataFromApi, pathInRequest, '')
               : dataFromApi;
+            if (key === pathInRequest && dataToKey === '') {
+              dataToKey = dataFromApi;
+            }
             return Object.assign({}, acc, {
               [key]: dataToKey,
             });
@@ -141,7 +153,7 @@ export default class ComponentController {
       if (directTemplate) {
         dataProps.template = injectValuesIntoString(
           dataProps.template,
-          Object.assign({}, this.settings, dataProps),
+          Object.assign({}, this.props.settings, dataProps),
           '',
           '{{',
           '}}',
@@ -158,6 +170,10 @@ export default class ComponentController {
   grid-area: ${component.id || templateName};
   padding: ${component.padding || '32px'};
   overflow: ${component.overflow || 'hidden'};
+  box-sizing: border-box;
+}
+.${templateName}:hover {
+  overflow: auto;
 }
 `;
       if ('css' in dataProps) {
@@ -169,23 +185,35 @@ export default class ComponentController {
         className += ` ${component.id}`;
       }
 
+      const { dark = true } = defaultAffiliationSettings[
+        this.props.affiliation
+      ];
+
       return (
         <Style key={i}>
           {modularCSS}
           <div className={className}>
             <Component
+              {...defaultAffiliationSettings[this.props.affiliation]}
+              dark={dark}
               translate={e => this.translate(e)}
+              updateSettings={this.props.updateSettings}
+              settings={this.props.settings}
               isPropOffline={prop =>
-                this.isPropOffline(apiService, component, prop)
+                this.isPropOffline(this.props.apiService, component, prop)
               }
               isPropOnline={prop =>
-                this.isPropOnline(apiService, component, prop)
+                this.isPropOnline(this.props.apiService, component, prop)
               }
               getPropFailCount={prop =>
-                this.getPropFailCount(apiService, component, prop)
+                this.getPropFailCount(this.props.apiService, component, prop)
               }
               getApiName={prop => this.getApiName(component, prop)}
               IfPropIsOnline={IfPropIsOnline}
+              affiliation={this.props.affiliation}
+              changeAffiliation={affiliation =>
+                this.changeAffiliation(affiliation)
+              }
               {...dataProps}
             />
           </div>

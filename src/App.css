@@ -5,6 +5,15 @@
   min-height: 100vh;
 }
 
+.App::before {
+  content: '';
+  display: block;
+  position: fixed;
+  cursor: none;
+  width: 1px;
+  height: 100vh;
+}
+
 .menu-button {
   font-size: 2em;
   padding: 10px 10px 0 0;
@@ -16,8 +25,36 @@
   opacity: 0.8;
 }
 
+.menu-bar {
+  position: fixed;
+  z-index: 999;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  height: 50px;
+  transition-property: opacity, height;
+  transition-duration: 0.2s;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
+.menu-bar:hover {
+  opacity: 1;
+  height: 100px;
+}
+
+.open-settings {
+  cursor: pointer;
+  font-size: 2.5em;
+  margin: 1rem;
+  display: flex;
+}
+
 .Components {
   width: 100%;
-  min-height: 100%;
+  min-height: 100vh;
   display: grid;
 }

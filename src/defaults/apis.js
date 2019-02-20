@@ -232,6 +232,13 @@ export const defaultApis = {
       },
     },
   },
+  timetable: {
+    interval: 10000,
+    cache: true,
+    url:
+      'https://ntnu.1024.no/[[now|date YYYY]]/[[now|date M|ifmatches [1-6] var host]]/{{users.*}}/#HTML2HTML:#schedule',
+    users: {},
+  },
   bartebuss: {
     interval: 10,
     offline: true,
@@ -240,6 +247,22 @@ export const defaultApis = {
       glos: { fromCity: '16010265', toCity: '16011265' },
       samf: { fromCity: '16010476', toCity: '16011476' },
     },
+  },
+  droneCI: {
+    interval: 100,
+    url: 'https://{{hosts.*}}/api/repos/{{users.*}}/{{repos.*}}/builds',
+    transform: {
+      '{{#each this}}': {
+        user: '{{author}}',
+        image: '{{author_avatar}}',
+        message: '{{message}}',
+        status: '{{status}}',
+        link: '{{link_url}}',
+      },
+    },
+    hosts: {},
+    users: {},
+    repos: {},
   },
   enturbus: {
     interval: 10,
@@ -254,7 +277,7 @@ export const defaultApis = {
       query: `{
         quay(id: "NSR:Quay:{{stops.*.fromCity,toCity}}") {
           name
-          estimatedCalls(numberOfDepartures: [[busCount|* 2]]) {
+          estimatedCalls(numberOfDepartures: [[busCount|* 4]]) {
             aimedDepartureTime
             expectedDepartureTime
             realtime
@@ -272,7 +295,7 @@ export const defaultApis = {
       }`,
     },
     stops: {
-      glos: { fromCity: '75707', toCity: '75708' },
+      glos: { fromCity: '75708', toCity: '75707' },
       samf: { fromCity: '73103', toCity: '73101' },
       prof: { fromCity: '71204', toCity: '71195' },
     },
@@ -307,15 +330,17 @@ export const defaultApis = {
   mannhulletEvents: {
     interval: 1000,
     url: 'https://www.mannhullet.no/arrangement/list#HTML:#container table',
+    cors: true,
+    cache: true,
     transformDates: {
       'events.*.startDate,endDate': 'HH:mm DD/MM YYYY',
     },
     transform: {
       events: {
-        '{{#each table.tbody[0].tr}}': {
-          startDate: '{{td[0].p[0].span[0]._}} 2019',
-          endDate: '{{td[0].p[1].span[0]._}} 2019',
-          title: '{{td[1].a[0].h3[0]}}',
+        '{{#each table.tbody.tr}}': {
+          startDate: '{{td[0].p[0].span}} 2019',
+          endDate: '{{td[0].p[1].span}} 2019',
+          title: '{{td[1].a.h3}}',
           image: 'https://www.mannhullet.no/img/logo-small-black.png',
         },
       },
@@ -363,6 +388,29 @@ export const defaultApis = {
         },
       },
     },
+  },
+  hcEvents: {
+    interval: 10000,
+    url: 'https://chemie.no/#HTML:#social',
+    cors: true,
+    cache: true,
+    transformDates: {
+      'events.*.startDate': 'DD MMMM - HH:mm',
+    },
+    transform: {
+      events: {
+        '{{#each this.div.a.slice(0, 5)}}': {
+          startDate: '{{p[1]}}',
+          title: '{{p[0]}}',
+        },
+      },
+    },
+  },
+  hcEventsHTML: {
+    interval: 10000,
+    cors: true,
+    cache: true,
+    url: 'https://chemie.no/#HTML2HTML:#social',
   },
   /* XML
   bergEvents: {

@@ -13,22 +13,35 @@ export default class Office extends Component {
     if (this.props.servants) {
       const timeNow = new Date();
       list = this.props.servants.map((e, i) => {
-        let style = { opacity: 0.5 };
+        let style = {
+          whiteSpace: 'nowrap',
+          display: 'flex',
+          flexFlow: 'row nowrap',
+        };
+        let nameStyle = {
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          padding: '0 .2em',
+        };
         let arrow = '';
         if (isAfter(timeNow, e.start.date) && isBefore(timeNow, e.end.date)) {
-          style = { color: 'white' };
+          style = { ...style, color: 'white' };
           arrow = '◀';
         }
 
         return (
           <div key={i} style={style}>
-            {e.pretty} - {e.summary} {arrow}
+            {e.pretty} - <span style={nameStyle}>{e.summary + ' '}</span>{' '}
+            {arrow}
           </div>
         );
       });
     } else {
       list = (
-        <span style={{ fontStyle: 'italic' }}>- {this.props.message}</span>
+        <span style={{ fontStyle: 'italic' }}>
+          {this.props.message ? `- ${this.props.message}` : ''}
+        </span>
       );
     }
 

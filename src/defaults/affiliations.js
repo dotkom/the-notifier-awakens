@@ -188,6 +188,15 @@ export const defaultAffiliationSettings = {
       },
     ],
   },
+  '': {
+    name: 'Velg linjeforening',
+    color: '#002c7c',
+    layouts: {
+      0: ['ChooseAffiliation'],
+      600: ['/ | minmax(600px,1fr) |', 'ChooseAffiliation / 1fr'],
+    },
+    components: ['ChooseAffiliation'],
+  },
   aarhonen: {
     name: 'H.M. Aarhønen',
     color: 'purple',
@@ -195,15 +204,23 @@ export const defaultAffiliationSettings = {
   },
   abakus: {
     name: 'Abakus',
-    color: 'red',
-    layouts: [['Events', 'Events-1']],
+    color: 'darkred',
+    dark: false,
+    layouts: {
+      0: ['Logo', 'Clock', '.', 'Events'],
+      800: ['/ 1fr 300px', 'Logo Clock / 200px', '.', 'Events Events'],
+    },
+    css: ', {background: linear-gradient(0deg, #f4f4f4, #eae9e8);}',
     components: [
-      'Events',
       {
-        template: 'Events-1',
-        apis: {
-          events: 'onlineEvents:events',
-        },
+        template: 'Logo',
+        url: 'https://abakus.no/7df72c5a291dc020b1d5d191ba50d871.png',
+      },
+      { template: 'Clock', apis: { time: 'seconds' } },
+      {
+        template: 'Events',
+        dark: false,
+        apis: { events: '{{affiliation}}Events:events' },
       },
     ],
   },
@@ -310,8 +327,8 @@ export const defaultAffiliationSettings = {
   },
   hc: {
     name: 'Høiskolens Chemikerforening',
-    color: 'yellow',
-    components: [],
+    color: '#003d54',
+    components: ['Events'],
   },
   hybrida: {
     name: 'Hybrida',
@@ -459,25 +476,30 @@ export const defaultAffiliationSettings = {
   online: {
     name: 'Online',
     layouts: {
-      0: ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events', 'Articles'],
+      0: ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events'],
       720: [
-        'Logo Logo Logo Logo Logo Logo',
-        'Office Office Office Clock Clock Clock',
-        '. . . . . .',
-        'Bus Bus Bus Bus2 Bus2 Bus2',
-        '. . . . . .',
-        'Events Events Events Events Events .',
+        '/ 200px . . 200px',
+        'Logo Logo Logo',
+        'Office Office Clock Clock',
+        '. . . .',
+        'Bus Bus Bus2 Bus2',
+        '. . . .',
+        'Events Events Events .',
       ],
       1400: [
         'Logo Logo Office Clock',
+        '. . . .',
+        '. . Events Events / 1',
         'Bus Bus Events Events',
         'Bus2 Bus2 Events Events',
-        '. Articles Articles .',
+        '. . Events Events / 1',
+        '. . . .',
       ],
       2000: [
         'Logo Logo Office Clock',
+        '. . .',
         'Bus Bus2 Events Events',
-        '. . Events Events',
+        '. . .',
       ],
     },
     components: [
@@ -487,7 +509,7 @@ export const defaultAffiliationSettings = {
       },
       {
         template: 'Clock',
-        css: ', {text-align: center;}',
+        apis: { time: 'seconds' },
       },
       {
         template: 'Bus',
@@ -523,10 +545,6 @@ export const defaultAffiliationSettings = {
         template: 'Events',
         type: '{{eventType}}',
         count: '{{eventCount}}',
-        apis: {
-          events: 'onlineEvents:events',
-        },
-        css: '.Events { padding-bottom: 0; }',
       },
     ],
   },
