@@ -330,15 +330,17 @@ export const defaultApis = {
   mannhulletEvents: {
     interval: 1000,
     url: 'https://www.mannhullet.no/arrangement/list#HTML:#container table',
+    cors: true,
+    cache: true,
     transformDates: {
       'events.*.startDate,endDate': 'HH:mm DD/MM YYYY',
     },
     transform: {
       events: {
-        '{{#each table.tbody[0].tr}}': {
-          startDate: '{{td[0].p[0].span[0]._}} 2019',
-          endDate: '{{td[0].p[1].span[0]._}} 2019',
-          title: '{{td[1].a[0].h3[0]}}',
+        '{{#each table.tbody.tr}}': {
+          startDate: '{{td[0].p[0].span}} 2019',
+          endDate: '{{td[0].p[1].span}} 2019',
+          title: '{{td[1].a.h3}}',
           image: 'https://www.mannhullet.no/img/logo-small-black.png',
         },
       },
