@@ -48,6 +48,10 @@ input:not([type]) {
   flex: 1 0 auto;
 }
 
+input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
 .form-group {
   display: flex;
   flex-flow: row wrap;
