@@ -498,7 +498,7 @@ ${this.state.css}`;
                           updateSettings={this.updateSettings}
                           closeSettings={() => this.closeSettings()}
                           settings={this.state.settings}
-                          affiliation={this.state.settings.affiliation}
+                          affiliation={props.match.params.affiliation}
                           changeAffiliation={affiliation =>
                             props.history.push(affiliation)
                           }
@@ -511,7 +511,7 @@ ${this.state.css}`;
                         components={this.state.components}
                         translations={this.state.translations}
                         settings={this.state.settings}
-                        affiliation={this.state.settings.affiliation}
+                        affiliation={props.match.params.affiliation}
                         updateSettings={this.updateSettings}
                         apiService={this.APIService}
                         data={data}

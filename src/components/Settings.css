@@ -1,6 +1,6 @@
 .Settings {
   background: rgba(0, 0, 0, 0);
-  position: fixed;
+  position: fixed !important;
   --scale: 0.5;
 }
 

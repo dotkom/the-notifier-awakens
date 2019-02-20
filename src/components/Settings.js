@@ -13,6 +13,12 @@ export default class Settings extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.affiliation === '' && nextProps.affiliation) {
+      this.setState({ ...this.state, affiliation: nextProps.affiliation });
+    }
+  }
+
   updateSettings(key, value) {
     const settings = { ...this.props.settings, [key]: value };
     this.props.updateSettings(settings);
