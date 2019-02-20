@@ -295,7 +295,7 @@ export const defaultApis = {
       }`,
     },
     stops: {
-      glos: { fromCity: '75707', toCity: '75708' },
+      glos: { fromCity: '75708', toCity: '75707' },
       samf: { fromCity: '73103', toCity: '73101' },
       prof: { fromCity: '71204', toCity: '71195' },
     },
