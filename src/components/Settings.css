@@ -15,4 +15,6 @@ iframe {
   height: calc(100% / var(--scale));
   transform: scale(var(--scale));
   transform-origin: 0 0;
+  border: none;
+  outline: none;
 }
