@@ -8,6 +8,9 @@ export default class Settings extends Component {
     super(props);
     this.updateSettings = this.updateSettings.bind(this);
     this.affiliations = defaultAffiliationSettings;
+    this.state = {
+      affiliation: props.affiliation,
+    };
   }
 
   updateSettings(key, value) {
@@ -18,11 +21,18 @@ export default class Settings extends Component {
   chooseAffiliation(affiliation) {
     if (affiliation in this.affiliations) {
       this.props.changeAffiliation(affiliation);
+      this.props.closeSettings();
+    }
+  }
+
+  selectAffiliation(affiliation) {
+    if (affiliation in this.affiliations) {
+      this.setState({ ...this.state, affiliation });
     }
   }
 
   render() {
-    const { affiliation = '' } = this.props.settings;
+    const { affiliation = '' } = this.state;
 
     const affiliationInput = (
       <div className="input-group">
@@ -31,7 +41,7 @@ export default class Settings extends Component {
         </label>
         <select
           value={affiliation}
-          onChange={e => this.chooseAffiliation(e.target.value)}
+          onChange={e => this.selectAffiliation(e.target.value)}
         >
           <option value="">
             {this.props.translate(this.affiliations[''].name)}
@@ -39,9 +49,9 @@ export default class Settings extends Component {
           {Object.entries(this.affiliations || {})
             .filter(([key]) => key && key !== 'debug')
             .sort(([, a], [, b]) => a.name.localeCompare(b.name))
-            .map(([key, { name = '' }], i) => (
+            .map(([key, { name = '', components = [] }], i) => (
               <option value={key} key={i}>
-                {this.props.translate(name || key)}
+                {this.props.translate(name || key)} ({components.length})
               </option>
             ))}
         </select>
@@ -56,8 +66,15 @@ export default class Settings extends Component {
         )}
         <div className="section">
           {affiliationInput}
+          <button
+            onClick={() => this.chooseAffiliation(this.state.affiliation)}
+          >
+            Lagre
+          </button>
           <h2>{this.props.translate('chooseVisibility')}</h2>
-          <iframe src="/" width="100%" height="100%" title="Mini display" />
+          <div className="iframe-wrapper">
+            <iframe src={`/${this.state.affiliation}`} title="Mini display" />
+          </div>
         </div>
       </>
     );
