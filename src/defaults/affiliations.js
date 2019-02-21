@@ -220,6 +220,7 @@ export const defaultAffiliationSettings = {
       {
         template: 'Events',
         dark: false,
+        count: '{{eventCount:5}}',
         apis: { events: '{{affiliation}}Events:events' },
       },
     ],

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { format, isToday } from 'date-fns';
+import { format, isToday, startOfToday } from 'date-fns';
 import * as locale from 'date-fns/locale/nb';
 import { Loading } from './';
 
@@ -19,7 +19,9 @@ export default class Events extends Component {
     }
     const now = Date.now();
     const eventsMapped = events
-      .filter(e => now <= new Date(e.endDate || e.startDate).getTime())
+      .filter(
+        e => startOfToday(now) <= new Date(e.endDate || e.startDate).getTime(),
+      )
       .slice(0, count)
       .map(e => {
         const startDateTime = e.startDate;
