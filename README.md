@@ -21,6 +21,9 @@ in 2014...
 ```bash
 yarn # Install dependencies
 yarn start # Start development
+
+# Setup own CORS server allowing requests from anywhere
+yarn cors-server
 ```
 
 # How it works

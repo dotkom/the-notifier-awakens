@@ -23,4 +23,7 @@ cors_proxy
   })
   .listen(port, host, () => {
     console.log(`Listening on ${host}:${port}`);
+    console.log(
+      'Change host and port by setting CORS_HOST and CORS_PORT in .env.local',
+    );
   });
