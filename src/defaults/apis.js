@@ -377,6 +377,7 @@ export const defaultApis = {
   },
   abakusEvents: {
     interval: 100,
+    cors: true,
     url:
       'https://lego.abakus.no/api/v1/events/?date_after=[[now.date]]&page_size=[[eventCount:5]]',
     transform: {
