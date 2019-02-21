@@ -4,7 +4,9 @@ import * as htmlparser from 'fast-xml-parser';
 import Storage from './storage';
 
 export const cache = new Storage(null, 'cache');
-export const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
+export const CORS_PROXY =
+  (process.env.REACT_APP_CORS_URL || 'https://cors-anywhere.herokuapp.com') +
+  '/';
 const selfClosingTags = [
   'area',
   'base',
