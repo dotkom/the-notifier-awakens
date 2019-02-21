@@ -7,14 +7,15 @@ const fs = require('fs');
 const dotenv = require('dotenv');
 const cors_proxy = require('cors-anywhere');
 
+dotenv.config();
 const envConfig = dotenv.parse(fs.readFileSync('.env.local'));
 for (let k in envConfig) {
   process.env[k] = envConfig[k];
 }
 
-const host = process.env.CORS_HOST || '0.0.0.0';
+const host = process.env.CORS_HOST || 'localhost';
 const port = process.env.CORS_PORT || 8080;
-const domains = process.env.WHITELIST_DOMAINS || '';
+const domains = process.env.ORIGIN_WHITELIST || '';
 
 cors_proxy
   .createServer({

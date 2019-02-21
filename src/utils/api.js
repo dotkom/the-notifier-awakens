@@ -2,11 +2,25 @@ import { API_ROOT } from '../constants';
 import { parseString } from 'xml2js';
 import * as htmlparser from 'fast-xml-parser';
 import Storage from './storage';
+import { whiteList } from '../constants';
 
 export const cache = new Storage(null, 'cache');
-export const CORS_PROXY =
-  (process.env.REACT_APP_CORS_URL || 'https://cors-anywhere.herokuapp.com') +
-  '/';
+export const CORS_PROXY = process.env.REACT_APP_CORS_URL + '/';
+export const CORS_PROXY_BACKUP = 'https://cors-anywhere.herokuapp.com/';
+export const addCors = (url, enable = true) => {
+  if (!enable) {
+    return url;
+  }
+  const removeScheme = ~url.indexOf('//') ? url.split('//')[1] : url;
+  const domain = removeScheme
+    .toLowerCase()
+    .split(/[^a-z.ø]/)[0]
+    .split('.')
+    .slice(-2)
+    .join('.');
+  return (~whiteList.indexOf(domain) ? CORS_PROXY : CORS_PROXY_BACKUP) + url;
+};
+
 const selfClosingTags = [
   'area',
   'base',
@@ -160,9 +174,9 @@ export const API = {
         return;
       }
     }
-    const prefix = req.cors ? CORS_PROXY : '';
+    const enableCors = !!req.cors;
     delete req.cors;
-    return fetch(API.transformURL(prefix + url), req)
+    return fetch(API.transformURL(addCors(url, enableCors)), req)
       .then(res => res.json())
       .then(data => {
         callback(data);
@@ -194,9 +208,9 @@ export const API = {
         return;
       }
     }
-    const prefix = req.cors === true ? CORS_PROXY : '';
+    const enableCors = req.cors !== false;
     delete req.cors;
-    return fetch(API.transformURL(prefix + url), req)
+    return fetch(API.transformURL(addCors(url, enableCors)), req)
       .then(res => res.text())
       .then(res => {
         parseString(res, (_, parsedResult) => {
@@ -250,9 +264,9 @@ export const API = {
         return;
       }
     }
-    const prefix = req.cors === true ? CORS_PROXY : '';
+    const enableCors = req.cors !== false;
     delete req.cors;
-    return fetch(API.transformURL(prefix + url), req)
+    return fetch(API.transformURL(addCors(url, enableCors)), req)
       .then(res => res.text())
       .then(html => {
         const parser = new DOMParser();
@@ -322,9 +336,9 @@ export const API = {
         return;
       }
     }
-    const prefix = req.cors === true ? CORS_PROXY : '';
+    const enableCors = req.cors !== false;
     delete req.cors;
-    return fetch(API.transformURL(prefix + url), req)
+    return fetch(API.transformURL(addCors(url, enableCors)), req)
       .then(res => res.text())
       .then(data => {
         callback(data);
