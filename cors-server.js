@@ -3,10 +3,18 @@
  * middleware that do not care about CORS. Headers will be held
  * in tact preserving the request properly.
  */
-var cors_proxy = require('cors-anywhere');
-var host = process.env.HOST || '0.0.0.0';
-var port = process.env.PORT || 8080;
-var domains = process.env.WHITELIST_DOMAINS || '';
+const fs = require('fs');
+const dotenv = require('dotenv');
+const cors_proxy = require('cors-anywhere');
+
+const envConfig = dotenv.parse(fs.readFileSync('.env.local'));
+for (let k in envConfig) {
+  process.env[k] = envConfig[k];
+}
+
+const host = process.env.CORS_HOST || '0.0.0.0';
+const port = process.env.CORS_PORT || 8080;
+const domains = process.env.WHITELIST_DOMAINS || '';
 
 cors_proxy
   .createServer({

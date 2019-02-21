@@ -13,6 +13,7 @@
   "dependencies": {
     "@sentry/browser": "^4.5.3",
     "cors-anywhere": "0.4.1",
+    "dotenv": "6.2.0",
     "fast-xml-parser": "^3.12.13",
     "fecha": "^3.0.2",
     "react": "^16.8.2",
