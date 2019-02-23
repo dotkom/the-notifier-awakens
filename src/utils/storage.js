@@ -91,6 +91,10 @@ export default class Storage {
    * @returns {object} Unified data sturcture.
    */
   merge(data, save = false) {
+    if ('components' in data) {
+      this.data.components = data.components;
+      delete data.components;
+    }
     this.data = merge(this.data, data);
 
     if (save) {
