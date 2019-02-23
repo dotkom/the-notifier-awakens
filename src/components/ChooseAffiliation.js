@@ -46,16 +46,22 @@ export default class ChooseAffiliation extends Component {
             name.toLowerCase(),
           ),
       )
-      .sort(([, a], [, b]) => a.name.localeCompare(b.name))
-      .sort(([, a], [, b]) => !a.components.length - !b.components.length)
-      .map(([key, { name = '', components = [] }], i) => (
-        <Link
-          to={'/' + key}
-          key={i}
-          className={`item${components.length ? '' : ' no-components'}`}
-        >
+      .sort(([, a], [, b]) => a.name.localeCompare(b.name));
+
+    const affiliationsAvailable = affiliations
+      .filter(([, { components = [] }]) => components.length)
+      .map(([key, { name = '' }], i) => (
+        <Link to={'/' + key} key={i} className="item">
           {name || key}
         </Link>
+      ));
+
+    const affiliationsUnavailable = affiliations
+      .filter(([, { components = [] }]) => !components.length)
+      .map(([key, { name = '' }], i) => (
+        <div key={i} className="item no-components">
+          + {name || key}
+        </div>
       ));
 
     return (
@@ -87,7 +93,9 @@ export default class ChooseAffiliation extends Component {
             </div>
           ) : null}
         </div>
-        <div className="affiliation-list">{affiliations}</div>
+        <div className="affiliation-list">{affiliationsAvailable}</div>
+        <h3>Mangler komponenter</h3>
+        <div className="affiliation-list">{affiliationsUnavailable}</div>
       </>
     );
   }
