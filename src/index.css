@@ -67,6 +67,25 @@ input + p:not([error=''])[error]::after {
   right: 0;
 }
 
+button,
+input[type='button'] {
+  background-color: rgba(0, 0, 0, 0.16);
+  border: none;
+  font-size: 1em;
+  color: #ddd;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+button[disabled],
+input[type='button'][disabled] {
+  opacity: 0.5;
+}
+button > svg,
+input[type='button'] > svg {
+  vertical-align: middle;
+}
+
 .form-group {
   display: flex;
   text-align: left;
@@ -115,6 +134,38 @@ input + p:not([error=''])[error]::after {
 
 .right {
   text-align: right;
+}
+
+.flex-align-start {
+  align-items: flex-start;
+}
+
+.flex-align-center {
+  align-items: center;
+}
+
+.flex-align-stretch {
+  align-items: stretch;
+}
+
+.flex-align-end {
+  align-items: flex-end;
+}
+
+.flex-start {
+  justify-content: flex-start;
+}
+
+.flex-center {
+  justify-content: center;
+}
+
+.flex-stretch {
+  justify-content: stretch;
+}
+
+.flex-end {
+  justify-content: flex-end;
 }
 
 .grow {

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { defaultAffiliationSettings } from '../defaults/affiliations';
 import './ChooseAffiliation.css';
 import { Link } from 'react-router-dom';
+import { Icon } from './';
 
 export default class ChooseAffiliation extends Component {
   constructor(props) {
@@ -106,6 +107,14 @@ export default class ChooseAffiliation extends Component {
 
     this.setState({
       ...this.state,
+      formIsEmpty: this.checkIfFormIsEmpty(
+        addAffiliationName,
+        addAffiliationId,
+      ),
+      formIsValid: this.checkIfFormIsValid(
+        addAffiliationName,
+        addAffiliationId,
+      ),
       addAffiliationName,
       addAffiliationId,
       addAffiliationIdDirty: true,
@@ -155,7 +164,7 @@ export default class ChooseAffiliation extends Component {
         </Link>
       ));
 
-    const createTranslation = this.props.translate('create');
+    const createTranslation = this.props.translate('change');
     const affiliationsUnavailable = affiliations
       .filter(([, { components = [] }]) => !components.length)
       .map(([key, { name = '' }], i) => (
@@ -244,19 +253,26 @@ export default class ChooseAffiliation extends Component {
                   </span>
                 </div>
               </div>
-              <div className="form-group">
-                <button
-                  disabled={this.state.formIsEmpty || !this.state.formIsValid}
-                >
-                  Opprett "{this.state.addAffiliationName}" (/
-                  {this.state.addAffiliationId})
-                </button>
-                <button
-                  disabled={this.state.formIsEmpty || this.state.formIsValid}
-                >
-                  Endre "{this.state.addAffiliationName}" (/
-                  {this.state.addAffiliationId})
-                </button>
+              <div className="form-group flex-end">
+                {!this.state.formIsEmpty && this.state.formIsValid ? (
+                  <button
+                    disabled={this.state.formIsEmpty || !this.state.formIsValid}
+                  >
+                    {this.props.translate('create')} "
+                    {this.state.addAffiliationName}"{' '}
+                    <Icon name="IosArrowForward" />
+                  </button>
+                ) : null}
+
+                {!this.state.formIsEmpty && !this.state.formIsValid ? (
+                  <button
+                    disabled={this.state.formIsEmpty || this.state.formIsValid}
+                  >
+                    {this.props.translate('change')} "
+                    {this.state.addAffiliationName}"{' '}
+                    <Icon name="IosArrowForward" />
+                  </button>
+                ) : null}
               </div>
             </div>
           ) : null}

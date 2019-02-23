@@ -19,6 +19,7 @@ export const defaultTranslations = {
   routeHome: 'Gå hjem',
   choose: 'Åpne',
   create: 'Lag',
+  change: 'Endre',
   name: 'Navn',
   urlPath: 'URL Sti',
   affiliationNameExample: 'Online Kontoret',
