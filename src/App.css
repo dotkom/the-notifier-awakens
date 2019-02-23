@@ -47,11 +47,42 @@
 }
 
 .menu-bar > * {
+  opacity: 0.8;
+  transition-property: opacity, padding;
+  transition-duration: 0.2s;
   color: #ddd;
   cursor: pointer;
   font-size: 2.5em;
   margin: 1rem;
   display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.menu-bar > *:hover {
+  opacity: 1;
+  transition-duration: 0.1s;
+}
+
+.open-settings {
+  order: 9;
+}
+
+.space {
+  flex: 1 0 auto;
+  order: 2;
+}
+
+.go-home {
+  order: 1;
+  padding-left: 10px;
+  padding-right: 0;
+  box-sizing: border-box;
+}
+
+.go-home:hover {
+  padding-left: 0;
+  padding-right: 10px;
 }
 
 .Components {

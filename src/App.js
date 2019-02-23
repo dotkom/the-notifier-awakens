@@ -502,12 +502,16 @@ ${this.state.css}`;
                       >
                         <Icon name="Settings" />
                       </div>
+                      <div className="space" />
                       <Link
                         to="/"
                         className="go-home"
                         title={this.translate('routeHome')}
                       >
-                        <Icon name="Home" />
+                        <Icon name="IosArrowBack" />{' '}
+                        <span className="extra-small">
+                          {this.translate('home')}
+                        </span>
                       </Link>
                     </div>
                   ) : null}
