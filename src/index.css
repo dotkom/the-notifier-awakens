@@ -59,9 +59,10 @@ input::placeholder {
 input + p:not([error=''])[error]::after {
   content: attr(error);
   color: #d21;
+  text-shadow: 0 0 8px #000;
   font-size: 0.7em;
-  margin-right: 0.5em;
-  padding: 0;
+  margin-right: 0.3em;
+  padding: 0 4px;
   position: absolute;
   right: 0;
 }
