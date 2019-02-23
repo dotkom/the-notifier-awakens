@@ -17,6 +17,7 @@
     "esm": "3.2.5",
     "fast-xml-parser": "^3.12.13",
     "fecha": "^3.0.2",
+    "merge": "1.2.1",
     "react": "^16.8.2",
     "react-dom": "^16.8.2",
     "react-icons": "^3.3.0",
