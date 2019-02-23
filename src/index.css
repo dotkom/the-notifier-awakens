@@ -98,7 +98,7 @@ input[type='button'] > svg {
 .form-group > label {
   flex: 0 0 auto;
   margin-right: 0.5em;
-  font-size: 1.2em;
+  font-size: 1em;
   color: #fff;
   text-align: left;
 }

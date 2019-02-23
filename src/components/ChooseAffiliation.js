@@ -210,7 +210,7 @@ export default class ChooseAffiliation extends Component {
           {this.state.isCreateAffiliationOpen ? (
             <div className="create-affiliation">
               <p
-                className="small"
+                className="small darken"
                 dangerouslySetInnerHTML={{
                   __html: this.props.translate('addAffiliationInfo'),
                 }}
@@ -266,7 +266,7 @@ export default class ChooseAffiliation extends Component {
               </div>
               <div className="form-group">
                 {!this.state.formIsEmpty ? (
-                  <button onClick={() => this.emptyForm()}>
+                  <button onClick={() => this.emptyForm()} tabIndex={-1}>
                     {this.props.translate('resetForm')} <Icon name="Trash" />
                   </button>
                 ) : null}
@@ -295,7 +295,10 @@ export default class ChooseAffiliation extends Component {
           ) : null}
         </div>
         <div className="affiliation-list">{affiliationsAvailable}</div>
-        <h3>{this.props.translate('unavailableComponents')}</h3>
+        <h2>{this.props.translate('unavailableComponents')}</h2>
+        <p className="small darken">
+          ({this.props.translate('unavailableComponentsSubComment')}.)
+        </p>
         <div className="affiliation-list">{affiliationsUnavailable}</div>
       </>
     );
