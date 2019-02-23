@@ -132,7 +132,11 @@ class App extends Component {
       settings.css,
       this.state,
     );
-    this.APIService.updateSettings(defaultApis, settings, newState.components);
+    this.APIService.updateSettings({
+      apis: defaultApis,
+      settings,
+      components: newState.components,
+    });
     this.setState({ ...this.state, ...newState, settings });
   }
 
