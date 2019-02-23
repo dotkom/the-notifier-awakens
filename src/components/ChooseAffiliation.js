@@ -10,6 +10,7 @@ export default class ChooseAffiliation extends Component {
     this.affiliations = defaultAffiliationSettings;
     this.state = {
       searchFilter: '',
+      isCreateAffiliationOpen: false,
     };
   }
 
@@ -26,6 +27,13 @@ export default class ChooseAffiliation extends Component {
 
   filterSearch(searchFilter) {
     this.setState({ ...this.state, searchFilter });
+  }
+
+  toggleCreateAffiliation() {
+    this.setState({
+      ...this.state,
+      isCreateAffiliationOpen: !this.state.isCreateAffiliationOpen,
+    });
   }
 
   render() {
@@ -52,13 +60,32 @@ export default class ChooseAffiliation extends Component {
 
     return (
       <>
-        <h1>Velg linjeforening</h1>
+        <h1>{this.props.translate('chooseAffiliation')}</h1>
         <div className="form-group">
           <input
-            placeholder="Søk i linjeforeninger..."
+            placeholder={this.props.translate('searchAffiliationPlaceholder')}
             type="text"
             onChange={e => this.filterSearch(e.target.value)}
           />
+        </div>
+        <div className="form-group">
+          <div
+            className="toggle-create-affiliation"
+            onClick={() => this.toggleCreateAffiliation()}
+          >
+            {this.state.isCreateAffiliationOpen ? '-' : '+'}{' '}
+            {this.props.translate('addAffiliation')}
+          </div>
+          {this.state.isCreateAffiliationOpen ? (
+            <div className="create-affiliation">
+              <p
+                className="small"
+                dangerouslySetInnerHTML={{
+                  __html: this.props.translate('addAffiliationInfo'),
+                }}
+              />
+            </div>
+          ) : null}
         </div>
         <div className="affiliation-list">{affiliations}</div>
       </>
