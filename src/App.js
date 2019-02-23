@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Style from 'style-it';
 import { get, set } from 'object-path';
 import * as Sentry from '@sentry/browser';
-import { Route, Redirect, withRouter } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 
 import './App.css';
 
@@ -546,4 +546,4 @@ ${this.state.css}`;
   }
 }
 
-export default withRouter(App);
+export default App;
