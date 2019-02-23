@@ -576,7 +576,7 @@ export const defaultAffiliationSettings = {
     color: 'blue',
     components: [],
   },
-  rektoratet_ntnu: {
+  'rektoratet-ntnu': {
     name: 'Rektoratet NTNU',
     color: 'blue',
     components: [],
@@ -616,7 +616,7 @@ export const defaultAffiliationSettings = {
     color: 'green',
     components: [],
   },
-  studenttinget_ntnu: {
+  'studenttinget-ntnu': {
     name: 'Studenttinget NTNU',
     color: 'purple',
     components: [],
@@ -641,7 +641,7 @@ export const defaultAffiliationSettings = {
     color: 'blue',
     components: [],
   },
-  tim_og_shaenko: {
+  'tim-og-shaenko': {
     name: 'Tim & Shænko',
     color: 'blue',
     components: [],
