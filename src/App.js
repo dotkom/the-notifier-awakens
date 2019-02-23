@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Style from 'style-it';
 import { get, set } from 'object-path';
 import * as Sentry from '@sentry/browser';
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Redirect, Link } from 'react-router-dom';
 
 import './App.css';
 
@@ -491,17 +491,26 @@ ${this.state.css}`;
               }
               return (
                 <>
-                  <div className="menu-bar">
-                    <div
-                      className="open-settings"
-                      onClick={() =>
-                        this.setState({ ...this.state, settingsOpen: true })
-                      }
-                      title={this.translate('settings')}
-                    >
-                      <Icon name="Settings" />
+                  {props.match.params.affiliation !== '' ? (
+                    <div className="menu-bar">
+                      <div
+                        className="open-settings"
+                        onClick={() =>
+                          this.setState({ ...this.state, settingsOpen: true })
+                        }
+                        title={this.translate('settings')}
+                      >
+                        <Icon name="Settings" />
+                      </div>
+                      <Link
+                        to="/"
+                        className="go-home"
+                        title={this.translate('routeHome')}
+                      >
+                        <Icon name="Home" />
+                      </Link>
                     </div>
-                  </div>
+                  ) : null}
                   {this.state.settingsOpen ? (
                     <Style>
                       {`.Settings {

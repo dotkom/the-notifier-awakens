@@ -46,7 +46,8 @@
   height: 100px;
 }
 
-.open-settings {
+.menu-bar > * {
+  color: #ddd;
   cursor: pointer;
   font-size: 2.5em;
   margin: 1rem;
