@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { defaultAffiliationSettings } from '../defaults/affiliations';
 import './ChooseAffiliation.css';
+import { Link } from 'react-router-dom';
 
 export default class ChooseAffiliation extends Component {
   constructor(props) {
@@ -40,14 +41,13 @@ export default class ChooseAffiliation extends Component {
       .sort(([, a], [, b]) => a.name.localeCompare(b.name))
       .sort(([, a], [, b]) => !a.components.length - !b.components.length)
       .map(([key, { name = '', components = [] }], i) => (
-        <div
+        <Link
+          to={'/' + key}
           key={i}
           className={`item${components.length ? '' : ' no-components'}`}
-          onClick={() => this.chooseAffiliation(key)}
         >
           {name || key}
-          {components.length ? ` (${components.length})` : ''}
-        </div>
+        </Link>
       ));
 
     return (

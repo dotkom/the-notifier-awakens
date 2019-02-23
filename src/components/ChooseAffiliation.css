@@ -13,6 +13,8 @@
   cursor: pointer;
   padding: 0.2em 0.5em;
   transition: background-color 0.1s;
+  color: #ddd;
+  text-decoration: none;
 }
 
 .item:hover {

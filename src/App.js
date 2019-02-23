@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Style from 'style-it';
 import { get, set } from 'object-path';
 import * as Sentry from '@sentry/browser';
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import { Route, Redirect, withRouter } from 'react-router-dom';
 
 import './App.css';
 
@@ -43,6 +43,26 @@ class App extends Component {
     );
 
     this.startAPIs();
+  }
+
+  componentWillMount() {
+    this.setTitleFromUrl(this.props.location.pathname);
+    this.unlisten = this.props.history.listen(state => {
+      this.setTitleFromUrl(state.pathname);
+    });
+  }
+
+  setTitleFromUrl(url) {
+    if (!url || url === '/') {
+      window.document.title = `Notiwall`;
+    } else {
+      const firstLetter = url.charAt(1).toUpperCase();
+      window.document.title = `Notiwall - ${firstLetter + url.slice(2)}`;
+    }
+  }
+
+  componentWillUnmount() {
+    this.unlisten();
   }
 
   updateState(affiliation, globalCSS = '', prevState = {}) {
@@ -457,30 +477,28 @@ ${this.state.css}`;
       <Style>
         {globalCSS}
         <div className="App">
-          <Router>
-            <Route
-              path="/:affiliation(.*)"
-              render={props => {
-                if (
-                  !(
-                    props.match.params.affiliation in defaultAffiliationSettings
-                  )
-                ) {
-                  return <Redirect to="/" />;
-                }
-                return (
-                  <>
-                    <div className="menu-bar">
-                      <div
-                        className="open-settings"
-                        onClick={() =>
-                          this.setState({ ...this.state, settingsOpen: true })
-                        }
-                        title={this.translate('settings')}
-                      >
-                        <Icon name="Settings" />
-                      </div>
+          <Route
+            path="/:affiliation(.*)"
+            render={props => {
+              if (
+                !(props.match.params.affiliation in defaultAffiliationSettings)
+              ) {
+                return <Redirect to="/" />;
+              }
+              return (
+                <>
+                  <div className="menu-bar">
+                    <div
+                      className="open-settings"
+                      onClick={() =>
+                        this.setState({ ...this.state, settingsOpen: true })
+                      }
+                      title={this.translate('settings')}
+                    >
+                      <Icon name="Settings" />
                     </div>
+                  </div>
+                  {this.state.settingsOpen ? (
                     <Style>
                       {`.Settings {
   ${this.state.settingsOpen ? '' : 'display: none;'}
@@ -505,27 +523,27 @@ ${this.state.css}`;
                         />
                       </div>
                     </Style>
-                    <div className="Components">
-                      <ComponentController
-                        {...props}
-                        components={this.state.components}
-                        translations={this.state.translations}
-                        settings={this.state.settings}
-                        affiliation={props.match.params.affiliation}
-                        updateSettings={this.updateSettings}
-                        apiService={this.APIService}
-                        data={data}
-                      />
-                    </div>
-                  </>
-                );
-              }}
-            />
-          </Router>
+                  ) : null}
+                  <div className="Components">
+                    <ComponentController
+                      {...props}
+                      components={this.state.components}
+                      translations={this.state.translations}
+                      settings={this.state.settings}
+                      affiliation={props.match.params.affiliation}
+                      updateSettings={this.updateSettings}
+                      apiService={this.APIService}
+                      data={data}
+                    />
+                  </div>
+                </>
+              );
+            }}
+          />
         </div>
       </Style>
     );
   }
 }
 
-export default App;
+export default withRouter(App);
