@@ -1,4 +1,5 @@
 ![NotiStar](https://i.imgur.com/i78hOG1.png)
+![Drone status](https://ci.online.ntnu.no/api/badges/dotkom/the-notifier-awakens/status.svg?branch=master)
 
 <!--![Storytime](https://i.imgur.com/ZXXFkQM.png)-->
 
