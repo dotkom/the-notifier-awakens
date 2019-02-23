@@ -54,7 +54,7 @@ export default class ChooseAffiliation extends Component {
     this.setState({
       ...this.state,
       addAffiliationId,
-      addAffiliationIdDirty: !!value ? Date.now() : false,
+      addAffiliationIdDirty: !!value,
     });
   }
 
@@ -66,6 +66,18 @@ export default class ChooseAffiliation extends Component {
       .replace(/æ/g, 'ae')
       .replace(/ø/g, 'o')
       .replace(/^-|-$/g, '');
+  }
+
+  setCreateAffiliationForm(addAffiliationName, addAffiliationId) {
+    document.documentElement.scrollTop = 0;
+
+    this.setState({
+      ...this.state,
+      addAffiliationName,
+      addAffiliationId,
+      addAffiliationIdDirty: true,
+      isCreateAffiliationOpen: true,
+    });
   }
 
   render() {
@@ -102,6 +114,7 @@ export default class ChooseAffiliation extends Component {
           key={i}
           className="item no-components"
           title={`${createTranslation} ${name || key}`}
+          onClick={() => this.setCreateAffiliationForm(name || key, key)}
         >
           + {name || key}
         </div>
@@ -139,6 +152,7 @@ export default class ChooseAffiliation extends Component {
                 </label>
                 <input
                   id="affiliation-name"
+                  value={this.state.addAffiliationName}
                   onChange={e => this.changeAddAffiliationName(e.target.value)}
                   type="text"
                   placeholder={this.props.translate('affiliationNameExample')}
