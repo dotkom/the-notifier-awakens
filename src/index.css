@@ -35,6 +35,10 @@ h6 {
   font-weight: normal;
 }
 
+a {
+  color: #f80;
+}
+
 input[type='text'],
 input:not([type]) {
   appearance: none;
@@ -54,6 +58,7 @@ input::placeholder {
 
 .form-group {
   display: flex;
+  text-align: left;
   flex-flow: row wrap;
   align-items: center;
   margin: 1em;
@@ -64,6 +69,10 @@ input::placeholder {
   font-size: 1.2em;
   color: #fff;
   text-align: left;
+}
+
+.small {
+  font-size: 0.8em;
 }
 
 .loading {
