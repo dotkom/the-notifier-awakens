@@ -172,6 +172,10 @@ input[type='button'] > svg {
   flex-grow: 1;
 }
 
+.space {
+  flex: 1 0 auto;
+}
+
 .loading {
   width: 100%;
   height: 100%;

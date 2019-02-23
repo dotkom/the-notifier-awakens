@@ -26,4 +26,5 @@ export const defaultTranslations = {
   affiliationIdExample: 'online-kontoret',
   nameTakenError: 'Dette navnet finnes',
   idTakenError: 'Denne URL stien eksisterer',
+  resetForm: 'Tøm felter',
 };

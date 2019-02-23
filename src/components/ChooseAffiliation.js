@@ -11,7 +11,7 @@ export default class ChooseAffiliation extends Component {
     this.affiliations = defaultAffiliationSettings;
     this.state = {
       searchFilter: '',
-      isCreateAffiliationOpen: true,
+      isCreateAffiliationOpen: false,
       addAffiliationName: '',
       addAffiliationId: '',
       addAffiliationIdDirty: false,
@@ -119,6 +119,17 @@ export default class ChooseAffiliation extends Component {
       addAffiliationId,
       addAffiliationIdDirty: true,
       isCreateAffiliationOpen: true,
+    });
+  }
+
+  emptyForm() {
+    this.setState({
+      ...this.state,
+      formIsEmpty: true,
+      formIsValid: false,
+      addAffiliationName: '',
+      addAffiliationId: '',
+      addAffiliationIdDirty: false,
     });
   }
 
@@ -253,7 +264,13 @@ export default class ChooseAffiliation extends Component {
                   </span>
                 </div>
               </div>
-              <div className="form-group flex-end">
+              <div className="form-group">
+                {!this.state.formIsEmpty ? (
+                  <button onClick={() => this.emptyForm()}>
+                    {this.props.translate('resetForm')} <Icon name="Trash" />
+                  </button>
+                ) : null}
+                <div className="space" />
                 {!this.state.formIsEmpty && this.state.formIsValid ? (
                   <button
                     disabled={this.state.formIsEmpty || !this.state.formIsValid}

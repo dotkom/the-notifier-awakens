@@ -68,8 +68,7 @@
   order: 9;
 }
 
-.space {
-  flex: 1 0 auto;
+.menu-bar > .space {
   order: 2;
 }
 
