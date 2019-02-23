@@ -48,18 +48,29 @@ export default class ChooseAffiliation extends Component {
       )
       .sort(([, a], [, b]) => a.name.localeCompare(b.name));
 
+    const chooseTranslation = this.props.translate('choose');
     const affiliationsAvailable = affiliations
       .filter(([, { components = [] }]) => components.length)
       .map(([key, { name = '' }], i) => (
-        <Link to={'/' + key} key={i} className="item">
+        <Link
+          to={'/' + key}
+          key={i}
+          className="item"
+          title={`${chooseTranslation} ${name || key}`}
+        >
           {name || key}
         </Link>
       ));
 
+    const createTranslation = this.props.translate('create');
     const affiliationsUnavailable = affiliations
       .filter(([, { components = [] }]) => !components.length)
       .map(([key, { name = '' }], i) => (
-        <div key={i} className="item no-components">
+        <div
+          key={i}
+          className="item no-components"
+          title={`${createTranslation} ${name || key}`}
+        >
           + {name || key}
         </div>
       ));
