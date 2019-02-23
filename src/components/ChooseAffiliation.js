@@ -94,7 +94,7 @@ export default class ChooseAffiliation extends Component {
           ) : null}
         </div>
         <div className="affiliation-list">{affiliationsAvailable}</div>
-        <h3>Mangler komponenter</h3>
+        <h3>{this.props.translate('unavailableComponents')}</h3>
         <div className="affiliation-list">{affiliationsUnavailable}</div>
       </>
     );
