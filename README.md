@@ -527,3 +527,44 @@ You can achieve everything with plain CSS, but The Notifier Grid Systemᵗᵐ is
 Example of the Online affiliation using 4 different layouts at specified widths:
 
 ![notifier-gif](https://user-images.githubusercontent.com/8504538/53286596-47fb6280-3771-11e9-9775-ef8f6d161a45.gif)
+
+<details>
+<summary>Example of the Online affiliation</summary>
+
+```diff
+  ...
+  online: {
+    name: 'Online',
++    layouts: {
++      0: ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events'],
++      720: [
++        '/ 200px . . 200px',
++        'Logo Logo Logo',
++        'Office Office Clock Clock',
++        '. . . .',
++        'Bus Bus Bus2 Bus2',
++        '. . . .',
++        'Events Events Events .',
++      ],
++      1400: [
++        'Logo Logo Office Clock',
++        '. . . .',
++        '. . Events Events / 1',
++        'Bus Bus Events Events',
++        'Bus2 Bus2 Events Events',
++        '. . Events Events / 1',
++        '. . . .',
++      ],
++      2000: [
++        'Logo Logo Office Clock',
++        '. . .',
++        'Bus Bus2 Events Events',
++        '. . .',
++      ],
++    },
+    components: [...],
+  },
+  ...
+```
+
+</details>
