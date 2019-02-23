@@ -167,12 +167,17 @@ export default class ChooseAffiliation extends Component {
                   value={this.state.addAffiliationId}
                   onChange={e => this.changeAddAffiliationId(e.target.value)}
                   type="text"
-                  placeholder={this.props.translate('affiliationIdExample')}
+                  placeholder={
+                    this.transformToSlug(this.state.addAffiliationName) ||
+                    this.props.translate('affiliationIdExample')
+                  }
                 />
                 <div className="small center grow">
                   <span className="darken">{window.location.origin}/</span>
                   <span className="glow">
-                    {this.state.addAffiliationId || '{URL}'}
+                    {this.state.addAffiliationId ||
+                      this.transformToSlug(this.state.addAffiliationName) ||
+                      '{URL}'}
                   </span>
                 </div>
               </div>
