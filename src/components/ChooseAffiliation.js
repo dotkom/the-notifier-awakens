@@ -10,7 +10,10 @@ export default class ChooseAffiliation extends Component {
     this.affiliations = defaultAffiliationSettings;
     this.state = {
       searchFilter: '',
-      isCreateAffiliationOpen: false,
+      isCreateAffiliationOpen: true,
+      addAffiliationName: '',
+      addAffiliationId: '',
+      addAffiliationIdDirty: false,
     };
   }
 
@@ -34,6 +37,35 @@ export default class ChooseAffiliation extends Component {
       ...this.state,
       isCreateAffiliationOpen: !this.state.isCreateAffiliationOpen,
     });
+  }
+
+  changeAddAffiliationName(value) {
+    const addAffiliationName = value;
+    if (!this.state.addAffiliationIdDirty) {
+      const addAffiliationId = this.transformToSlug(value);
+      this.setState({ ...this.state, addAffiliationName, addAffiliationId });
+    } else {
+      this.setState({ ...this.state, addAffiliationName });
+    }
+  }
+
+  changeAddAffiliationId(value) {
+    const addAffiliationId = this.transformToSlug(value);
+    this.setState({
+      ...this.state,
+      addAffiliationId,
+      addAffiliationIdDirty: !!value ? Date.now() : false,
+    });
+  }
+
+  transformToSlug(value) {
+    return value
+      .toLowerCase()
+      .replace(/[^0-9a-zæøå]+/g, '-')
+      .replace(/å/g, 'a')
+      .replace(/æ/g, 'ae')
+      .replace(/ø/g, 'o')
+      .replace(/^-|-$/g, '');
   }
 
   render() {
@@ -101,6 +133,29 @@ export default class ChooseAffiliation extends Component {
                   __html: this.props.translate('addAffiliationInfo'),
                 }}
               />
+              <div className="form-group">
+                <label htmlFor="affiliation-name">
+                  {this.props.translate('name')}
+                </label>
+                <input
+                  id="affiliation-name"
+                  onChange={e => this.changeAddAffiliationName(e.target.value)}
+                  type="text"
+                  placeholder={this.props.translate('affiliationNameExample')}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="affiliation-name">
+                  {window.location.origin}/
+                </label>
+                <input
+                  id="affiliation-id"
+                  value={this.state.addAffiliationId}
+                  onChange={e => this.changeAddAffiliationId(e.target.value)}
+                  type="text"
+                  placeholder={this.props.translate('affiliationIdExample')}
+                />
+              </div>
             </div>
           ) : null}
         </div>
