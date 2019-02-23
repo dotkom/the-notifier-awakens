@@ -413,6 +413,18 @@ export const defaultApis = {
     cache: true,
     url: 'https://chemie.no/#HTML2HTML:#social',
   },
+  aarhonenEvents: {
+    interval: 10000,
+    cors: true,
+    cache: true,
+    url: 'https://aarhonen.no/bedriftspresentasjoner/#HTML:.bpc-list-events',
+    transform: {
+      '{{#each div.article}}': {
+        startDate: '{{aside.table.tbody.tr[1].td[1]}}',
+        title: '{{header["#text"]}}',
+      },
+    },
+  },
   /* XML
   bergEvents: {
     interval: 100,
@@ -1358,7 +1370,6 @@ XML eller facebook
   duskenArticles: {
     interval: 43200,
     url: 'https://dusken.no/feed#RSS',
-    print: true,
     cache: true,
     scrape: ['articles.*.image'],
     transform: {

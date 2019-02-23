@@ -8,4 +8,11 @@ export const DEBUG = (process.env.REACT_APP_DEBUG || 'false') === 'true';
 const targetWhitelist = process.env.REACT_APP_TARGET_WHITELIST
   ? process.env.REACT_APP_TARGET_WHITELIST.split(',')
   : [];
-export const whiteList = ['abakus.no'].concat(targetWhitelist);
+export const whiteList = [
+  'aarhonen.no',
+  'abakus.no',
+  'deltahouse.no',
+  'dusken.no',
+  'mannhullet.no',
+  'online.ntnu.no',
+].concat(targetWhitelist);

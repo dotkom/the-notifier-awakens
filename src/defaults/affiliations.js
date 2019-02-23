@@ -200,7 +200,8 @@ export const defaultAffiliationSettings = {
   aarhonen: {
     name: 'H.M. Aarhønen',
     color: 'purple',
-    components: ['Events', 'Articles'],
+    layouts: ['"Events"'],
+    components: ['Events'],
   },
   abakus: {
     name: 'Abakus',
@@ -248,12 +249,10 @@ export const defaultAffiliationSettings = {
   delta: {
     name: 'Delta',
     color: 'green',
+    layouts: ['"Articles"'],
     components: [
       {
         template: 'Articles',
-        apis: {
-          articles: 'deltaArticles:articles',
-        },
         css: '.Articles .article { background-size: contain; }',
       },
     ],
@@ -281,15 +280,8 @@ export const defaultAffiliationSettings = {
   dusken: {
     name: 'Dusken.no',
     color: 'grey',
-    components: [
-      {
-        template: 'Articles',
-        id: 'Dusken',
-        apis: {
-          articles: 'dusken:articles',
-        },
-      },
-    ],
+    layouts: ['"Articles"'],
+    components: ['Articles'],
   },
   emil: {
     name: 'EMIL',
