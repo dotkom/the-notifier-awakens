@@ -80,6 +80,14 @@ export default class ChooseAffiliation extends Component {
     });
   }
 
+  checkIfNameIsTaken(name) {
+    return name && Object.values(this.affiliations).some(a => a.name === name);
+  }
+
+  checkIfIdIsTaken(id) {
+    return id && id in this.affiliations;
+  }
+
   render() {
     const affiliations = Object.entries(this.affiliations)
       .filter(
@@ -157,6 +165,13 @@ export default class ChooseAffiliation extends Component {
                   type="text"
                   placeholder={this.props.translate('affiliationNameExample')}
                 />
+                <p
+                  error={
+                    this.checkIfNameIsTaken(this.state.addAffiliationName)
+                      ? this.props.translate('nameTakenError')
+                      : ''
+                  }
+                />
               </div>
               <div className="form-group">
                 <label htmlFor="affiliation-name">
@@ -170,6 +185,13 @@ export default class ChooseAffiliation extends Component {
                   placeholder={
                     this.transformToSlug(this.state.addAffiliationName) ||
                     this.props.translate('affiliationIdExample')
+                  }
+                />
+                <p
+                  error={
+                    this.checkIfIdIsTaken(this.state.addAffiliationId)
+                      ? this.props.translate('idTakenError')
+                      : ''
                   }
                 />
                 <div className="small center grow">

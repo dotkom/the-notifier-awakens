@@ -56,12 +56,23 @@ input::placeholder {
   color: rgba(255, 255, 255, 0.5);
 }
 
+input + p:not([error=''])[error]::after {
+  content: attr(error);
+  color: #d21;
+  font-size: 0.7em;
+  margin-right: 0.5em;
+  padding: 0;
+  position: absolute;
+  right: 0;
+}
+
 .form-group {
   display: flex;
   text-align: left;
   flex-flow: row wrap;
   align-items: center;
   margin: 1em;
+  position: relative;
 }
 
 .form-group > label {

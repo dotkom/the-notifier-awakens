@@ -23,4 +23,6 @@ export const defaultTranslations = {
   urlPath: 'URL Sti',
   affiliationNameExample: 'Online Kontoret',
   affiliationIdExample: 'online-kontoret',
+  nameTakenError: 'Dette navnet er tatt',
+  idTakenError: 'Denne URL stien er tatt',
 };
