@@ -524,7 +524,9 @@ You can achieve everything with plain CSS, but The Notifier Grid Systemᵗᵐ is
 
 </details>
 
-Example of the Online affiliation using 4 different layouts at specified widths:
+### Real layout example
+
+Example of the Online affiliation using four different layouts at specified widths:
 
 ![notifier-gif](https://user-images.githubusercontent.com/8504538/53286596-47fb6280-3771-11e9-9775-ef8f6d161a45.gif)
 
