@@ -575,21 +575,6 @@ export const defaultApis = {
       },
     },
   },
-  Scrape
-  mannhulletEvents: {
-    interval: 100,
-    url:
-      'https://mannhullet.no/arrangement'
-    transform: {
-      events: {
-        '{{#each results}}': {
-          startDate: '{{startTime}}',
-          title: '{{title}}',
-          image: '{{cover}}',
-        },
-      },
-    },
-  },
   Use facebook events evt finne deres api
   omegaEvents: {
     interval: 100,
