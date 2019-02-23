@@ -146,7 +146,7 @@ export default class ChooseAffiliation extends Component {
               </div>
               <div className="form-group">
                 <label htmlFor="affiliation-name">
-                  {window.location.origin}/
+                  {this.props.translate('urlPath')}
                 </label>
                 <input
                   id="affiliation-id"
@@ -155,6 +155,12 @@ export default class ChooseAffiliation extends Component {
                   type="text"
                   placeholder={this.props.translate('affiliationIdExample')}
                 />
+                <div className="small center grow">
+                  <span className="darken">{window.location.origin}/</span>
+                  <span className="glow">
+                    {this.state.addAffiliationId || '{URL}'}
+                  </span>
+                </div>
               </div>
             </div>
           ) : null}

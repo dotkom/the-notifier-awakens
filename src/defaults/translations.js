@@ -20,6 +20,7 @@ export const defaultTranslations = {
   choose: 'Åpne',
   create: 'Lag',
   name: 'Navn',
+  urlPath: 'URL Sti',
   affiliationNameExample: 'Online Kontoret',
   affiliationIdExample: 'online-kontoret',
 };
