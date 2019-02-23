@@ -14,6 +14,8 @@ export default class ChooseAffiliation extends Component {
       addAffiliationName: '',
       addAffiliationId: '',
       addAffiliationIdDirty: false,
+      formIsValid: false,
+      formIsEmpty: true,
     };
   }
 
@@ -43,9 +45,32 @@ export default class ChooseAffiliation extends Component {
     const addAffiliationName = value;
     if (!this.state.addAffiliationIdDirty) {
       const addAffiliationId = this.transformToSlug(value);
-      this.setState({ ...this.state, addAffiliationName, addAffiliationId });
+      this.setState({
+        ...this.state,
+        formIsEmpty: this.checkIfFormIsEmpty(
+          addAffiliationName,
+          addAffiliationId,
+        ),
+        formIsValid: this.checkIfFormIsValid(
+          addAffiliationName,
+          addAffiliationId,
+        ),
+        addAffiliationName,
+        addAffiliationId,
+      });
     } else {
-      this.setState({ ...this.state, addAffiliationName });
+      this.setState({
+        ...this.state,
+        formIsEmpty: this.checkIfFormIsEmpty(
+          addAffiliationName,
+          this.state.addAffiliationId,
+        ),
+        formIsValid: this.checkIfFormIsValid(
+          addAffiliationName,
+          this.state.addAffiliationId,
+        ),
+        addAffiliationName,
+      });
     }
   }
 
@@ -53,6 +78,14 @@ export default class ChooseAffiliation extends Component {
     const addAffiliationId = this.transformToSlug(value);
     this.setState({
       ...this.state,
+      formIsEmpty: this.checkIfFormIsEmpty(
+        this.state.addAffiliationName,
+        addAffiliationId,
+      ),
+      formIsValid: this.checkIfFormIsValid(
+        this.state.addAffiliationName,
+        addAffiliationId,
+      ),
       addAffiliationId,
       addAffiliationIdDirty: !!value,
     });
@@ -86,6 +119,14 @@ export default class ChooseAffiliation extends Component {
 
   checkIfIdIsTaken(id) {
     return id && id in this.affiliations;
+  }
+
+  checkIfFormIsValid(name, id) {
+    return !this.checkIfNameIsTaken(name) && !this.checkIfIdIsTaken(id);
+  }
+
+  checkIfFormIsEmpty(name, id) {
+    return !name && !id;
   }
 
   render() {
@@ -202,6 +243,20 @@ export default class ChooseAffiliation extends Component {
                       '{URL}'}
                   </span>
                 </div>
+              </div>
+              <div className="form-group">
+                <button
+                  disabled={this.state.formIsEmpty || !this.state.formIsValid}
+                >
+                  Opprett "{this.state.addAffiliationName}" (/
+                  {this.state.addAffiliationId})
+                </button>
+                <button
+                  disabled={this.state.formIsEmpty || this.state.formIsValid}
+                >
+                  Endre "{this.state.addAffiliationName}" (/
+                  {this.state.addAffiliationId})
+                </button>
               </div>
             </div>
           ) : null}
