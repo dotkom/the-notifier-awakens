@@ -59,4 +59,5 @@ it('Stores device data', () => {
   expect(storage.has('components.0.template')).toBeTruthy();
   expect(storage.has('components.0.nokey')).toBeFalsy();
   expect(storage.has('components.0.nokey.key')).toBeFalsy();
+  expect(storage.has('components.1.nokey.key')).toBeFalsy();
 });
