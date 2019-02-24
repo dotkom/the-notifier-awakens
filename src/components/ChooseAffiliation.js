@@ -210,18 +210,18 @@ export default class ChooseAffiliation extends Component {
         </Link>
       ));
 
-    const createTranslation = this.props.translate('change');
+    const changeTranslation = this.props.translate('change');
     const affiliationsUnavailable = affiliations
       .filter(([, { components = [] }]) => !components.length)
       .map(([key, { name = '' }], i) => (
-        <div
+        <Link
+          to={'/' + key}
           key={i}
           className="item no-components"
-          title={`${createTranslation} ${name || key}`}
-          onClick={() => this.setCreateAffiliationForm(name || key, key)}
+          title={`${changeTranslation} ${name || key}`}
         >
           + {name || key}
-        </div>
+        </Link>
       ));
 
     return (
