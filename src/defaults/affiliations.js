@@ -249,8 +249,28 @@ export const defaultAffiliationSettings = {
   delta: {
     name: 'Delta',
     color: 'green',
-    layouts: ['"Articles"'],
+    layouts: {
+      0: ['Logo / calc(200px + 10vw)', 'Clock', 'Events', 'Articles'],
+      512: [
+        'Logo Clock / calc(200px + 10vw)',
+        'Events Events',
+        'Articles Articles',
+      ],
+      1100: [
+        '/ . . 400px',
+        'Logo Clock Articles / 300px',
+        'Events Events Articles',
+      ],
+    },
     components: [
+      {
+        template: 'Logo',
+        filter: 'grayscale(1) brightness(100)',
+        url:
+          'https://www.deltahouse.no/wp-content/themes/delta/dist/images/logo.svg',
+      },
+      'Events',
+      'Clock',
       {
         template: 'Articles',
         css: '.Articles .article { background-size: contain; }',
