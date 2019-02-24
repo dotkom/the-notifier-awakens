@@ -104,6 +104,7 @@ button[disabled],
 input[type='button'][disabled] {
   opacity: 0.5;
 }
+
 button > svg,
 input[type='button'] > svg {
   vertical-align: middle;

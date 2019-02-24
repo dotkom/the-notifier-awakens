@@ -449,7 +449,7 @@ export const defaultAffiliationSettings = {
       },
       {
         template: `
-          <h1>Neste buss til {{bus:glos|translate}}:
+          <h1>Neste buss til {{bus:Gløshaugen|translate}}:
             <span class="bus">
               {{number:Laster inn...}} {{name|front - (|back )}} {{time|time HH:mm}}
             </span>

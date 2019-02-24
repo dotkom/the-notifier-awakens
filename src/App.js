@@ -189,6 +189,11 @@ class App extends Component {
     this.APIService.update();
   }
 
+  restartAPIs(time = 0) {
+    this.stopAPIs();
+    this.startAPIs(time);
+  }
+
   /**
    * Get a CSS grid-template value from layout array.
    * 
@@ -501,6 +506,13 @@ ${this.state.css}`;
                         title={this.translate('settings')}
                       >
                         <Icon name="MdSettings" />
+                      </div>
+                      <div
+                        className="sync"
+                        onClick={() => this.restartAPIs()}
+                        title={this.translate('sync')}
+                      >
+                        <Icon name="GoSync" />
                       </div>
                       <div className="space" />
                       <Link
