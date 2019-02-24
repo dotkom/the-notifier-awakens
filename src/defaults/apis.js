@@ -455,21 +455,6 @@ export const defaultApis = {
       },
     },
   },
-  XML
-  deltaEvents: {
-    interval: 100,
-    url:
-      'http://www.deltahouse.no/feed/'
-    transform: {
-      events: {
-        '{{#each results}}': {
-          startDate: '{{startTime}}',
-          title: '{{title}}',
-          image: '{{cover}}',
-        },
-      },
-    },
-  },
     XML
   emilEvents: {
     interval: 100,
@@ -1348,6 +1333,23 @@ XML eller facebook
           author: '{{this["dc:creator"][0]}}',
           image:
             'https://www.deltahouse.no/wp-content/themes/delta/dist/images/logo.svg',
+        },
+      },
+    },
+  },
+  deltaEvents: {
+    interval: 43200,
+    url:
+      'https://teamup.com/ks3nuenfpbx2y8b78w/events?startDate=[[now.date]]&endDate=[[now.date|addDay 30|date YYYY-MM-DD]]',
+    cors: true,
+    print: true,
+    printTransform: true,
+    transform: {
+      events: {
+        '{{#each events}}': {
+          startDate: '{{start_dt}}',
+          endDate: '{{end_dt}}',
+          title: '{{title}}',
         },
       },
     },
