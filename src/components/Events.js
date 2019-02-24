@@ -30,12 +30,12 @@ export default class Events extends Component {
           : format(startDateTime, 'dddd D. MMM', {
               locale,
             });
-        const startTimeFormatted = format(startDateTime, 'HH:MM', { locale });
+        const startTimeFormatted = format(startDateTime, 'HH:mm', { locale });
         const endDateTime = e.endDate;
         const endDateFormatted = isToday(endDateTime)
           ? 'I dag'
           : format(endDateTime, 'dddd D. MMM', { locale });
-        const endTimeFormatted = format(endDateTime, 'HH:MM', { locale });
+        const endTimeFormatted = format(endDateTime, 'HH:mm', { locale });
         const title = e.title;
         const image = e.image;
         const companyImage = e.companyImage;
