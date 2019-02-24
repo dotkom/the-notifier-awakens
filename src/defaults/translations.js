@@ -10,7 +10,8 @@ export const defaultTranslations = {
   settings: 'Instillinger',
   sync: 'Oppdater',
   autoUpdate: 'Auto oppdater',
-  autoUpdateCheck: 'Oppdater oppsett ut ifra globale instillinger',
+  autoUpdateCheck:
+    'Oppdater oppsett ut ifra globale instillinger med jevne mellomrom',
   chooseVisibility: 'Velg hva som vises',
   chooseAffiliation: 'Velg oppsett',
   searchAffiliationPlaceholder: 'Søk i oppsett...',
