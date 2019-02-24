@@ -149,11 +149,9 @@ export const pipes = {
 };
 
 export const pipeTransform = (pipe, params, input, _pipes = pipes) => {
-  if (pipe in _pipes) {
-    return _pipes[pipe](
-      input,
-      params,
-    );
+  const lowerPipe = pipe.toLowerCase();
+  if (lowerPipe in _pipes) {
+    return _pipes[lowerPipe](input, params);
   }
 
   throw new Error(`Pipe: ${pipe}, does not exist`);
