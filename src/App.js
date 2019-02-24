@@ -500,7 +500,7 @@ ${this.state.css}`;
                         }
                         title={this.translate('settings')}
                       >
-                        <Icon name="Settings" />
+                        <Icon name="MdSettings" />
                       </div>
                       <div className="space" />
                       <Link
