@@ -56,15 +56,37 @@ input::placeholder {
   color: rgba(255, 255, 255, 0.5);
 }
 
-input + p:not([error=''])[error]::after {
+[warning],
+[error] {
+  display: none;
+}
+
+:not([error=''])[error],
+:not([warning=''])[warning] {
+  display: block;
+}
+
+:not([error=''])[error] > svg,
+:not([warning=''])[warning] > svg {
+  vertical-align: middle;
+}
+
+:not([error=''])[error]::after {
   content: attr(error);
   color: #d21;
   text-shadow: 0 0 8px #000;
   font-size: 0.7em;
   margin-right: 0.3em;
   padding: 0 4px;
-  position: absolute;
-  right: 0;
+}
+
+:not([warning=''])[warning]::after {
+  content: attr(warning);
+  color: #f80;
+  text-shadow: 0 0 8px #000;
+  font-size: 0.7em;
+  margin-right: 0.3em;
+  padding: 0 4px;
 }
 
 button,
@@ -74,6 +96,7 @@ input[type='button'] {
   font-size: 1em;
   color: #ddd;
   padding: 10px 16px;
+  margin: 8px;
   cursor: pointer;
 }
 

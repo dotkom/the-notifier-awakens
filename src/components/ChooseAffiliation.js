@@ -18,6 +18,7 @@ export default class ChooseAffiliation extends Component {
       formIsValid: false,
       formIsEmpty: true,
     };
+    this.searchField = null;
   }
 
   updateSettings(key, value) {
@@ -36,10 +37,33 @@ export default class ChooseAffiliation extends Component {
   }
 
   toggleCreateAffiliation() {
-    this.setState({
-      ...this.state,
-      isCreateAffiliationOpen: !this.state.isCreateAffiliationOpen,
-    });
+    if (this.state.isCreateAffiliationOpen) {
+      this.setState(state => ({
+        ...state,
+        searchFilter: this.searchField.value,
+        isCreateAffiliationOpen: false,
+      }));
+    } else {
+      const addAffiliationName =
+        this.state.addAffiliationName || this.state.searchFilter;
+      const addAffiliationId =
+        this.state.addAffiliationId || this.transformToSlug(addAffiliationName);
+      this.setState(state => ({
+        ...state,
+        formIsEmpty: this.checkIfFormIsEmpty(
+          addAffiliationName,
+          addAffiliationId,
+        ),
+        formIsValid: this.checkIfFormIsValid(
+          addAffiliationName,
+          addAffiliationId,
+        ),
+        searchFilter: state.addAffiliationName,
+        addAffiliationName,
+        addAffiliationId,
+        isCreateAffiliationOpen: true,
+      }));
+    }
   }
 
   changeAddAffiliationName(value) {
@@ -57,6 +81,7 @@ export default class ChooseAffiliation extends Component {
           addAffiliationId,
         ),
         addAffiliationName,
+        searchFilter: addAffiliationName,
         addAffiliationId,
       });
     } else {
@@ -71,6 +96,7 @@ export default class ChooseAffiliation extends Component {
           this.state.addAffiliationId,
         ),
         addAffiliationName,
+        searchFilter: addAffiliationName,
       });
     }
   }
@@ -116,6 +142,7 @@ export default class ChooseAffiliation extends Component {
         addAffiliationId,
       ),
       addAffiliationName,
+      searchFilter: addAffiliationName,
       addAffiliationId,
       addAffiliationIdDirty: true,
       isCreateAffiliationOpen: true,
@@ -129,12 +156,19 @@ export default class ChooseAffiliation extends Component {
       formIsValid: false,
       addAffiliationName: '',
       addAffiliationId: '',
+      searchFilter: '',
       addAffiliationIdDirty: false,
     });
   }
 
   checkIfNameIsTaken(name) {
-    return name && Object.values(this.affiliations).some(a => a.name === name);
+    if (name) {
+      const lowerName = name.toLowerCase();
+      return Object.values(this.affiliations).some(
+        ({ name = '' }) => name.toLowerCase() === lowerName,
+      );
+    }
+    return false;
   }
 
   checkIfIdIsTaken(id) {
@@ -142,7 +176,8 @@ export default class ChooseAffiliation extends Component {
   }
 
   checkIfFormIsValid(name, id) {
-    return !this.checkIfNameIsTaken(name) && !this.checkIfIdIsTaken(id);
+    // return !this.checkIfNameIsTaken(name) && !this.checkIfIdIsTaken(id);
+    return !this.checkIfIdIsTaken(id);
   }
 
   checkIfFormIsEmpty(name, id) {
@@ -196,6 +231,7 @@ export default class ChooseAffiliation extends Component {
           <input
             placeholder={this.props.translate('searchAffiliationPlaceholder')}
             type="text"
+            ref={element => (this.searchField = element)}
             onChange={e => this.filterSearch(e.target.value)}
           />
         </div>
@@ -226,13 +262,6 @@ export default class ChooseAffiliation extends Component {
                   type="text"
                   placeholder={this.props.translate('affiliationNameExample')}
                 />
-                <p
-                  error={
-                    this.checkIfNameIsTaken(this.state.addAffiliationName)
-                      ? this.props.translate('nameTakenError')
-                      : ''
-                  }
-                />
               </div>
               <div className="form-group">
                 <label htmlFor="affiliation-name">
@@ -246,13 +275,6 @@ export default class ChooseAffiliation extends Component {
                   placeholder={
                     this.transformToSlug(this.state.addAffiliationName) ||
                     this.props.translate('affiliationIdExample')
-                  }
-                />
-                <p
-                  error={
-                    this.checkIfIdIsTaken(this.state.addAffiliationId)
-                      ? this.props.translate('idTakenError')
-                      : ''
                   }
                 />
                 <div className="small center grow">
@@ -291,6 +313,15 @@ export default class ChooseAffiliation extends Component {
                   </button>
                 ) : null}
               </div>
+              <p
+                warning={
+                  this.checkIfIdIsTaken(this.state.addAffiliationId)
+                    ? this.props.translate('idTakenError')
+                    : ''
+                }
+              >
+                <Icon name="MdInfoOutline" />
+              </p>
             </div>
           ) : null}
         </div>
