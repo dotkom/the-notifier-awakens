@@ -65,6 +65,13 @@ class App extends Component {
     this.unlisten();
   }
 
+  toggleAutoUpdate() {
+    this.setState(({ autoUpdate }) => ({
+      ...this.state,
+      autoUpdate: !autoUpdate,
+    }));
+  }
+
   updateState(affiliation, globalCSS = '', prevState = {}) {
     const {
       components = [],
@@ -506,6 +513,17 @@ ${this.state.css}`;
                         title={this.translate('settings')}
                       >
                         <Icon name="MdSettings" />
+                      </div>
+                      <div
+                        className={`auto-update${
+                          this.state.autoUpdate ? ' checked' : ''
+                        }`}
+                        onClick={() => this.toggleAutoUpdate()}
+                        title={this.translate('autoUpdateCheck')}
+                      >
+                        <span className="extra-small">
+                          {this.translate('autoUpdate')}
+                        </span>
                       </div>
                       <div
                         className="sync"

@@ -9,6 +9,8 @@ export const defaultTranslations = {
   affiliation: 'Gruppe',
   settings: 'Instillinger',
   sync: 'Oppdater',
+  autoUpdate: 'Auto oppdater',
+  autoUpdateCheck: 'Oppdater oppsett ut ifra globale instillinger',
   chooseVisibility: 'Velg hva som vises',
   chooseAffiliation: 'Velg oppsett',
   searchAffiliationPlaceholder: 'Søk i oppsett...',
