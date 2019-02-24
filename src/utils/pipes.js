@@ -1,4 +1,11 @@
-import { format, addHours, addDays, addMonths, addYears } from 'date-fns';
+import {
+  format,
+  addMinutes,
+  addHours,
+  addDays,
+  addMonths,
+  addYears,
+} from 'date-fns';
 import * as locale from 'date-fns/locale/nb';
 
 export const pipes = {
@@ -23,11 +30,11 @@ export const pipes = {
       return format(input, 'YYYY-MM-DD HH:mm:ss', { locale });
     }
   },
-  adddays: (input, params) => {
+  addminutes: (input, params) => {
     if (params.length > 0) {
-      return addDays(input, parseInt(params[0]));
+      return addMinutes(input, parseInt(params[0]));
     } else {
-      return addDays(input, 1);
+      return addMinutes(input, 1);
     }
   },
   addhours: (input, params) => {
@@ -35,6 +42,13 @@ export const pipes = {
       return addHours(input, parseInt(params[0]));
     } else {
       return addHours(input, 1);
+    }
+  },
+  adddays: (input, params) => {
+    if (params.length > 0) {
+      return addDays(input, parseInt(params[0]));
+    } else {
+      return addDays(input, 1);
     }
   },
   addmonths: (input, params) => {
@@ -156,8 +170,9 @@ export const pipes = {
 };
 
 export const pipeAliases = {
-  addday: 'adddays',
+  addminute: 'addminutes',
   addhour: 'addhours',
+  addday: 'adddays',
   addmonth: 'addmonths',
   addyear: 'addyears',
   plus: '+',
@@ -173,6 +188,21 @@ export const pipeAliases = {
   multBy: '*',
   multiply: '*',
   multiplyBy: '*',
+  prefix: 'front',
+  postfix: 'back',
+  addstr: 'back',
+  chop: 'slice',
+  eq: 'ifeq',
+  equals: 'ifeq',
+  '=?': 'ifeq',
+  '=?:': 'ifeqelse',
+  ifcontain: 'ifcontains',
+  contains: 'ifcontains',
+  contain: 'ifcontains',
+  ifmatch: 'ifmatches',
+  matches: 'ifmatches',
+  match: 'ifmatches',
+  '=>': 'then',
 };
 
 export const pipeTransform = (pipe, params, input, _pipes = pipes) => {
