@@ -79,6 +79,7 @@
 .auto-update {
   order: 3;
   position: relative;
+  white-space: nowrap;
 }
 
 .auto-update::before {
