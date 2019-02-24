@@ -1,4 +1,4 @@
-import { format, addDays, addHours, addYears } from 'date-fns';
+import { format, addHours, addDays, addMonths, addYears } from 'date-fns';
 import * as locale from 'date-fns/locale/nb';
 
 export const pipes = {
@@ -23,21 +23,28 @@ export const pipes = {
       return format(input, 'YYYY-MM-DD HH:mm:ss', { locale });
     }
   },
-  addday: (input, params) => {
+  adddays: (input, params) => {
     if (params.length > 0) {
       return addDays(input, parseInt(params[0]));
     } else {
       return addDays(input, 1);
     }
   },
-  addhour: (input, params) => {
+  addhours: (input, params) => {
     if (params.length > 0) {
       return addHours(input, parseInt(params[0]));
     } else {
       return addHours(input, 1);
     }
   },
-  addyear: (input, params) => {
+  addmonths: (input, params) => {
+    if (params.length > 0) {
+      return addMonths(input, parseInt(params[0]));
+    } else {
+      return addMonths(input, 1);
+    }
+  },
+  addyears: (input, params) => {
     if (params.length > 0) {
       return addYears(input, parseInt(params[0]));
     } else {
@@ -148,10 +155,32 @@ export const pipes = {
   },
 };
 
+export const pipeAliases = {
+  addday: 'adddays',
+  addhour: 'addhours',
+  addmonth: 'addmonths',
+  addyear: 'addyears',
+  plus: '+',
+  add: '+',
+  minus: '-',
+  sub: '-',
+  subtract: '-',
+  div: '/',
+  divBy: '/',
+  divide: '/',
+  divideBy: '/',
+  mult: '*',
+  multBy: '*',
+  multiply: '*',
+  multiplyBy: '*',
+};
+
 export const pipeTransform = (pipe, params, input, _pipes = pipes) => {
   const lowerPipe = pipe.toLowerCase();
   if (lowerPipe in _pipes) {
     return _pipes[lowerPipe](input, params);
+  } else if (lowerPipe in pipeAliases) {
+    return _pipes[pipeAliases[lowerPipe]](input, params);
   }
 
   throw new Error(`Pipe: ${pipe}, does not exist`);

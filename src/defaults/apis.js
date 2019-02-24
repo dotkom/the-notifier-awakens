@@ -1340,7 +1340,7 @@ XML eller facebook
   deltaEvents: {
     interval: 43200,
     url:
-      'https://teamup.com/ks3nuenfpbx2y8b78w/events?startDate=[[now|date]]&endDate=[[now|addDay 30|date]]',
+      'https://teamup.com/ks3nuenfpbx2y8b78w/events?startDate=[[now|date]]&endDate=[[now|addMonth|date]]',
     cors: true,
     print: true,
     printTransform: true,
