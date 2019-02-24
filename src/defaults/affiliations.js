@@ -256,9 +256,9 @@ export const defaultAffiliationSettings = {
         'Events Events',
         'Articles Articles',
       ],
-      1100: [
-        '/ . . 400px',
-        'Logo Clock Articles / 300px',
+      1024: [
+        '/ . . 320px',
+        'Logo Clock Clock / 300px',
         'Events Events Articles',
       ],
     },
