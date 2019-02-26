@@ -291,7 +291,6 @@ export const renderTemplate = (template, object = {}, options = {}) => {
   const endLoopDelimiterLength = endLoopDelimiter.length;
   const endDelimiterLength = endDelimiter.length;
   if (~result.indexOf(loopDelimiter)) {
-    const scopes = [];
     result = result.split(loopDelimiter).reduce((acc, next) => {
       const loopVariableEndIndex = next.indexOf(endDelimiter);
       if (loopVariableEndIndex === -1) {
@@ -302,7 +301,6 @@ export const renderTemplate = (template, object = {}, options = {}) => {
         ...Object.keys(object),
         'return ' + loopVariable,
       ).bind({})(...Object.values(object));
-      scopes.push(loopVariable);
 
       const endLoopIndex = next.indexOf(endLoopDelimiter);
       if (~endLoopIndex) {
