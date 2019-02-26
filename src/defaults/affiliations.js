@@ -475,7 +475,7 @@ export const defaultAffiliationSettings = {
                 {{departures.0.number:Laster inn...}} {{departures.0.name|front - (|back )}} {{departures.0.registeredTime|time HH:mm}}
               </div>
               {{#each departures.slice(0, 5)}}
-                <div>{{number}} - ({{name}})</div>
+                <div>{{number}} - ({{name}}) {{registeredTime|time HH:mm}}</div>
               {{#end}}
             </div>
             <style>.bustable {color: orange;}</style>
