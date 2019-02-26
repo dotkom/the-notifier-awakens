@@ -179,4 +179,13 @@ it('Render templates', () => {
   expect(
     renderTemplate(`{{#each objects}}<li>{{value}}</li>{{#end}}`, obj),
   ).toBe(`<li>test1</li><li>test2</li><li>test3</li>`);
+  expect(
+    renderTemplate(`{{#each objects}}<li>{{$index}}</li>{{#end}}`, obj),
+  ).toBe(`<li>0</li><li>1</li><li>2</li>`);
+  expect(
+    renderTemplate(
+      `{{#each objects.slice(0, 2)}}<li>{{$index}}</li>{{#end}}`,
+      obj,
+    ),
+  ).toBe(`<li>0</li><li>1</li>`);
 }, 1000);

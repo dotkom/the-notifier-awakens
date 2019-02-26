@@ -299,7 +299,9 @@ export const renderTemplate = (template, object = {}, options = {}) => {
         return acc + next;
       }
       const loopVariable = next.slice(0, loopVariableEndIndex).trim();
-      const loopVariableValue = get(object, loopVariable, []);
+      const loopVariableValue = new Function(
+        'return this.' + loopVariable,
+      ).bind(object)();
       scopes.push(loopVariable);
 
       const endLoopIndex = next.indexOf(endLoopDelimiter);
@@ -327,7 +329,6 @@ export const renderTemplate = (template, object = {}, options = {}) => {
             );
           })
           .join('');
-        console.log(loopContent);
         return (
           acc +
           loopContentRepeated +
