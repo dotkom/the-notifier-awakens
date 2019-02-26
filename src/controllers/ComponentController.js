@@ -112,7 +112,7 @@ export default class ComponentController extends Component {
 
   render() {
     return (this.props.components || []).map((component, i) => {
-      const directTemplate = !!~component.template.indexOf('<');
+      const directTemplate = !!~component.template.indexOf(/[<{]/);
       let template = directTemplate
         ? 'CustomComponent'
         : component.template.split('-')[0];
