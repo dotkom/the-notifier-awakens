@@ -157,16 +157,23 @@ it('Inject values into placeholders in string', () => {
   ).toEqual('to:thistest');
 });
 
-it('Render templates', () => {
+it('Render template', () => {
+  const obj = {
+    value: 'test',
+  };
+
+  expect(renderTemplate(`<span>{{value}}</span>`, obj)).toBe(
+    `<span>test</span>`,
+  );
+});
+
+it('Render template with single loop', () => {
   const obj = {
     value: 'test',
     values: ['test1', 'test2', 'test3'],
     objects: [{ value: 'test1' }, { value: 'test2' }, { value: 'test3' }],
   };
 
-  expect(renderTemplate(`<span>{{value}}</span>`, obj)).toBe(
-    `<span>test</span>`,
-  );
   expect(
     renderTemplate(`<ul>{{#each values}}<li>{{this}}</li>{{#end}}</ul>`, obj),
   ).toBe(`<ul><li>test1</li><li>test2</li><li>test3</li></ul>`);
@@ -188,4 +195,37 @@ it('Render templates', () => {
       obj,
     ),
   ).toBe(`<li>0</li><li>1</li>`);
+  expect(
+    renderTemplate(
+      `{{#each ['nice', 1, null]}}<li>{{this}}{{$index}}</li>{{#end}}`,
+      obj,
+    ),
+  ).toBe(`<li>nice0</li><li>11</li><li>null2</li>`);
+}, 1000);
+
+it('Render template with multiple loops', () => {
+  const obj = {
+    value: 'test',
+    values: ['test1', 'test2', 'test3'],
+    objects: [{ value: 'test1' }, { value: 'test2' }, { value: 'test3' }],
+  };
+
+  expect(
+    renderTemplate(
+      `<ul>{{#each values}}<li>{{this}}</li>{{#end}}</ul>
+<ol>{{#each objects}}<li>{{$index}}</li>{{#end}}</ol>`,
+      obj,
+    ),
+  ).toBe(`<ul><li>test1</li><li>test2</li><li>test3</li></ul>
+<ol><li>0</li><li>1</li><li>2</li></ol>`);
+  expect(
+    renderTemplate(
+      `{{#each values}}<li>{{this}}</li>{{#end}}{{#each objects}}
+  <li>{{$index}}</li>{{#end}}`,
+      obj,
+    ),
+  ).toBe(`<li>test1</li><li>test2</li><li>test3</li>
+  <li>0</li>
+  <li>1</li>
+  <li>2</li>`);
 }, 1000);
