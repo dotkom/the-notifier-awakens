@@ -296,9 +296,9 @@ To use the data from the API's you need a component to pass the data into. Compo
 +       },
 +     },
 
-      // Shorthand self made template (with pipe transformations)
-+     '<h1>{{affiliation|upper|back  er kult}}!</h1>',
-      // Output: <h1>DOTKOM er kult!</h1>
+      // Shorthand self made template (with pipe transformation and loop)
++     '<h1>{{affiliation|upper|back  er kult}}!{{#each [1,3,3,7]}}{{this}}{{#end}}</h1>',
+      // Output: <h1>DOTKOM er kult!1337</h1>
 
       // Extended self made template
 +     {
@@ -385,6 +385,27 @@ Shorthand (Will not update regularly as it does not listen to a time API):
 [
   ...
   '<h1>Klokke: {{clock|time HH:mm}}</h1>',
+  ...
+]
+```
+
+</details>
+
+<details>
+<summary>Example with template loops</summary>
+
+```javascript
+[
+  ...
+  {
+    template: `<h1>Bus table for {{bus:glos|translate}}</h1>
+{{#each departures}}
+<div>{{number}} - {{name}} ({{registeredTime|time HH:mm}})</div>
+{{#end}}`,
+    apis: {
+      departures: 'tarbus.stops.{{bus:glos}}.fromCity:departures',
+    },
+  },
   ...
 ]
 ```
