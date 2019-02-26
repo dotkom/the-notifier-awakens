@@ -470,17 +470,20 @@ export const defaultAffiliationSettings = {
       {
         template: `
           <h1>Neste buss til {{bus:Gløshaugen|translate}}:
-            <span class="bus">
-              {{number:Laster inn...}} {{name|front - (|back )}} {{time|time HH:mm}}
-            </span>
+          <div class="bustable">
+              <div class="bus">
+                {{departures.0.number:Laster inn...}} {{departures.0.name|front - (|back )}} {{departures.0.registeredTime|time HH:mm}}
+              </div>
+              {{#each departures.slice(0, 5)}}
+                <div>{{number}} - ({{name}})</div>
+              {{#end}}
+            </div>
+            <style>.bustable {color: orange;}</style>
           </h1>`,
         id: 'Bus',
         css: '.bus { color: red; }',
         apis: {
-          name: 'enturbus.stops.{{bus:glos}}.fromCity:departures.0.name',
-          number: 'enturbus.stops.{{bus:glos}}.fromCity:departures.0.number',
-          time:
-            'enturbus.stops.{{bus:glos}}.fromCity:departures.0.registeredTime',
+          departures: 'enturbus.stops.{{bus:glos}}.fromCity:departures',
         },
       },
       'Clock',
