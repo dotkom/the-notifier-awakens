@@ -200,7 +200,7 @@ export const injectValuesIntoString = (
         !~param.indexOf(pipeMatch))
     ) {
       const [extractedParam, defaultVal] = param.split(defaultMatch);
-      if (extractedParam in values) {
+      if (has(values, extractedParam)) {
         const valueContent = get(values, extractedParam);
         value =
           typeof valueContent === 'function' ? valueContent() : valueContent;
@@ -224,7 +224,7 @@ export const injectValuesIntoString = (
       ~param.indexOf(pipeMatch)
     ) {
       const [extractedParam, ...pipes] = param.split(pipeMatch);
-      if (extractedParam in values) {
+      if (has(values, extractedParam)) {
         const valueContent = get(values, extractedParam);
         value =
           typeof valueContent === 'function' ? valueContent() : valueContent;
@@ -275,7 +275,7 @@ export const renderTemplate = (template, object = {}, options = {}) => {
     loop = 'each',
     operation = '#',
     endOperation = 'end',
-    fallbackValue = null,
+    fallbackValue = '',
     startDelimiter = '{{',
     endDelimiter = '}}',
     defaultMatch = ':',
@@ -297,10 +297,17 @@ export const renderTemplate = (template, object = {}, options = {}) => {
         return acc + next;
       }
       const loopVariable = next.slice(0, loopVariableEndIndex).trim();
-      const loopVariableValue = new Function(
-        ...Object.keys(object),
-        'return ' + loopVariable,
-      ).bind({})(...Object.values(object));
+
+      let loopVariableValue;
+      try {
+        // eslint-disable-next-line
+        loopVariableValue = new Function(
+          ...Object.keys(object),
+          'return ' + loopVariable,
+        ).bind({})(...Object.values(object));
+      } catch (err) {
+        loopVariableValue = [];
+      }
 
       const endLoopIndex = next.indexOf(endLoopDelimiter);
       if (~endLoopIndex) {
@@ -312,8 +319,14 @@ export const renderTemplate = (template, object = {}, options = {}) => {
           .map((value, i) => {
             const values =
               typeof value === 'string'
-                ? { this: value, $root: object, $index: i }
-                : { ...value, this: value, $root: object, $index: i };
+                ? { ...object, this: value, $root: object, $index: i }
+                : {
+                    ...object,
+                    ...value,
+                    this: value,
+                    $root: object,
+                    $index: i,
+                  };
             return injectValuesIntoString(
               loopContent,
               values,

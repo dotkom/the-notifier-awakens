@@ -75,6 +75,11 @@ it('Inject values into placeholders in string', () => {
     two: 2,
     three: 3,
     four: 4,
+    object: {
+      ten: 10,
+      eleven: 11,
+      array: [1, 2, { tvelve: 12 }],
+    },
   };
 
   expect(injectValuesIntoString('test', obj)).toEqual('test');
@@ -155,6 +160,22 @@ it('Inject values into placeholders in string', () => {
       pipe => pipe,
     ),
   ).toEqual('to:thistest');
+  expect(injectValuesIntoString('{{object.ten}}test', obj)).toEqual('10test');
+  expect(injectValuesIntoString('{{object.tvelve:nope}}test', obj)).toEqual(
+    'nopetest',
+  );
+  expect(injectValuesIntoString('{{object.array.0}}test', obj)).toEqual(
+    '1test',
+  );
+  expect(injectValuesIntoString('{{object.array.2.tvelve}}test', obj)).toEqual(
+    '12test',
+  );
+  expect(
+    injectValuesIntoString('{{object.array.2.tvelve:shouldnotfire}}test', obj),
+  ).toEqual('12test');
+  expect(
+    injectValuesIntoString('{{object.array.2.thirteen:fire}}test', obj),
+  ).toEqual('firetest');
 });
 
 it('Render template', () => {
