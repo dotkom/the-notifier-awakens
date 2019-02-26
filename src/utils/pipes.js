@@ -89,6 +89,12 @@ export const pipes = {
     }
     return input;
   },
+  '^': (input, params) => {
+    if (params.length > 0) {
+      return Math.pow(parseInt(input), parseInt(params[0])) + '';
+    }
+    return input;
+  },
   lower: (input, params) => {
     return input.toLowerCase();
   },
@@ -188,6 +194,9 @@ export const pipeAliases = {
   multBy: '*',
   multiply: '*',
   multiplyBy: '*',
+  pow: '^',
+  power: '^',
+  powerBy: '^',
   prefix: 'front',
   postfix: 'back',
   addstr: 'back',
