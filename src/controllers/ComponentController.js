@@ -3,7 +3,12 @@ import Style from 'style-it';
 
 import * as Components from '../components';
 import { get } from 'object-path';
-import { injectValuesIntoString, pipes, pipeTransform } from '../utils';
+import {
+  injectValuesIntoString,
+  pipes,
+  pipeTransform,
+  renderTemplate,
+} from '../utils';
 import { IfPropIsOnline } from './IfPropIsOnline';
 import { defaultAffiliationSettings } from '../defaults';
 
@@ -151,15 +156,14 @@ export default class ComponentController extends Component {
       );
 
       if (directTemplate) {
-        dataProps.template = injectValuesIntoString(
+        dataProps.template = renderTemplate(
           dataProps.template,
-          Object.assign({}, this.props.settings, dataProps),
-          '',
-          '{{',
-          '}}',
-          ':',
-          (pipe, params, input) =>
-            pipeTransform(pipe, params, input, this.pipes),
+          { ...this.props.settings, ...dataProps },
+          {
+            fallbackValue: '',
+            pipeFunction: (pipe, params, input) =>
+              pipeTransform(pipe, params, input, this.pipes),
+          },
         );
       }
 
