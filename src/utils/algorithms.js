@@ -300,8 +300,9 @@ export const renderTemplate = (template, object = {}, options = {}) => {
       }
       const loopVariable = next.slice(0, loopVariableEndIndex).trim();
       const loopVariableValue = new Function(
-        'return this.' + loopVariable,
-      ).bind(object)();
+        ...Object.keys(object),
+        'return ' + loopVariable,
+      ).bind({})(...Object.values(object));
       scopes.push(loopVariable);
 
       const endLoopIndex = next.indexOf(endLoopDelimiter);
