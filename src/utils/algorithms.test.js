@@ -201,6 +201,12 @@ it('Render template with single loop', () => {
       obj,
     ),
   ).toBe(`<li>nice0</li><li>11</li><li>null2</li>`);
+  expect(
+    renderTemplate(
+      `{{#each ['nice', 1, null]}}<li>{{this}}{{$root.value}}</li>{{#end}}`,
+      obj,
+    ),
+  ).toBe(`<li>nicetest</li><li>1test</li><li>nulltest</li>`);
 }, 1000);
 
 it('Render template with multiple loops', () => {
@@ -228,4 +234,25 @@ it('Render template with multiple loops', () => {
   <li>0</li>
   <li>1</li>
   <li>2</li>`);
+}, 1000);
+
+it('Render template with loop and pipes', () => {
+  const obj = {
+    value: 'test',
+    values: ['test1', 'test2', 'test3'],
+    objects: [{ value: 'test1' }, { value: 'test2' }, { value: 'test3' }],
+  };
+
+  expect(
+    renderTemplate(
+      `<ul>{{#each values}}<li>{{this|apipe}}</li>{{#end}}</ul>
+<ol>{{#each objects}}<li>{{$index|double}}</li>{{#end}}</ol>`,
+      obj,
+      {
+        pipeFunction: (pipeName, _, input) =>
+          pipeName === 'apipe' ? pipeName : parseInt(input) * 2,
+      },
+    ),
+  ).toBe(`<ul><li>apipe</li><li>apipe</li><li>apipe</li></ul>
+<ol><li>0</li><li>2</li><li>4</li></ol>`);
 }, 1000);

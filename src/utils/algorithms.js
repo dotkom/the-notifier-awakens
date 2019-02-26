@@ -289,7 +289,6 @@ export const renderTemplate = (template, object = {}, options = {}) => {
   const endLoopDelimiter =
     startDelimiter + operation + endOperation + endDelimiter;
   const endLoopDelimiterLength = endLoopDelimiter.length;
-  const startDelimiterLength = startDelimiter.length;
   const endDelimiterLength = endDelimiter.length;
   if (~result.indexOf(loopDelimiter)) {
     const scopes = [];
@@ -323,10 +322,10 @@ export const renderTemplate = (template, object = {}, options = {}) => {
               fallbackValue,
               startDelimiter,
               endDelimiter,
-              false,
-              null,
-              false,
-              false,
+              defaultMatch,
+              pipeFunction,
+              pipeMatch,
+              pipeParamMatch,
             );
           })
           .join('');
