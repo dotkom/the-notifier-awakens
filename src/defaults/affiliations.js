@@ -564,6 +564,81 @@ export const defaultAffiliationSettings = {
       },
     ],
   },
+  'online-kontoret': {
+    name: 'Online Kontoret',
+    layouts: {
+      0: ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events'],
+      720: [
+        '/ 200px . . 200px',
+        'Logo Logo Logo',
+        'Office Office Clock Clock',
+        '. . . .',
+        'Bus Bus Bus2 Bus2',
+        '. . . .',
+        'Events Events Events .',
+      ],
+      1400: [
+        'Logo Logo Office Clock',
+        '. . . .',
+        '. . Events Events / 1',
+        'Bus Bus Events Events',
+        'Bus2 Bus2 Events Events',
+        '. . Events Events / 1',
+        '. . . .',
+      ],
+      2000: [
+        'Logo Logo Office Clock',
+        '. . .',
+        'Bus Bus2 Events Events',
+        '. . .',
+      ],
+    },
+    components: [
+      {
+        template: 'Logo',
+        url: 'https://online.ntnu.no/static/img/online_logo.svg',
+      },
+      {
+        template: 'Clock',
+        apis: { time: 'seconds' },
+      },
+      {
+        template: 'Bus',
+        name: '{{bus:glos}}',
+        count: '{{busCount:6}}',
+        apis: {
+          fromCity:
+            '{{busApi:enturbus}}.stops.{{bus:glos}}.fromCity:departures',
+          toCity: '{{busApi:enturbus}}.stops.{{bus:glos}}.toCity:departures',
+        },
+      },
+      {
+        template: 'Bus',
+        id: 'Bus2',
+        name: '{{bus2:prof}}',
+        count: '{{busCount:6}}',
+        apis: {
+          fromCity:
+            '{{busApi:enturbus}}.stops.{{bus2:prof}}.fromCity:departures',
+          toCity: '{{busApi:enturbus}}.stops.{{bus2:prof}}.toCity:departures',
+        },
+      },
+      {
+        template: 'Office',
+        title: 'Onlinekontoret',
+        apis: {
+          servants: 'affiliation.org.{{affiliation}}:servant.servants',
+          message: 'affiliation.org.{{affiliation}}:servant.message',
+          status: 'affiliation.org.{{affiliation}}:meeting.message',
+        },
+      },
+      {
+        template: 'Events',
+        type: '{{eventType}}',
+        count: '{{eventCount}}',
+      },
+    ],
+  },
   paideia: {
     name: 'Paideia',
     color: 'blue',

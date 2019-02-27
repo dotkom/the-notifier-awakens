@@ -230,7 +230,8 @@ class App extends Component {
     this.setState({ ...this.state, settingsOpen: false });
   }
 
-  autofillComponents(components, affiliation) {
+  autofillComponents(components, affiliationFullName) {
+    const affiliation = affiliationFullName.split('-')[0];
     return components.map(component => {
       if (typeof component === 'string') {
         const type = component.split('-')[0];
@@ -543,8 +544,8 @@ ${this.generateLayoutCSS(layouts)}
       if (this.state.style in styles) {
         globalCSS += styles[this.state.style];
       } else {
-        if (this.state.settings.affiliation in styles) {
-          globalCSS += styles[this.state.settings.affiliation];
+        if (this.state.settings.affiliation.split('-')[0] in styles) {
+          globalCSS += styles[this.state.settings.affiliation.split('-')[0]];
         }
       }
     }
