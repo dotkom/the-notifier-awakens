@@ -1,4 +1,11 @@
-import { format, addDays, addHours, addYears } from 'date-fns';
+import {
+  format,
+  addMinutes,
+  addHours,
+  addDays,
+  addMonths,
+  addYears,
+} from 'date-fns';
 import * as locale from 'date-fns/locale/nb';
 
 export const pipes = {
@@ -23,21 +30,35 @@ export const pipes = {
       return format(input, 'YYYY-MM-DD HH:mm:ss', { locale });
     }
   },
-  addday: (input, params) => {
+  addminutes: (input, params) => {
     if (params.length > 0) {
-      return addDays(input, parseInt(params[0]));
+      return addMinutes(input, parseInt(params[0]));
     } else {
-      return addDays(input, 1);
+      return addMinutes(input, 1);
     }
   },
-  addhour: (input, params) => {
+  addhours: (input, params) => {
     if (params.length > 0) {
       return addHours(input, parseInt(params[0]));
     } else {
       return addHours(input, 1);
     }
   },
-  addyear: (input, params) => {
+  adddays: (input, params) => {
+    if (params.length > 0) {
+      return addDays(input, parseInt(params[0]));
+    } else {
+      return addDays(input, 1);
+    }
+  },
+  addmonths: (input, params) => {
+    if (params.length > 0) {
+      return addMonths(input, parseInt(params[0]));
+    } else {
+      return addMonths(input, 1);
+    }
+  },
+  addyears: (input, params) => {
     if (params.length > 0) {
       return addYears(input, parseInt(params[0]));
     } else {
@@ -65,6 +86,12 @@ export const pipes = {
   '/': (input, params) => {
     if (params.length > 0) {
       return parseInt(input) / parseInt(params[0]) + '';
+    }
+    return input;
+  },
+  '^': (input, params) => {
+    if (params.length > 0) {
+      return Math.pow(parseInt(input), parseInt(params[0])) + '';
     }
     return input;
   },
@@ -148,12 +175,51 @@ export const pipes = {
   },
 };
 
+export const pipeAliases = {
+  addminute: 'addminutes',
+  addhour: 'addhours',
+  addday: 'adddays',
+  addmonth: 'addmonths',
+  addyear: 'addyears',
+  plus: '+',
+  add: '+',
+  minus: '-',
+  sub: '-',
+  subtract: '-',
+  div: '/',
+  divBy: '/',
+  divide: '/',
+  divideBy: '/',
+  mult: '*',
+  multBy: '*',
+  multiply: '*',
+  multiplyBy: '*',
+  pow: '^',
+  power: '^',
+  powerBy: '^',
+  prefix: 'front',
+  postfix: 'back',
+  addstr: 'back',
+  chop: 'slice',
+  eq: 'ifeq',
+  equals: 'ifeq',
+  '=?': 'ifeq',
+  '=?:': 'ifeqelse',
+  ifcontain: 'ifcontains',
+  contains: 'ifcontains',
+  contain: 'ifcontains',
+  ifmatch: 'ifmatches',
+  matches: 'ifmatches',
+  match: 'ifmatches',
+  '=>': 'then',
+};
+
 export const pipeTransform = (pipe, params, input, _pipes = pipes) => {
-  if (pipe in _pipes) {
-    return _pipes[pipe](
-      input,
-      params,
-    );
+  const lowerPipe = pipe.toLowerCase();
+  if (lowerPipe in _pipes) {
+    return _pipes[lowerPipe](input, params);
+  } else if (lowerPipe in pipeAliases) {
+    return _pipes[pipeAliases[lowerPipe]](input, params);
   }
 
   throw new Error(`Pipe: ${pipe}, does not exist`);

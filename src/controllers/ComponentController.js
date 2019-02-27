@@ -3,7 +3,12 @@ import Style from 'style-it';
 
 import * as Components from '../components';
 import { get } from 'object-path';
-import { injectValuesIntoString, pipes, pipeTransform } from '../utils';
+import {
+  injectValuesIntoString,
+  pipes,
+  pipeTransform,
+  renderTemplate,
+} from '../utils';
 import { IfPropIsOnline } from './IfPropIsOnline';
 import { defaultAffiliationSettings } from '../defaults';
 
@@ -107,7 +112,9 @@ export default class ComponentController extends Component {
 
   render() {
     return (this.props.components || []).map((component, i) => {
-      const directTemplate = !!~component.template.indexOf('<');
+      const directTemplate =
+        !!~component.template.indexOf('<') ||
+        !!~component.template.indexOf('{');
       let template = directTemplate
         ? 'CustomComponent'
         : component.template.split('-')[0];
@@ -151,15 +158,14 @@ export default class ComponentController extends Component {
       );
 
       if (directTemplate) {
-        dataProps.template = injectValuesIntoString(
+        dataProps.template = renderTemplate(
           dataProps.template,
-          Object.assign({}, this.props.settings, dataProps),
-          '',
-          '{{',
-          '}}',
-          ':',
-          (pipe, params, input) =>
-            pipeTransform(pipe, params, input, this.pipes),
+          { ...this.props.settings, ...dataProps },
+          {
+            fallbackValue: '',
+            pipeFunction: (pipe, params, input) =>
+              pipeTransform(pipe, params, input, this.pipes),
+          },
         );
       }
 
@@ -211,6 +217,7 @@ export default class ComponentController extends Component {
               getApiName={prop => this.getApiName(component, prop)}
               IfPropIsOnline={IfPropIsOnline}
               affiliation={this.props.affiliation}
+              affiliations={this.props.affiliations}
               changeAffiliation={affiliation =>
                 this.changeAffiliation(affiliation)
               }

@@ -249,8 +249,28 @@ export const defaultAffiliationSettings = {
   delta: {
     name: 'Delta',
     color: 'green',
-    layouts: ['"Articles"'],
+    layouts: {
+      0: ['Logo / calc(200px + 10vw)', 'Clock', 'Events', 'Articles'],
+      512: [
+        'Logo Clock / calc(200px + 10vw)',
+        'Events Events',
+        'Articles Articles',
+      ],
+      1024: [
+        '/ . . 320px',
+        'Logo Clock Clock / 300px',
+        'Events Events Articles',
+      ],
+    },
     components: [
+      {
+        template: 'Logo',
+        filter: 'grayscale(1) brightness(100)',
+        url:
+          'https://www.deltahouse.no/wp-content/themes/delta/dist/images/logo.svg',
+      },
+      'Events',
+      'Clock',
       {
         template: 'Articles',
         css: '.Articles .article { background-size: contain; }',
@@ -449,18 +469,21 @@ export const defaultAffiliationSettings = {
       },
       {
         template: `
-          <h1>Neste buss til {{bus:glos|translate}}:
-            <span class="bus">
-              {{number:Laster inn...}} {{name|front - (|back )}} {{time|time HH:mm}}
-            </span>
+          <h1>Neste buss til {{bus:Gløshaugen|translate}}:
+          <div class="bustable">
+              <div class="bus">
+                {{departures.0.number:Laster inn...}} {{departures.0.name|front - (|back )}} {{departures.0.registeredTime|time HH:mm}}
+              </div>
+              {{#each departures.slice(0, 5)}}
+                <div>{{number}} - ({{name}}) {{registeredTime|time HH:mm}}</div>
+              {{#end}}
+            </div>
+            <style>.bustable {color: orange;}</style>
           </h1>`,
         id: 'Bus',
         css: '.bus { color: red; }',
         apis: {
-          name: 'enturbus.stops.{{bus:glos}}.fromCity:departures.0.name',
-          number: 'enturbus.stops.{{bus:glos}}.fromCity:departures.0.number',
-          time:
-            'enturbus.stops.{{bus:glos}}.fromCity:departures.0.registeredTime',
+          departures: 'enturbus.stops.{{bus:glos}}.fromCity:departures',
         },
       },
       'Clock',
@@ -576,7 +599,7 @@ export const defaultAffiliationSettings = {
     color: 'blue',
     components: [],
   },
-  rektoratet_ntnu: {
+  'rektoratet-ntnu': {
     name: 'Rektoratet NTNU',
     color: 'blue',
     components: [],
@@ -616,7 +639,7 @@ export const defaultAffiliationSettings = {
     color: 'green',
     components: [],
   },
-  studenttinget_ntnu: {
+  'studenttinget-ntnu': {
     name: 'Studenttinget NTNU',
     color: 'purple',
     components: [],
@@ -641,7 +664,7 @@ export const defaultAffiliationSettings = {
     color: 'blue',
     components: [],
   },
-  tim_og_shaenko: {
+  'tim-og-shaenko': {
     name: 'Tim & Shænko',
     color: 'blue',
     components: [],

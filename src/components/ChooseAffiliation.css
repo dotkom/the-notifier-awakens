@@ -25,3 +25,29 @@
 .item.no-components {
   opacity: 0.5;
 }
+
+.toggle-create-affiliation,
+.no-components {
+  cursor: pointer;
+  opacity: 0.5;
+  box-sizing: border-box;
+  transition: background-color, padding-left 0.2s;
+}
+
+.toggle-create-affiliation:hover,
+.no-components:hover {
+  cursor: pointer;
+  opacity: 1;
+  padding-left: calc(0.2em + 10px);
+  transition-duration: 0.05s;
+}
+
+.create-affiliation {
+  background-color: rgba(0, 0, 0, 0.16);
+  padding: 0;
+  margin: 1em -1em;
+}
+
+.create-affiliation > p {
+  margin: 1em;
+}

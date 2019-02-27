@@ -304,17 +304,16 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
     return this.apis;
   }
 
-  updateSettings(apis, settings, components = []) {
+  updateSettings({ apis = {}, settings = {}, components = [] }) {
     this.stop();
+
     this.apis = apis;
     this.settings = settings;
     this.usedApis = {};
     this.failedApis = {};
     this.workingApis = {};
 
-    if (components.length) {
-      this.updateUsedApis(components);
-    }
+    this.updateUsedApis(components);
     this.start();
   }
 

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Style from 'style-it';
 import { get, set } from 'object-path';
 import * as Sentry from '@sentry/browser';
-import { Route, Redirect, withRouter } from 'react-router-dom';
+import { Route, Redirect, Link } from 'react-router-dom';
 
 import './App.css';
 
@@ -15,8 +15,8 @@ import {
   defaultTranslations,
   styles,
 } from './defaults';
-import { DEBUG } from './constants';
-import { injectValuesIntoString } from './utils';
+import { DEBUG, DEFAULT_SETTINGS_URL } from './constants';
+import { injectValuesIntoString, API, Storage } from './utils';
 import { Settings, Icon } from './components';
 
 if (process.env.REACT_APP_SENTRY) {
@@ -28,7 +28,23 @@ if (process.env.REACT_APP_SENTRY) {
 class App extends Component {
   constructor(props) {
     super(props);
-    const { affiliation = '', css: globalCSS = '' } = defaultSettings;
+    this.storage = new Storage();
+    if (this.storage.isEmpty()) {
+      this.storage.set(
+        '',
+        {
+          affiliations: defaultAffiliationSettings,
+          apis: defaultApis,
+          settings: defaultSettings,
+          translations: defaultTranslations,
+        },
+        true,
+      );
+    }
+
+    const { affiliation = '', css: globalCSS = '' } = this.storage.get(
+      'settings',
+    );
 
     this.updateData = this.updateData.bind(this);
     this.updateSettings = this.updateSettings.bind(this);
@@ -36,13 +52,14 @@ class App extends Component {
     this.state = this.updateState(affiliation, globalCSS);
 
     this.APIService = new APIService(
-      defaultApis,
+      this.storage.get('apis'),
       this.updateData,
-      defaultSettings,
+      this.storage.get('settings'),
       this.state.components,
     );
 
     this.startAPIs();
+    this.startCheckForUpdates();
   }
 
   componentWillMount() {
@@ -63,16 +80,83 @@ class App extends Component {
 
   componentWillUnmount() {
     this.unlisten();
+    if (this.checkForUpdatesInterval) {
+      clearInterval(this.checkForUpdatesInterval);
+    }
+  }
+
+  toggleAutoUpdate() {
+    this.setState(({ autoUpdate }) => ({
+      ...this.state,
+      autoUpdate: !autoUpdate,
+    }));
+  }
+
+  startCheckForUpdates() {
+    if (DEFAULT_SETTINGS_URL) {
+      this.checkForUpdates();
+      this.checkForUpdatesInterval = setInterval(() => {
+        this.checkForUpdates();
+      }, 10000);
+    }
+  }
+
+  checkForUpdates() {
+    if (this.state.autoUpdate) {
+      const validateAndFetchKey = (key, hash) => {
+        if (hash && this.storage.get(`hash.${key}`) !== hash) {
+          this.storage.set(`hash.${key}`, hash);
+          API.getRequest(
+            `${DEFAULT_SETTINGS_URL}/${key}.json`,
+            { cors: true },
+            data => {
+              this.storage.set(key, data, true);
+              this.setState(
+                state =>
+                  this.updateState(state.affiliation, state.globalCSS, {
+                    ...state,
+                    [key]: data,
+                  }),
+                () => {
+                  this.APIService.updateSettings({
+                    apis: this.storage.get('apis'),
+                    settings: this.state.settings,
+                    components: this.state.components,
+                  });
+                },
+              );
+            },
+          );
+        }
+      };
+      API.getRequest(
+        `${DEFAULT_SETTINGS_URL}/hash.json`,
+        { cors: true },
+        ({
+          affiliations = '',
+          apis = '',
+          translations = '',
+          settings = '',
+        }) => {
+          validateAndFetchKey('affiliations', affiliations);
+          validateAndFetchKey('apis', apis);
+          validateAndFetchKey('translations', translations);
+          validateAndFetchKey('settings', settings);
+          this.storage.save();
+        },
+      );
+    }
   }
 
   updateState(affiliation, globalCSS = '', prevState = {}) {
+    const affiliations = this.storage.get('affiliations');
     const {
       components = [],
       layouts,
       style = affiliation,
       css = '',
-      color = defaultSettings.color || '',
-    } = defaultAffiliationSettings[affiliation];
+      color = this.storage.get('settings.color'),
+    } = affiliations[affiliation];
 
     const autofilledComponents = this.autofillComponents(
       components,
@@ -81,15 +165,17 @@ class App extends Component {
 
     return {
       data: {},
+      autoUpdate: 'autoUpdate' in prevState ? prevState.autoUpdate : true,
       affiliation,
+      affiliations,
       components: autofilledComponents,
       layouts,
       style,
       globalCSS,
       css,
       color,
-      settings: defaultSettings,
-      translations: defaultTranslations,
+      settings: this.storage.get('settings'),
+      translations: this.storage.get('translations'),
       settingsOpen:
         'settingsOpen' in prevState ? prevState.settingsOpen : false,
     };
@@ -132,7 +218,11 @@ class App extends Component {
       settings.css,
       this.state,
     );
-    this.APIService.updateSettings(defaultApis, settings, newState.components);
+    this.APIService.updateSettings({
+      apis: this.storage.get('apis'),
+      settings,
+      components: newState.components,
+    });
     this.setState({ ...this.state, ...newState, settings });
   }
 
@@ -185,6 +275,11 @@ class App extends Component {
     this.APIService.update();
   }
 
+  restartAPIs(time = 0) {
+    this.stopAPIs();
+    this.startAPIs(time);
+  }
+
   /**
    * Get a CSS grid-template value from layout array.
    * 
@@ -193,7 +288,6 @@ class App extends Component {
 getGridTemplateFromLayoutArray(['a b', 'a b']) => '"a b" "a b" / 1fr 1fr'
 getGridTemplateFromLayoutArray(['a a', '. b b ']) => '"a a ." ". b b" / 1fr 1fr 1fr'
 getGridTemplateFromLayoutArray(['a ', 'a b  b']) => '"a . ." "a b b" / 1fr 1fr 1fr'
-getGridTemplateFromLayoutArray(['a / auto', 'a b  b / 2 ']) => '"a . ." auto "a b b" 2fr / 1fr 1fr 1fr'
 getGridTemplateFromLayoutArray(['a / auto', 'a b  b / 2 ']) => '"a . ." auto "a b b" 2fr / 1fr 1fr 1fr'
 ```
    * See ./App.test.js for more examples.
@@ -481,23 +575,54 @@ ${this.state.css}`;
             path="/:affiliation(.*)"
             render={props => {
               if (
-                !(props.match.params.affiliation in defaultAffiliationSettings)
+                !(props.match.params.affiliation in this.state.affiliations)
               ) {
                 return <Redirect to="/" />;
               }
               return (
                 <>
-                  <div className="menu-bar">
-                    <div
-                      className="open-settings"
-                      onClick={() =>
-                        this.setState({ ...this.state, settingsOpen: true })
-                      }
-                      title={this.translate('settings')}
-                    >
-                      <Icon name="Settings" />
+                  {props.match.params.affiliation !== '' ? (
+                    <div className="menu-bar">
+                      <div
+                        className="open-settings"
+                        onClick={() =>
+                          this.setState({ ...this.state, settingsOpen: true })
+                        }
+                        title={this.translate('settings')}
+                      >
+                        <Icon name="MdSettings" />
+                      </div>
+                      <div
+                        className={`auto-update${
+                          this.state.autoUpdate ? ' checked' : ''
+                        }`}
+                        onClick={() => this.toggleAutoUpdate()}
+                        title={this.translate('autoUpdateCheck')}
+                      >
+                        <span className="extra-small">
+                          {this.translate('autoUpdate')}
+                        </span>
+                      </div>
+                      <div
+                        className="sync"
+                        onClick={() => this.restartAPIs()}
+                        title={this.translate('sync')}
+                      >
+                        <Icon name="GoSync" />
+                      </div>
+                      <div className="space" />
+                      <Link
+                        to="/"
+                        className="go-home"
+                        title={this.translate('routeHome')}
+                      >
+                        <Icon name="IosArrowBack" />{' '}
+                        <span className="extra-small">
+                          {this.translate('home')}
+                        </span>
+                      </Link>
                     </div>
-                  </div>
+                  ) : null}
                   {this.state.settingsOpen ? (
                     <Style>
                       {`.Settings {
@@ -531,6 +656,7 @@ ${this.state.css}`;
                       translations={this.state.translations}
                       settings={this.state.settings}
                       affiliation={props.match.params.affiliation}
+                      affiliations={this.state.affiliations}
                       updateSettings={this.updateSettings}
                       apiService={this.APIService}
                       data={data}
@@ -546,4 +672,4 @@ ${this.state.css}`;
   }
 }
 
-export default withRouter(App);
+export default App;

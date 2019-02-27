@@ -44,8 +44,20 @@ it('Stores device data', () => {
       },
     ],
   });
+  expect(storage.merge({ apis: 'value' }).apis).toEqual('value');
+  expect(storage.merge({ apis: { key: 'value' } }).apis).toEqual({
+    key: 'value',
+  });
+  expect(storage.merge({ apis: { key2: 'value' } }).apis).toEqual({
+    key: 'value',
+    key2: 'value',
+  });
+  expect(
+    storage.merge({ components: [{ template: 'Events' }] }).components,
+  ).toHaveLength(1);
 
-  expect(storage.has('components.1.template')).toBeTruthy();
-  expect(storage.has('components.1.nokey')).toBeFalsy();
+  expect(storage.has('components.0.template')).toBeTruthy();
+  expect(storage.has('components.0.nokey')).toBeFalsy();
+  expect(storage.has('components.0.nokey.key')).toBeFalsy();
   expect(storage.has('components.1.nokey.key')).toBeFalsy();
 });

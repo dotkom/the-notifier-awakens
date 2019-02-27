@@ -1,4 +1,5 @@
 ![NotiStar](https://i.imgur.com/i78hOG1.png)
+[![Drone status](https://ci.online.ntnu.no/api/badges/dotkom/the-notifier-awakens/status.svg?branch=master)](https://ci.online.ntnu.no/dotkom/the-notifier-awakens)
 
 <!--![Storytime](https://i.imgur.com/ZXXFkQM.png)-->
 
@@ -295,9 +296,9 @@ To use the data from the API's you need a component to pass the data into. Compo
 +       },
 +     },
 
-      // Shorthand self made template (with pipe transformations)
-+     '<h1>{{affiliation|upper|back  er kult}}!</h1>',
-      // Output: <h1>DOTKOM er kult!</h1>
+      // Shorthand self made template (with pipe transformation and loop)
++     '<h1>{{affiliation|upper|back  er kult}}!{{#each [1,3,3,7]}}{{this}}{{#end}}</h1>',
+      // Output: <h1>DOTKOM er kult!1337</h1>
 
       // Extended self made template
 +     {
@@ -384,6 +385,27 @@ Shorthand (Will not update regularly as it does not listen to a time API):
 [
   ...
   '<h1>Klokke: {{clock|time HH:mm}}</h1>',
+  ...
+]
+```
+
+</details>
+
+<details>
+<summary>Example with template loops</summary>
+
+```javascript
+[
+  ...
+  {
+    template: `<h1>Bus table for {{bus:glos|translate}}</h1>
+{{#each departures}}
+<div>{{number}} - {{name}} ({{registeredTime|time HH:mm}})</div>
+{{#end}}`,
+    apis: {
+      departures: 'tarbus.stops.{{bus:glos}}.fromCity:departures',
+    },
+  },
   ...
 ]
 ```
@@ -518,6 +540,53 @@ You can achieve everything with plain CSS, but The Notifier Grid Systemᵗᵐ is
         ...
       },
     ],
+  },
+  ...
+```
+
+</details>
+
+### Real layout example
+
+Example of the Online affiliation using four different layouts at specified widths:
+
+![notifier-gif](https://user-images.githubusercontent.com/8504538/53286596-47fb6280-3771-11e9-9775-ef8f6d161a45.gif)
+
+<details>
+<summary>Example of the Online affiliation</summary>
+
+```diff
+  ...
+  online: {
+    name: 'Online',
++    layouts: {
++      0: ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events'],
++      720: [
++        '/ 200px . . 200px',
++        'Logo Logo Logo',
++        'Office Office Clock Clock',
++        '. . . .',
++        'Bus Bus Bus2 Bus2',
++        '. . . .',
++        'Events Events Events .',
++      ],
++      1400: [
++        'Logo Logo Office Clock',
++        '. . . .',
++        '. . Events Events / 1',
++        'Bus Bus Events Events',
++        'Bus2 Bus2 Events Events',
++        '. . Events Events / 1',
++        '. . . .',
++      ],
++      2000: [
++        'Logo Logo Office Clock',
++        '. . .',
++        'Bus Bus2 Events Events',
++        '. . .',
++      ],
++    },
+    components: [...],
   },
   ...
 ```

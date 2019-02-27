@@ -5,6 +5,7 @@ import {
   getStringParams,
   findObjectPaths,
   injectValuesIntoString,
+  renderTemplate,
 } from './algorithms';
 
 export {
@@ -13,6 +14,7 @@ export {
   getStringParams,
   findObjectPaths,
   injectValuesIntoString,
+  renderTemplate,
   pipes,
   pipeTransform,
 };

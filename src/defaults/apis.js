@@ -379,7 +379,7 @@ export const defaultApis = {
     interval: 100,
     cors: true,
     url:
-      'https://lego.abakus.no/api/v1/events/?date_after=[[now.date]]&page_size=[[eventCount:5]]',
+      'https://lego.abakus.no/api/v1/events/?date_after=[[now|date]]&page_size=[[eventCount:5]]',
     transform: {
       events: {
         '{{#each results}}': {
@@ -445,21 +445,6 @@ export const defaultApis = {
     interval: 100,
     url:
       'http://broderskabet.no/feed'
-    transform: {
-      events: {
-        '{{#each results}}': {
-          startDate: '{{startTime}}',
-          title: '{{title}}',
-          image: '{{cover}}',
-        },
-      },
-    },
-  },
-  XML
-  deltaEvents: {
-    interval: 100,
-    url:
-      'http://www.deltahouse.no/feed/'
     transform: {
       events: {
         '{{#each results}}': {
@@ -1348,6 +1333,23 @@ XML eller facebook
           author: '{{this["dc:creator"][0]}}',
           image:
             'https://www.deltahouse.no/wp-content/themes/delta/dist/images/logo.svg',
+        },
+      },
+    },
+  },
+  deltaEvents: {
+    interval: 43200,
+    url:
+      'https://teamup.com/ks3nuenfpbx2y8b78w/events?startDate=[[now|date]]&endDate=[[now|addMonth|date]]',
+    cors: true,
+    print: true,
+    printTransform: true,
+    transform: {
+      events: {
+        '{{#each events}}': {
+          startDate: '{{start_dt}}',
+          endDate: '{{end_dt}}',
+          title: '{{title}}',
         },
       },
     },

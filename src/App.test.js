@@ -1,10 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter as Router, withRouter } from 'react-router-dom';
 import App from './App';
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
+  const Root = withRouter(App);
+  ReactDOM.render(
+    <Router>
+      <Root />
+    </Router>,
+    div,
+  );
   ReactDOM.unmountComponentAtNode(div);
 });
 

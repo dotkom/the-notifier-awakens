@@ -2,6 +2,7 @@ import {
   findObjectPaths,
   getStringParams,
   injectValuesIntoString,
+  renderTemplate,
 } from './algorithms';
 
 it('Find object paths', () => {
@@ -74,6 +75,11 @@ it('Inject values into placeholders in string', () => {
     two: 2,
     three: 3,
     four: 4,
+    object: {
+      ten: 10,
+      eleven: 11,
+      array: [1, 2, { tvelve: 12 }],
+    },
   };
 
   expect(injectValuesIntoString('test', obj)).toEqual('test');
@@ -154,4 +160,120 @@ it('Inject values into placeholders in string', () => {
       pipe => pipe,
     ),
   ).toEqual('to:thistest');
+  expect(injectValuesIntoString('{{object.ten}}test', obj)).toEqual('10test');
+  expect(injectValuesIntoString('{{object.tvelve:nope}}test', obj)).toEqual(
+    'nopetest',
+  );
+  expect(injectValuesIntoString('{{object.array.0}}test', obj)).toEqual(
+    '1test',
+  );
+  expect(injectValuesIntoString('{{object.array.2.tvelve}}test', obj)).toEqual(
+    '12test',
+  );
+  expect(
+    injectValuesIntoString('{{object.array.2.tvelve:shouldnotfire}}test', obj),
+  ).toEqual('12test');
+  expect(
+    injectValuesIntoString('{{object.array.2.thirteen:fire}}test', obj),
+  ).toEqual('firetest');
 });
+
+it('Render template', () => {
+  const obj = {
+    value: 'test',
+  };
+
+  expect(renderTemplate(`<span>{{value}}</span>`, obj)).toBe(
+    `<span>test</span>`,
+  );
+});
+
+it('Render template with single loop', () => {
+  const obj = {
+    value: 'test',
+    values: ['test1', 'test2', 'test3'],
+    objects: [{ value: 'test1' }, { value: 'test2' }, { value: 'test3' }],
+  };
+
+  expect(
+    renderTemplate(`<ul>{{#each values}}<li>{{this}}</li>{{#end}}</ul>`, obj),
+  ).toBe(`<ul><li>test1</li><li>test2</li><li>test3</li></ul>`);
+  expect(renderTemplate(`{{#each values}}<li>{{this}}</li>{{#end}}`, obj)).toBe(
+    `<li>test1</li><li>test2</li><li>test3</li>`,
+  );
+  expect(
+    renderTemplate(`{{#each objects}}<li>{{this.value}}</li>{{#end}}`, obj),
+  ).toBe(`<li>test1</li><li>test2</li><li>test3</li>`);
+  expect(
+    renderTemplate(`{{#each objects}}<li>{{value}}</li>{{#end}}`, obj),
+  ).toBe(`<li>test1</li><li>test2</li><li>test3</li>`);
+  expect(
+    renderTemplate(`{{#each objects}}<li>{{$index}}</li>{{#end}}`, obj),
+  ).toBe(`<li>0</li><li>1</li><li>2</li>`);
+  expect(
+    renderTemplate(
+      `{{#each objects.slice(0, 2)}}<li>{{$index}}</li>{{#end}}`,
+      obj,
+    ),
+  ).toBe(`<li>0</li><li>1</li>`);
+  expect(
+    renderTemplate(
+      `{{#each ['nice', 1, null]}}<li>{{this}}{{$index}}</li>{{#end}}`,
+      obj,
+    ),
+  ).toBe(`<li>nice0</li><li>11</li><li>null2</li>`);
+  expect(
+    renderTemplate(
+      `{{#each ['nice', 1, null]}}<li>{{this}}{{$root.value}}</li>{{#end}}`,
+      obj,
+    ),
+  ).toBe(`<li>nicetest</li><li>1test</li><li>nulltest</li>`);
+}, 1000);
+
+it('Render template with multiple loops', () => {
+  const obj = {
+    value: 'test',
+    values: ['test1', 'test2', 'test3'],
+    objects: [{ value: 'test1' }, { value: 'test2' }, { value: 'test3' }],
+  };
+
+  expect(
+    renderTemplate(
+      `<ul>{{#each values}}<li>{{this}}</li>{{#end}}</ul>
+<ol>{{#each objects}}<li>{{$index}}</li>{{#end}}</ol>`,
+      obj,
+    ),
+  ).toBe(`<ul><li>test1</li><li>test2</li><li>test3</li></ul>
+<ol><li>0</li><li>1</li><li>2</li></ol>`);
+  expect(
+    renderTemplate(
+      `{{#each values}}<li>{{this}}</li>{{#end}}{{#each objects}}
+  <li>{{$index}}</li>{{#end}}`,
+      obj,
+    ),
+  ).toBe(`<li>test1</li><li>test2</li><li>test3</li>
+  <li>0</li>
+  <li>1</li>
+  <li>2</li>`);
+}, 1000);
+
+it('Render template with loop and pipes', () => {
+  const obj = {
+    value: 'test',
+    values: ['test1', 'test2', 'test3'],
+    objects: [{ value: 'test1' }, { value: 'test2' }, { value: 'test3' }],
+  };
+
+  expect(
+    renderTemplate(
+      `<ul>{{#each values}}<li>{{this|apipe}}</li>{{#end}}</ul>
+<ol>{{#each objects}}<li>{{$index|double}}</li>{{#end}}</ol>`,
+      obj,
+      {
+        pipeFunction: (pipeName, _, input) =>
+          pipeName === 'apipe' ? pipeName : parseInt(input) * 2,
+      },
+    ),
+  ).toBe(`<ul><li>apipe</li><li>apipe</li><li>apipe</li></ul>
+<ol><li>0</li><li>2</li><li>4</li></ol>`);
+}, 1000);

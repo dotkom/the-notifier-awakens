@@ -39,6 +39,10 @@
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
+  overflow-y: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  transform: translateZ(0);
 }
 
 .menu-bar:hover {
@@ -46,11 +50,70 @@
   height: 100px;
 }
 
-.open-settings {
+.menu-bar > * {
+  opacity: 0.8;
+  transition-property: opacity, padding;
+  transition-duration: 0.2s;
+  color: #ddd;
   cursor: pointer;
   font-size: 2.5em;
   margin: 1rem;
   display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.menu-bar > *:hover {
+  opacity: 1;
+  transition-duration: 0.1s;
+}
+
+.open-settings {
+  order: 9;
+}
+
+.sync {
+  order: 8;
+}
+
+.auto-update {
+  order: 3;
+  position: relative;
+  white-space: nowrap;
+}
+
+.auto-update::before {
+  content: '';
+  display: block;
+  width: 0.6em;
+  height: 0.6em;
+  margin: 8px;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.auto-update.checked::after {
+  content: '✓';
+  position: absolute;
+  left: 0.15em;
+  font-size: 0.8em;
+  color: #0f0;
+}
+
+.menu-bar > .space {
+  margin: 0;
+  order: 2;
+}
+
+.go-home {
+  order: 1;
+  padding-left: 10px;
+  padding-right: 0;
+  box-sizing: border-box;
+}
+
+.go-home:hover {
+  padding-left: 0;
+  padding-right: 10px;
 }
 
 .Components {

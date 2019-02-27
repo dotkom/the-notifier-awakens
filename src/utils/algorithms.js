@@ -187,11 +187,11 @@ export const injectValuesIntoString = (
   for (let param of params) {
     let value = '';
 
-    if (param in values) {
-      if (typeof values[param] === 'function') {
-        value = values[param]();
+    if (has(values, param)) {
+      if (typeof get(values, param) === 'function') {
+        value = get(values, param)();
       } else {
-        value = values[param];
+        value = get(values, param);
       }
     } else if (
       defaultMatch &&
@@ -200,11 +200,10 @@ export const injectValuesIntoString = (
         !~param.indexOf(pipeMatch))
     ) {
       const [extractedParam, defaultVal] = param.split(defaultMatch);
-      if (extractedParam in values) {
+      if (has(values, extractedParam)) {
+        const valueContent = get(values, extractedParam);
         value =
-          typeof values[extractedParam] === 'function'
-            ? values[extractedParam]()
-            : values[extractedParam];
+          typeof valueContent === 'function' ? valueContent() : valueContent;
         if (pipeFunction !== null && pipeMatch && ~param.indexOf(pipeMatch)) {
           const [, ...pipes] = param.split(pipeMatch);
           value = pipes.reduce((acc, pipe) => {
@@ -225,11 +224,10 @@ export const injectValuesIntoString = (
       ~param.indexOf(pipeMatch)
     ) {
       const [extractedParam, ...pipes] = param.split(pipeMatch);
-      if (extractedParam in values) {
+      if (has(values, extractedParam)) {
+        const valueContent = get(values, extractedParam);
         value =
-          typeof values[extractedParam] === 'function'
-            ? values[extractedParam]()
-            : values[extractedParam];
+          typeof valueContent === 'function' ? valueContent() : valueContent;
         value = pipes.reduce((acc, pipe) => {
           const [pipeName, ...pipeParams] = pipe.split(pipeParamMatch);
           return pipeFunction(pipeName, pipeParams, acc);
@@ -260,5 +258,107 @@ export const injectValuesIntoString = (
 
   result += string.slice(prevPosition + prevFormattedParam.length);
 
+  return result;
+};
+
+/**
+ *
+ *
+ * @param {string} template
+ * @param {object} object
+ * @param {object} options
+ *
+ * @returns {string} A string with values injected properly
+ */
+export const renderTemplate = (template, object = {}, options = {}) => {
+  const {
+    loop = 'each',
+    operation = '#',
+    endOperation = 'end',
+    fallbackValue = '',
+    startDelimiter = '{{',
+    endDelimiter = '}}',
+    defaultMatch = ':',
+    pipeFunction = null,
+    pipeMatch = '|',
+    pipeParamMatch = ' ',
+  } = options;
+
+  let result = template;
+  const loopDelimiter = startDelimiter + operation + loop + ' ';
+  const endLoopDelimiter =
+    startDelimiter + operation + endOperation + endDelimiter;
+  const endLoopDelimiterLength = endLoopDelimiter.length;
+  const endDelimiterLength = endDelimiter.length;
+  if (~result.indexOf(loopDelimiter)) {
+    result = result.split(loopDelimiter).reduce((acc, next) => {
+      const loopVariableEndIndex = next.indexOf(endDelimiter);
+      if (loopVariableEndIndex === -1) {
+        return acc + next;
+      }
+      const loopVariable = next.slice(0, loopVariableEndIndex).trim();
+
+      let loopVariableValue;
+      try {
+        // eslint-disable-next-line
+        loopVariableValue = new Function(
+          ...Object.keys(object),
+          'return ' + loopVariable,
+        ).bind({})(...Object.values(object));
+      } catch (err) {
+        loopVariableValue = [];
+      }
+
+      const endLoopIndex = next.indexOf(endLoopDelimiter);
+      if (~endLoopIndex) {
+        const loopContent = next.slice(
+          loopVariableEndIndex + endDelimiterLength,
+          endLoopIndex,
+        );
+        const loopContentRepeated = loopVariableValue
+          .map((value, i) => {
+            const values =
+              typeof value === 'string'
+                ? { ...object, this: value, $root: object, $index: i }
+                : {
+                    ...object,
+                    ...value,
+                    this: value,
+                    $root: object,
+                    $index: i,
+                  };
+            return injectValuesIntoString(
+              loopContent,
+              values,
+              fallbackValue,
+              startDelimiter,
+              endDelimiter,
+              defaultMatch,
+              pipeFunction,
+              pipeMatch,
+              pipeParamMatch,
+            );
+          })
+          .join('');
+        return (
+          acc +
+          loopContentRepeated +
+          next.slice(endLoopIndex + endLoopDelimiterLength)
+        );
+      }
+      return acc + loopDelimiter + next;
+    }, '');
+  }
+  result = injectValuesIntoString(
+    result,
+    object,
+    fallbackValue,
+    startDelimiter,
+    endDelimiter,
+    defaultMatch,
+    pipeFunction,
+    pipeMatch,
+    pipeParamMatch,
+  );
   return result;
 };

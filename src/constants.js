@@ -14,5 +14,7 @@ export const whiteList = [
   'deltahouse.no',
   'dusken.no',
   'mannhullet.no',
+  'nabla.no',
   'online.ntnu.no',
+  'teamup.com',
 ].concat(targetWhitelist);

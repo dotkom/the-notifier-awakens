@@ -14,7 +14,7 @@ export const addCors = (url, enable = true) => {
   const removeScheme = ~url.indexOf('//') ? url.split('//')[1] : url;
   const domain = removeScheme
     .toLowerCase()
-    .split(/[^a-z.ø]/)[0]
+    .split(/[^0-9a-z.ø]/)[0]
     .split('.')
     .slice(-2)
     .join('.');
