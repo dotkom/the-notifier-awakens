@@ -16,7 +16,7 @@ import {
   styles,
 } from './defaults';
 import { DEBUG, DEFAULT_SETTINGS_URL } from './constants';
-import { injectValuesIntoString } from './utils';
+import { injectValuesIntoString, API, Storage } from './utils';
 import { Settings, Icon } from './components';
 
 if (process.env.REACT_APP_SENTRY) {
@@ -28,7 +28,23 @@ if (process.env.REACT_APP_SENTRY) {
 class App extends Component {
   constructor(props) {
     super(props);
-    const { affiliation = '', css: globalCSS = '' } = defaultSettings;
+    this.storage = new Storage();
+    if (this.storage.isEmpty()) {
+      this.storage.set(
+        '',
+        {
+          affiliations: defaultAffiliationSettings,
+          apis: defaultApis,
+          settings: defaultSettings,
+          translations: defaultTranslations,
+        },
+        true,
+      );
+    }
+
+    const { affiliation = '', css: globalCSS = '' } = this.storage.get(
+      'settings',
+    );
 
     this.updateData = this.updateData.bind(this);
     this.updateSettings = this.updateSettings.bind(this);
@@ -36,9 +52,9 @@ class App extends Component {
     this.state = this.updateState(affiliation, globalCSS);
 
     this.APIService = new APIService(
-      defaultApis,
+      this.storage.get('apis'),
       this.updateData,
-      defaultSettings,
+      this.storage.get('settings'),
       this.state.components,
     );
 
@@ -64,7 +80,9 @@ class App extends Component {
 
   componentWillUnmount() {
     this.unlisten();
-    clearInterval(this.checkForUpdatesInterval);
+    if (this.checkForUpdatesInterval) {
+      clearInterval(this.checkForUpdatesInterval);
+    }
   }
 
   toggleAutoUpdate() {
@@ -75,19 +93,63 @@ class App extends Component {
   }
 
   startCheckForUpdates() {
-    this.checkForUpdatesInterval = setInterval(() => {
-      // TODO: Implement check for update feature
-    }, 60000);
+    if (DEFAULT_SETTINGS_URL) {
+      this.checkForUpdates();
+      this.checkForUpdatesInterval = setInterval(() => {
+        this.checkForUpdates();
+      }, 10000);
+    }
+  }
+
+  checkForUpdates() {
+    const validateAndFetchKey = (key, hash) => {
+      if (hash && this.storage.get(`hash.${key}`) !== hash) {
+        this.storage.set(`hash.${key}`, hash);
+        API.getRequest(
+          `${DEFAULT_SETTINGS_URL}/${key}.json`,
+          { cors: true },
+          data => {
+            this.storage.set(key, data, true);
+            this.setState(
+              state =>
+                this.updateState(state.affiliation, state.globalCSS, {
+                  ...state,
+                  [key]: data,
+                }),
+              () => {
+                this.APIService.updateSettings({
+                  apis: this.storage.get('apis'),
+                  settings: this.state.settings,
+                  components: this.state.components,
+                });
+              },
+            );
+          },
+        );
+      }
+    };
+    API.getRequest(
+      `${DEFAULT_SETTINGS_URL}/hash.json`,
+      { cors: true },
+      ({ affiliations = '', apis = '', translations = '', settings = '' }) => {
+        validateAndFetchKey('affiliations', affiliations);
+        validateAndFetchKey('apis', apis);
+        validateAndFetchKey('translations', translations);
+        validateAndFetchKey('settings', settings);
+        this.storage.save();
+      },
+    );
   }
 
   updateState(affiliation, globalCSS = '', prevState = {}) {
+    const affiliations = this.storage.get('affiliations');
     const {
       components = [],
       layouts,
       style = affiliation,
       css = '',
-      color = defaultSettings.color || '',
-    } = defaultAffiliationSettings[affiliation];
+      color = this.storage.get('settings.color'),
+    } = affiliations[affiliation];
 
     const autofilledComponents = this.autofillComponents(
       components,
@@ -97,14 +159,15 @@ class App extends Component {
     return {
       data: {},
       affiliation,
+      affiliations,
       components: autofilledComponents,
       layouts,
       style,
       globalCSS,
       css,
       color,
-      settings: defaultSettings,
-      translations: defaultTranslations,
+      settings: this.storage.get('settings'),
+      translations: this.storage.get('translations'),
       settingsOpen:
         'settingsOpen' in prevState ? prevState.settingsOpen : false,
     };
@@ -148,7 +211,7 @@ class App extends Component {
       this.state,
     );
     this.APIService.updateSettings({
-      apis: defaultApis,
+      apis: this.storage.get('apis'),
       settings,
       components: newState.components,
     });
@@ -217,7 +280,6 @@ class App extends Component {
 getGridTemplateFromLayoutArray(['a b', 'a b']) => '"a b" "a b" / 1fr 1fr'
 getGridTemplateFromLayoutArray(['a a', '. b b ']) => '"a a ." ". b b" / 1fr 1fr 1fr'
 getGridTemplateFromLayoutArray(['a ', 'a b  b']) => '"a . ." "a b b" / 1fr 1fr 1fr'
-getGridTemplateFromLayoutArray(['a / auto', 'a b  b / 2 ']) => '"a . ." auto "a b b" 2fr / 1fr 1fr 1fr'
 getGridTemplateFromLayoutArray(['a / auto', 'a b  b / 2 ']) => '"a . ." auto "a b b" 2fr / 1fr 1fr 1fr'
 ```
    * See ./App.test.js for more examples.
@@ -505,7 +567,7 @@ ${this.state.css}`;
             path="/:affiliation(.*)"
             render={props => {
               if (
-                !(props.match.params.affiliation in defaultAffiliationSettings)
+                !(props.match.params.affiliation in this.state.affiliations)
               ) {
                 return <Redirect to="/" />;
               }
@@ -586,6 +648,7 @@ ${this.state.css}`;
                       translations={this.state.translations}
                       settings={this.state.settings}
                       affiliation={props.match.params.affiliation}
+                      affiliations={this.state.affiliations}
                       updateSettings={this.updateSettings}
                       apiService={this.APIService}
                       data={data}

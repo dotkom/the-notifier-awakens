@@ -217,6 +217,7 @@ export default class ComponentController extends Component {
               getApiName={prop => this.getApiName(component, prop)}
               IfPropIsOnline={IfPropIsOnline}
               affiliation={this.props.affiliation}
+              affiliations={this.props.affiliations}
               changeAffiliation={affiliation =>
                 this.changeAffiliation(affiliation)
               }
