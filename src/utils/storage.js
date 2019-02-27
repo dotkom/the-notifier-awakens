@@ -76,6 +76,13 @@ export default class Storage {
   }
 
   /**
+   * Check if storage is empty.
+   */
+  isEmpty() {
+    return !Object.keys(this.data).length;
+  }
+
+  /**
    * Saves the current storage object state to the device storage.
    */
   save() {
