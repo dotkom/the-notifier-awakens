@@ -102,43 +102,50 @@ class App extends Component {
   }
 
   checkForUpdates() {
-    const validateAndFetchKey = (key, hash) => {
-      if (hash && this.storage.get(`hash.${key}`) !== hash) {
-        this.storage.set(`hash.${key}`, hash);
-        API.getRequest(
-          `${DEFAULT_SETTINGS_URL}/${key}.json`,
-          { cors: true },
-          data => {
-            this.storage.set(key, data, true);
-            this.setState(
-              state =>
-                this.updateState(state.affiliation, state.globalCSS, {
-                  ...state,
-                  [key]: data,
-                }),
-              () => {
-                this.APIService.updateSettings({
-                  apis: this.storage.get('apis'),
-                  settings: this.state.settings,
-                  components: this.state.components,
-                });
-              },
-            );
-          },
-        );
-      }
-    };
-    API.getRequest(
-      `${DEFAULT_SETTINGS_URL}/hash.json`,
-      { cors: true },
-      ({ affiliations = '', apis = '', translations = '', settings = '' }) => {
-        validateAndFetchKey('affiliations', affiliations);
-        validateAndFetchKey('apis', apis);
-        validateAndFetchKey('translations', translations);
-        validateAndFetchKey('settings', settings);
-        this.storage.save();
-      },
-    );
+    if (this.state.autoUpdate) {
+      const validateAndFetchKey = (key, hash) => {
+        if (hash && this.storage.get(`hash.${key}`) !== hash) {
+          this.storage.set(`hash.${key}`, hash);
+          API.getRequest(
+            `${DEFAULT_SETTINGS_URL}/${key}.json`,
+            { cors: true },
+            data => {
+              this.storage.set(key, data, true);
+              this.setState(
+                state =>
+                  this.updateState(state.affiliation, state.globalCSS, {
+                    ...state,
+                    [key]: data,
+                  }),
+                () => {
+                  this.APIService.updateSettings({
+                    apis: this.storage.get('apis'),
+                    settings: this.state.settings,
+                    components: this.state.components,
+                  });
+                },
+              );
+            },
+          );
+        }
+      };
+      API.getRequest(
+        `${DEFAULT_SETTINGS_URL}/hash.json`,
+        { cors: true },
+        ({
+          affiliations = '',
+          apis = '',
+          translations = '',
+          settings = '',
+        }) => {
+          validateAndFetchKey('affiliations', affiliations);
+          validateAndFetchKey('apis', apis);
+          validateAndFetchKey('translations', translations);
+          validateAndFetchKey('settings', settings);
+          this.storage.save();
+        },
+      );
+    }
   }
 
   updateState(affiliation, globalCSS = '', prevState = {}) {
@@ -158,6 +165,7 @@ class App extends Component {
 
     return {
       data: {},
+      autoUpdate: 'autoUpdate' in prevState ? prevState.autoUpdate : true,
       affiliation,
       affiliations,
       components: autofilledComponents,
