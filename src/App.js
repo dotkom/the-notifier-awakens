@@ -15,7 +15,7 @@ import {
   defaultTranslations,
   styles,
 } from './defaults';
-import { DEBUG } from './constants';
+import { DEBUG, DEFAULT_SETTINGS_URL } from './constants';
 import { injectValuesIntoString } from './utils';
 import { Settings, Icon } from './components';
 
@@ -43,6 +43,7 @@ class App extends Component {
     );
 
     this.startAPIs();
+    this.startCheckForUpdates();
   }
 
   componentWillMount() {
@@ -63,6 +64,7 @@ class App extends Component {
 
   componentWillUnmount() {
     this.unlisten();
+    clearInterval(this.checkForUpdatesInterval);
   }
 
   toggleAutoUpdate() {
@@ -70,6 +72,12 @@ class App extends Component {
       ...this.state,
       autoUpdate: !autoUpdate,
     }));
+  }
+
+  startCheckForUpdates() {
+    this.checkForUpdatesInterval = setInterval(() => {
+      // TODO: Implement check for update feature
+    }, 60000);
   }
 
   updateState(affiliation, globalCSS = '', prevState = {}) {
