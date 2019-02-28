@@ -631,9 +631,11 @@ export const defaultAffiliationSettings = {
         template: 'Office',
         title: 'Onlinekontoret',
         apis: {
-          servants: 'affiliation.org.{{affiliation}}:servant.servants',
-          message: 'affiliation.org.{{affiliation}}:servant.message',
-          status: 'affiliation.org.{{affiliation}}:meeting.message',
+          servants:
+            'affiliation.org.{{affiliationGroup:online}}:servant.servants',
+          message:
+            'affiliation.org.{{affiliationGroup:online}}:servant.message',
+          status: 'affiliation.org.{{affiliationGroup:online}}:meeting.message',
         },
       },
       {

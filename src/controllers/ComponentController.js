@@ -10,7 +10,6 @@ import {
   renderTemplate,
 } from '../utils';
 import { IfPropIsOnline } from './IfPropIsOnline';
-import { defaultAffiliationSettings } from '../defaults';
 
 /**
  * The component controller passes data into components and
@@ -58,7 +57,10 @@ export default class ComponentController extends Component {
   injectSettings(value, fallbackValue = null, defaultMatch = ':') {
     return injectValuesIntoString(
       value,
-      this.props.settings,
+      {
+        ...this.props.settings,
+        affiliationGroup: this.props.settings.affiliation.split('-')[0],
+      },
       fallbackValue,
       '{{',
       '}}',
@@ -191,16 +193,14 @@ export default class ComponentController extends Component {
         className += ` ${component.id}`;
       }
 
-      const { dark = true } = defaultAffiliationSettings[
-        this.props.affiliation
-      ];
+      const { dark = true } = this.props.affiliations[this.props.affiliation];
 
       return (
         <Style key={i}>
           {modularCSS}
           <div className={className}>
             <Component
-              {...defaultAffiliationSettings[this.props.affiliation]}
+              {...this.props.affiliations[this.props.affiliation]}
               dark={dark}
               translate={e => this.translate(e)}
               updateSettings={this.props.updateSettings}

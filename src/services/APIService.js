@@ -293,7 +293,16 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
   }
 
   injectSettings(value) {
-    return injectValuesIntoString(value, this.settings, '', '{{', '}}');
+    return injectValuesIntoString(
+      value,
+      {
+        ...this.settings,
+        affiliationGroup: this.settings.affiliation.split('-')[0],
+      },
+      '',
+      '{{',
+      '}}',
+    );
   }
 
   updateUsedApis(components = []) {

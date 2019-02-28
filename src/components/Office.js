@@ -5,7 +5,9 @@ import { isBefore, isAfter } from 'date-fns';
 export default class Office extends Component {
   constructor() {
     super();
-    this.state = { servants: ['Anne', 'Malin', 'Emilie', 'Gunvor'] };
+    this.state = {
+      servants: [],
+    };
   }
 
   render() {
