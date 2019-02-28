@@ -29,7 +29,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.storage = new Storage();
-    if (this.storage.isEmpty()) {
+    if (this.storage.isEmpty() || DEBUG) {
       this.storage.set(
         '',
         {
@@ -93,7 +93,7 @@ class App extends Component {
   }
 
   startCheckForUpdates() {
-    if (DEFAULT_SETTINGS_URL) {
+    if (DEFAULT_SETTINGS_URL && !DEBUG) {
       this.checkForUpdates();
       this.checkForUpdatesInterval = setInterval(() => {
         this.checkForUpdates();
