@@ -13,6 +13,8 @@ export const whiteList = [
   'abakus.no',
   'deltahouse.no',
   'dusken.no',
+  'google.com',
+  'google.no',
   'mannhullet.no',
   'nabla.no',
   'online.ntnu.no',
