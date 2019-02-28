@@ -425,6 +425,23 @@ export const defaultApis = {
       },
     },
   },
+  smorekoppenEvents: {
+    interval: 100,
+    cors: true,
+    url:
+      'https://clients6.google.com/calendar/v3/calendars/l7fsecfdl2c73pp5dh4slomsek@group.calendar.google.com/events?calendarId=l7fsecfdl2c73pp5dh4slomsek%40group.calendar.google.com&maxResults=10&sanitizeHtml=true&timeMin=[[now|date]]T00%3A00%3A00%2B01%3A00&timeMax=[[now|addMonth 3|date]]T00%3A00%3A00%2B01%3A00&key=AIzaSyBNlYH01_9Hc5S1J9vuFmu2nUqBZJNAXxs',
+    transform: {
+      events: {
+        '{{#each items}}': {
+          startDateTime: '{{#? start.dateTime}}',
+          startDate: '{{#? start.date}}',
+          endDateTime: '{{#? end.dateTime}}',
+          endDate: '{{#? end.date}}',
+          title: '{{summary}}',
+        },
+      },
+    },
+  },
   /* XML
   bergEvents: {
     interval: 100,
@@ -611,21 +628,6 @@ export const defaultApis = {
     interval: 100,
     url:
       ''
-    transform: {
-      events: {
-        '{{#each results}}': {
-          startDate: '{{startTime}}',
-          title: '{{title}}',
-          image: '{{cover}}',
-        },
-      },
-    },
-  },
-  Google Calender key
-  smorekoppenEvents: {
-    interval: 100,
-    url:
-      'https://clients6.google.com/calendar/v3/calendars/l7fsecfdl2c73pp5dh4slomsek@group.calendar.google.com/events?calendarId=l7fsecfdl2c73pp5dh4slomsek%40group.calendar.google.com&singleEvents=true&timeZone=Europe%2FOslo&maxAttendees=1&maxResults=250&sanitizeHtml=true&timeMin=2018-10-29T00%3A00%3A00%2B01%3A00&timeMax=2018-12-03T00%3A00%3A00%2B01%3A00&key=AIzaSyBNlYH01_9Hc5S1J9vuFmu2nUqBZJNAXxs'
     transform: {
       events: {
         '{{#each results}}': {

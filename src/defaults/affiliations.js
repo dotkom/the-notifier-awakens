@@ -696,8 +696,19 @@ export const defaultAffiliationSettings = {
   },
   smorekoppen: {
     name: 'A/F Smørekoppen',
-    color: 'red',
-    components: [],
+    color: '#9c0018',
+    layouts: {
+      0: ['Logo', 'Clock', 'Events'],
+    },
+    components: [
+      {
+        template: 'Logo',
+        url:
+          'https://static1.squarespace.com/static/5996ea333e00be99ded8ae9f/t/5a6f7744ec212d5a20ab91d7/1551098977088/?format=1500w',
+      },
+      'Clock',
+      'Events',
+    ],
   },
   solan: {
     name: 'Solan',

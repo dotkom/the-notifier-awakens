@@ -20,18 +20,22 @@ export default class Events extends Component {
     const now = Date.now();
     const eventsMapped = events
       .filter(
-        e => startOfToday(now) <= new Date(e.endDate || e.startDate).getTime(),
+        e =>
+          startOfToday(now) <=
+          new Date(
+            e.endDate || e.endDateTime || e.startDate || e.startDateTime,
+          ).getTime(),
       )
       .slice(0, count)
       .map(e => {
-        const startDateTime = e.startDate;
+        const startDateTime = e.startDate || e.startDateTime;
         const startDateFormatted = isToday(startDateTime)
           ? 'I dag'
           : format(startDateTime, 'dddd D. MMM', {
               locale,
             });
         const startTimeFormatted = format(startDateTime, 'HH:mm', { locale });
-        const endDateTime = e.endDate;
+        const endDateTime = e.endDate || e.endDateTime;
         const endDateFormatted = isToday(endDateTime)
           ? 'I dag'
           : format(endDateTime, 'dddd D. MMM', { locale });
@@ -47,6 +51,10 @@ export default class Events extends Component {
           endDate: new Date(endDateTime),
           endDateFormatted,
           endTimeFormatted,
+          hasTime: !(
+            (e.startDate && e.startDate.length === 10) ||
+            (e.endDate && e.endDate.length === 10)
+          ),
           title,
           image: image || companyImage,
         };
@@ -70,7 +78,7 @@ class EventsFromSplash extends Component {
     } = this.props;
     let prevStartDate = '';
     const eventList = events.slice(1).map((e, i) => {
-      const { startDateFormatted, startTimeFormatted, title } = e;
+      const { startDateFormatted, startTimeFormatted, title, hasTime } = e;
       const style = {};
       let skipDate = false;
       if (prevStartDate !== startDateFormatted || i === 0) {
@@ -84,7 +92,9 @@ class EventsFromSplash extends Component {
             {skipDate ? startDateFormatted : ''}
           </span>
           <span className="time-element">
-            <span className="start-time">{startTimeFormatted}</span>
+            <span className="start-time">
+              {hasTime ? startTimeFormatted : ''}
+            </span>
             <span className="title">{title}</span>
           </span>
         </div>
@@ -196,8 +206,10 @@ class EventsFromSplash extends Component {
           <div className="main-event">
             <span className="main-title">{firstEvent.title}</span>
             <span className="main-start-datetime">
-              {firstEvent.startDateFormatted} klokken{' '}
-              {firstEvent.startTimeFormatted}
+              {firstEvent.startDateFormatted}
+              {firstEvent.hasTime ? (
+                <span> klokken {firstEvent.startTimeFormatted}</span>
+              ) : null}
             </span>
           </div>
           <div className="event-list">{eventList}</div>
