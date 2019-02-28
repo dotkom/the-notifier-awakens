@@ -26,6 +26,13 @@ const writeDataToFile = (data, file) => {
   return getHash(json);
 };
 
+const getDirectoryHash = folder =>
+  getHash(
+    require('child_process')
+      .execSync(`cat ${folder}/*.*`)
+      .toString('UTF-8'),
+  );
+
 const hashFile = {
   affiliations: writeDataToFile(
     defaults.defaultAffiliationSettings,
@@ -37,6 +44,8 @@ const hashFile = {
     defaults.defaultTranslations,
     'translations.json',
   ),
+  components: getDirectoryHash('src/components'),
+  core: getDirectoryHash('src'),
 };
 
 writeDataToFile(hashFile, 'hash.json');
