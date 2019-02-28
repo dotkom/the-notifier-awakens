@@ -392,9 +392,13 @@ export const defaultAffiliationSettings = {
     name: 'Mannhullet',
     color: 'deepblue',
     layouts: {
-      0: ['Events', 'Bus'],
+      0: ['Logo / 200px', 'Clock', 'Events', 'Bus'],
+      768: ['Logo Clock / 240px', 'Events Events', 'Bus Bus'],
+      1400: ['Logo Clock / 240px', '. .', 'Events Bus'],
     },
     components: [
+      { template: 'Logo', url: 'https://www.mannhullet.no/img/logo2.png' },
+      'Clock',
       'Events',
       {
         template: 'Bus',
