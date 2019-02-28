@@ -129,6 +129,12 @@ class App extends Component {
           );
         }
       };
+      const validateAndRefresh = (key, hash) => {
+        if (hash && this.storage.get(`hash.${key}`) !== hash) {
+          this.storage.set(`hash.${key}`, hash);
+          window.location.reload();
+        }
+      };
       API.getRequest(
         `${DEFAULT_SETTINGS_URL}/hash.json`,
         { cors: true },
@@ -137,11 +143,15 @@ class App extends Component {
           apis = '',
           translations = '',
           settings = '',
+          components = '',
+          core = '',
         }) => {
           validateAndFetchKey('affiliations', affiliations);
           validateAndFetchKey('apis', apis);
           validateAndFetchKey('translations', translations);
           validateAndFetchKey('settings', settings);
+          validateAndRefresh('components', components);
+          validateAndRefresh('core', core);
           this.storage.save();
         },
       );
