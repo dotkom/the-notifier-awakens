@@ -699,6 +699,7 @@ export const defaultAffiliationSettings = {
     color: '#9c0018',
     layouts: {
       0: ['Logo', 'Clock', 'Events'],
+      1000: ['Logo Clock', 'Events Events'],
     },
     components: [
       {
