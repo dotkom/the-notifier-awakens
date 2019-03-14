@@ -103,21 +103,21 @@ function configureEnv() {
   # Apply changes to env file
   if [[ $STATUS_SERVER_INPUT != "" ]]; then
     if cat $ENV_FILE | grep -Eq "^STATUS_SERVER="; then
-      sed -i "s/STATUS_SERVER=.*/STATUS_SERVER=$STATUS_SERVER_INPUT/" $ENV_FILE
+      sed -i "s,STATUS_SERVER=.*,STATUS_SERVER=$STATUS_SERVER_INPUT," $ENV_FILE
     else
       echo "STATUS_SERVER=$STATUS_SERVER_INPUT" >> $ENV_FILE
     fi
   fi
   if [[ $INFOSCREEN_NAME_INPUT != "" ]]; then
       if cat $ENV_FILE | grep -Eq "^INFOSCREEN_NAME="; then
-    sed -i "s/INFOSCREEN_NAME=.*/INFOSCREEN_NAME=$INFOSCREEN_NAME_INPUT/" $ENV_FILE
+    sed -i "s,INFOSCREEN_NAME=.*,INFOSCREEN_NAME=$INFOSCREEN_NAME_INPUT," $ENV_FILE
     else
       echo "INFOSCREEN_NAME=$INFOSCREEN_NAME_INPUT" >> $ENV_FILE
     fi
   fi
   if [[ $INFOSCREEN_TOKEN_INPUT != "" ]]; then
     if cat $ENV_FILE | grep -Eq "^INFOSCREEN_TOKEN="; then
-      sed -i "s/INFOSCREEN_TOKEN=.*/INFOSCREEN_TOKEN=$INFOSCREEN_TOKEN_INPUT/" $ENV_FILE
+      sed -i "s,INFOSCREEN_TOKEN=.*,INFOSCREEN_TOKEN=$INFOSCREEN_TOKEN_INPUT," $ENV_FILE
     else
       echo "INFOSCREEN_TOKEN=$INFOSCREEN_TOKEN_INPUT" >> $ENV_FILE
     fi
