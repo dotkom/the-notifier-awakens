@@ -32,7 +32,7 @@
     "eject": "react-scripts eject",
     "cors-server": "node cors-server",
     "generate": "node generate-files",
-    "status-server": "node status-server"
+    "notiwatch": "node notiwatch"
   },
   "eslintConfig": {
     "extends": "react-app"
