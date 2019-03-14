@@ -281,8 +281,8 @@ const requestHandler = (req, res) => {
           res.end(
             content
               .toString()
-              .replace(/\$1/g, username)
-              .replace(/\$2/g, token),
+              .replace(/\$1/, username)
+              .replace(/\$2/, token),
           );
         }
       });
