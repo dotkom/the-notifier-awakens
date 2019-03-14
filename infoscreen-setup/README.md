@@ -35,9 +35,9 @@ _Skip this section if you do not want / need to control the infoscreen from remo
 You can choose to install or not, either run:
 
 ```bash
-$ bash \<(curl -s https://notiwall.online.ntnu.no/api/v1/notiwall.sh) install # To get the cli
+$ bash <(curl -s https://notiwall.online.ntnu.no/api/v1/notiwall.sh) install # To get the cli
 # OR
-$ bash \<(curl -s https://notiwall.online.ntnu.no/api/v1/notiwall.sh) [command] # Just run commands like this
+$ bash <(curl -s https://notiwall.online.ntnu.no/api/v1/notiwall.sh) [command] # Just run commands like this
 ```
 
 The Notiwall CLI is built for both the admins and the infoscreens themselves. It has a set of commands you can run at the infoscreen, and a set of commands to run from remote.
@@ -47,7 +47,7 @@ Just write:
 ```bash
 $ notiwall --help
 # OR
-$ bash \<(curl -s https://notiwall.online.ntnu.no/api/v1/notiwall.sh) --help
+$ bash <(curl -s https://notiwall.online.ntnu.no/api/v1/notiwall.sh) --help
 ```
 
 to list all the commands.
