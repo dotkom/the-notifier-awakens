@@ -179,14 +179,18 @@ function command_crontab() {
 
 # Send a POST request with current IP to STATUS_SERVER
 function push_ip() {
-  source $ENV_FILE
+  if [ -f $ENV_FILE ]; then
+    source $ENV_FILE
+  fi
   IP=$(hostname -I)
   TOKEN=$(echo -n $INFOSCREEN_NAME:$INFOSCREEN_TOKEN | base64)
   curl -X POST "$STATUS_SERVER/ip/$TOKEN" -d "$IP"
 }
 
 function screenshot() {
-  source $ENV_FILE
+  if [ -f $ENV_FILE ]; then
+    source $ENV_FILE
+  fi
   FILE_NAME=screenshot.png
   STATUS="NOT DONE"
   if command -v scrot > /dev/null 2>&1; then
