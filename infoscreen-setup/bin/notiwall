@@ -7,6 +7,8 @@ INSTALL_DIR=/usr/local/bin
 CONFIG_DIR=~/.config/notiwall
 TEMP_DIR=/tmp
 ENV_FILE=$CONFIG_DIR/.env.local
+INFOSCREEN_NAME="$1"
+INFOSCREEN_TOKEN="$2"
 DEFAULT_STATUS_SERVER="https://notiwall.online.ntnu.no/api/v1"
 INSTALL_COMMAND="bash <(curl -s $DEFAULT_STATUS_SERVER/notiwall.sh)"
 
@@ -358,7 +360,9 @@ function notiwall_install() {
     echo "Alternative solution is to add content of this file $STATUS_SERVER/notiwall.sh to $INSTALL_DIR/notiwall."
     exit 1
   fi
-  rm $TEMP_DIR/notiwall
+  if [ -f $TEMP_DIR/notiwall ]; then
+    rm $TEMP_DIR/notiwall
+  fi
 }
 
 function check_install() {
@@ -383,7 +387,9 @@ function check_install() {
 function uninstall() {
   if command -v notiwall > /dev/null 2>&1; then
     echo "Uninstalling notiwall..."
-    rm $TEMP_DIR/notiwall
+    if [ -f $TEMP_DIR/notiwall ]; then
+      rm $TEMP_DIR/notiwall
+    fi
     sudo rm $INSTALL_DIR/notiwall
     echo "Done!"
   else
@@ -506,7 +512,11 @@ case $COMMAND in
     echo "Done! You are now using Notiwall CLI $VERSION"
     ;;
   install)
-    check_install "${ARGS[0]}" "${ARGS[1]}" "${ARGS[2]}"
+    if [ -z $INFOSCREEN_NAME ] || [ -z $INFOSCREEN_TOKEN ]; then
+      check_install "${ARGS[0]}" "${ARGS[1]}" "${ARGS[2]}"
+    else
+      check_install "$INFOSCREEN_NAME" "$INFOSCREEN_TOKEN"
+    fi
     ;;
   reinstall)
     uninstall
