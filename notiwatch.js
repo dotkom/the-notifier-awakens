@@ -114,6 +114,7 @@ const returnResult = (
 ) => {
   res.statusCode = statusCode;
   res.statusMessage = http.STATUS_CODES[statusCode];
+  res.writeHead(200, { 'Content-Type': 'application/json' });
   const type = statusCode >= 200 && statusCode < 400 ? 'result' : 'error';
   const descriptionObj = description ? { description } : {};
   if (typeof message === 'object') {
