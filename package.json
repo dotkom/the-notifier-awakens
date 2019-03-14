@@ -17,20 +17,22 @@
     "esm": "3.2.5",
     "fast-xml-parser": "^3.12.13",
     "fecha": "^3.0.2",
+    "formidable": "^1.2.1",
     "merge": "1.2.1",
     "react": "^16.8.2",
     "react-dom": "^16.8.2",
     "react-icons": "^3.3.0",
-    "react-scripts": "2.1.5",
-    "react-router-dom": "4.3.1"
+    "react-router-dom": "4.3.1",
+    "react-scripts": "2.1.5"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build && node generate-files.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "cors-server": "node cors-server.js",
-    "generate": "node generate-files.js"
+    "cors-server": "node cors-server",
+    "generate": "node generate-files",
+    "notiwatch": "node notiwatch"
   },
   "eslintConfig": {
     "extends": "react-app"
