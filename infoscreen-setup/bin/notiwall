@@ -1,0 +1,527 @@
+#!/bin/bash
+
+# This is the Notiwall CLI
+VERSION="v1.0.0"
+ARGS=( )
+INSTALL_DIR=/usr/local/bin
+CONFIG_DIR=~/.config/notiwall
+TEMP_DIR=/tmp
+ENV_FILE=$CONFIG_DIR/.env.local
+DEFAULT_STATUS_SERVER="https://notiwall.online.ntnu.no/api/v1"
+INSTALL_COMMAND="bash <(curl -s $DEFAULT_STATUS_SERVER/notiwall.sh)"
+
+function help() {
+  echo "Usage: notiwall [options]"
+  echo "       notiwall [command]"
+  echo
+  echo "Options:"
+  echo "  -h, --help                 this help page"
+  echo "  -v, --version              print Notiwall CLI version ($VERSION)"
+  echo
+  echo "Commands for infoscreens:"
+  echo "  configure                  configure Notiwall settings"
+  echo "  cron                       configure crontab jobs like regular screenshots"
+  echo "  env                        configure environment variables"
+  echo "  open [-d|--detached]       open browser with https://notiwall.online.ntnu.no in kiosk mode"
+  echo "  install [<name>] [<token>] install Notiwall CLI $VERSION"
+  echo "  mouse move <x> <y>         move mouse"
+  echo "  mouse click                do a mouse click"
+  echo "  rotate [0-3]               configure screen rotation. 0 is normal, rest goes counter-clockwise"
+  echo "  send ip|screenshot         send screenshot or ip to notiwall server"
+  echo "  uninstall                  uninstall Notiwall CLI and purge files from system"
+  echo "  upgrade                    upgrade Notiwall CLI"
+  echo
+  echo "Remote commands (to control infoscreens):"
+  echo "  screenshot <user>@<ip>                get screenshot of screen at notiwall"
+  #echo "  remote mouse move <user>@<ip> <x> <y> move mouse"
+  #echo "  remote mouse click <user>@<ip>        do a mouse click"
+  #echo "  remote rotate <user>@<ip> [0-3]       configure screen rotation. 0 is normal, rest goes counter-clockwise"
+  echo
+  echo "Find more details at: https://github.com/dotkom/the-notifier-awakens/infoscreen-setup"
+  echo
+}
+
+function open() {
+  # Kiosk mode is not preferred here as it is almost impossible to close
+  local CHROME_OPTIONS="--disable-notifications --disable-translate --disable-plugins --disable-extensions --incognito --start-fullscreen --fullscreen"
+  local DEFAULT_URL="https://notiwall.online.ntnu.no"
+  local URL="${1:-$DEFAULT_URL}"
+
+  # Preferring Chromium as it has kiosk mode still available
+  if command -v chromium-browser > /dev/null 2>&1; then
+    echo "Found Chromium. Opening browser..."
+    chromium-browser $CHROME_OPTIONS $URL > /dev/null 2>&1
+    echo "Browser closed."
+  elif command -v google-chrome > /dev/null 2>&1; then
+    echo "Found Google Chrome. Opening browser..."
+    google-chrome $CHROME_OPTIONS $URL > /dev/null 2>&1
+    if command -v xdotool > /dev/null 2>&1; then
+      xdotool key F11
+    fi
+    echo "Browser closed."
+  else
+    echo "Could not find Google Chrome or Chromium. Please download from https://chrome.google.com"
+  fi
+}
+
+function configureEnv() {
+  local DEFAULT_INFOSCREEN_NAME="infoscreen-"$(( RANDOM % 1000 ))
+  local DEFAULT_INFOSCREEN_TOKEN=$(( RANDOM % 10000 ))
+
+  # Ask for values
+  if [ -z $STATUS_SERVER ]; then
+    echo -n "External server to send IP to (defaults to $DEFAULT_STATUS_SERVER): "
+  else
+    echo -n "External server to send IP to (defaults to $STATUS_SERVER): "
+    DEFAULT_STATUS_SERVER=
+  fi
+  read STATUS_SERVER_INPUT
+  STATUS_SERVER_INPUT=${STATUS_SERVER_INPUT:-$DEFAULT_STATUS_SERVER}
+
+  if [ -z $INFOSCREEN_NAME ]; then
+    echo -n "Unique infoscreen name (defaults to $DEFAULT_INFOSCREEN_NAME): "
+  else
+    echo -n "Unique infoscreen name (defaults to $INFOSCREEN_NAME): "
+    DEFAULT_INFOSCREEN_NAME=$INFOSCREEN_NAME
+  fi
+  read INFOSCREEN_NAME_INPUT
+  INFOSCREEN_NAME_INPUT=${INFOSCREEN_NAME_INPUT:-$DEFAULT_INFOSCREEN_NAME}
+
+  if [ -z $INFOSCREEN_TOKEN ]; then
+    echo -n "Secret token (defaults to a random token): "
+  else
+    echo -n "Secret token (defaults to previous token): "
+    DEFAULT_INFOSCREEN_TOKEN=$INFOSCREEN_TOKEN
+  fi
+  read -s INFOSCREEN_TOKEN_INPUT
+  INFOSCREEN_TOKEN_INPUT=${INFOSCREEN_TOKEN_INPUT:-$DEFAULT_INFOSCREEN_TOKEN}
+
+  echo
+
+  # Apply changes to env file
+  if [[ $STATUS_SERVER_INPUT != "" ]]; then
+    if cat $ENV_FILE | grep -Eq "^STATUS_SERVER="; then
+      sed -i "s/STATUS_SERVER=.*/STATUS_SERVER=$STATUS_SERVER_INPUT/" $ENV_FILE
+    else
+      echo "STATUS_SERVER=$STATUS_SERVER_INPUT" >> $ENV_FILE
+    fi
+  fi
+  if [[ $INFOSCREEN_NAME_INPUT != "" ]]; then
+      if cat $ENV_FILE | grep -Eq "^INFOSCREEN_NAME="; then
+    sed -i "s/INFOSCREEN_NAME=.*/INFOSCREEN_NAME=$INFOSCREEN_NAME_INPUT/" $ENV_FILE
+    else
+      echo "INFOSCREEN_NAME=$INFOSCREEN_NAME_INPUT" >> $ENV_FILE
+    fi
+  fi
+  if [[ $INFOSCREEN_TOKEN_INPUT != "" ]]; then
+    if cat $ENV_FILE | grep -Eq "^INFOSCREEN_TOKEN="; then
+      sed -i "s/INFOSCREEN_TOKEN=.*/INFOSCREEN_TOKEN=$INFOSCREEN_TOKEN_INPUT/" $ENV_FILE
+    else
+      echo "INFOSCREEN_TOKEN=$INFOSCREEN_TOKEN_INPUT" >> $ENV_FILE
+    fi
+  fi
+}
+
+function manage_env() {
+  mkdir -p $CONFIG_DIR
+  if [ ! -f "$ENV_FILE" ]; then
+    echo "File, $ENV_FILE, does not exist. Asking how to set environment variables:"
+    echo -n > $ENV_FILE
+    configureEnv
+  else
+    if cat $ENV_FILE | grep -Eq "^STATUS_SERVER=|^INFOSCREEN_NAME=|^INFOSCREEN_TOKEN="; then
+      read -p "Environment variables are already set. Reconfigure? [y/N] " -n 1 -r
+      if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo
+        source $ENV_FILE
+        configureEnv
+      else
+        echo "Skipping step."
+      fi
+    else
+      echo "Environment variables are not set. Asking how to set them:"
+      configureEnv
+    fi
+  fi
+}
+
+function command_crontab() {
+  local COMMAND="$1"
+  if [ ! -z "$COMMAND" ]; then
+    if [[ "$2" == "clean" ]]; then
+      echo "Removing lines containing command: $COMMAND"
+      (crontab -l | grep -v "$COMMAND") | crontab -
+    else
+      DEFAULT_INTERVAL="*/10 * * * *"
+      INTERVAL="${2:-$DEFAULT_INTERVAL}"
+      CRONTAB_LINE="$INTERVAL $COMMAND"
+      if crontab -l | grep -Fxq "$CRONTAB_LINE"; then
+        echo "Line already exists in crontab:"
+        echo "$CRONTAB_LINE"
+        echo "Skipping step."
+      elif crontab -l | grep -Fq "$COMMAND"; then
+        echo "Schedule was changed. Applying change..."
+        PREV_LINE=$(crontab -l | grep "$COMMAND")
+        PREV=${PREV_LINE%\**}"*"
+        (crontab -l | grep -v "$COMMAND"; echo "$CRONTAB_LINE") | crontab -
+        NEXT_LINE=$(crontab -l | grep "$COMMAND")
+        NEXT=${NEXT_LINE%\**}"*"
+        echo "Changed schedule from $PREV to $NEXT."
+      else
+        echo "Adding $CRONTAB_LINE to crontab..."
+        (crontab -l; echo "$CRONTAB_LINE") | crontab -
+      fi
+    fi
+  fi
+}
+
+# Send a POST request with current IP to STATUS_SERVER
+function push_ip() {
+  source $ENV_FILE
+  IP=$(hostname -I)
+  TOKEN=$(echo -n $INFOSCREEN_NAME:$INFOSCREEN_TOKEN | base64)
+  curl -X POST "$STATUS_SERVER/ip/$TOKEN" -d "$IP"
+}
+
+function screenshot() {
+  source $ENV_FILE
+  FILE_NAME=screenshot.png
+  STATUS="NOT DONE"
+  if command -v scrot > /dev/null 2>&1; then
+    DISPLAY=${DISPLAY:-\:0.0} scrot $TEMP_DIR/$FILE_NAME
+    STATUS="DONE"
+  elif command -v import > /dev/null 2>&1; then
+    DISPLAY=${DISPLAY:-\:0.0} import -window root -resize 800 $TEMP_DIR/$FILE_NAME
+    STATUS="DONE"
+  fi
+  if [[ "$STATUS" == "NOT DONE" ]]; then
+    sudo apt update
+    sudo apt install scrot -y
+    DISPLAY=${DISPLAY:-\:0.0} scrot $TEMP_DIR/$FILE_NAME
+    STATUS="DONE"
+  fi
+}
+
+# Send a POST request with current screenshot to STATUS_SERVER
+function push_screenshot() {
+  screenshot
+  if [[ "$STATUS" == "DONE" ]]; then
+    TOKEN=$(echo -n $INFOSCREEN_NAME:$INFOSCREEN_TOKEN | base64)
+    curl "$STATUS_SERVER/screenshot/$TOKEN" -F "image=@$TEMP_DIR/$FILE_NAME"
+  fi
+}
+
+function remote_get_ip() {
+  echo "NOT IMPLEMENTED"
+}
+
+function remote_screenshot() {
+  TIME_STAMP=$(date '+%Y-%m-%d_%H:%M:%S')
+  IMG_NAME=screenshot
+  EXT=png
+  REMOTE="$1"
+  echo "Taking screenshot on $REMOTE..."
+  ssh $REMOTE "$INSTALL_COMMAND screenshot && ls $TEMP_DIR"
+  echo "Fetching screenshot from $REMOTE..."
+  scp $REMOTE:$TEMP_DIR/$IMG_NAME.$EXT $TEMP_DIR/$IMG_NAME\_$TIME_STAMP.$EXT
+  echo "Displaying screenshot from $TIME_STAMP"
+  eog $TEMP_DIR/$IMG_NAME\_$TIME_STAMP.$EXT
+}
+
+function manage_crontab() {
+  if [[ "$1" == "stop" ]]; then
+    REPLY=N
+  elif [[ "$1" == "start" ]]; then
+    REPLY=Y
+  else
+    read -p "Want to continously send screenshots to external server? [Y/n] " -n 1 -r
+    echo
+  fi
+  if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+    if [[ $2 =~ ^[1-9][0-9]*$ ]]; then
+      NUMBER=$2
+    else
+      echo -n "How often (in minutes) do you want to send? (default is 10) "
+      read REPLY
+      NUMBER=${REPLY:-10}
+      echo
+    fi
+    if [[ $NUMBER =~ ^[1-9][0-9]*$ ]]; then
+      NUMBER="*/$NUMBER * * * *"
+    fi
+    command_crontab "/bin/bash $INSTALL_DIR/notiwall send ip" "$NUMBER"
+    command_crontab "/bin/bash $INSTALL_DIR/notiwall send screenshot" "$NUMBER"
+  else
+    command_crontab "/bin/bash $INSTALL_DIR/notiwall send ip" "clean"
+    command_crontab "/bin/bash $INSTALL_DIR/notiwall send screenshot" "clean"
+  fi
+}
+
+function manage_rotation() {
+  if [[ "$1" =~ ^[0-3]$ ]]; then
+    xrandr -o $1
+  else
+    read -p "Is the screen rotation correct? [Y/n] " -n 1 -r
+    if [[ $REPLY =~ ^[Nn]$ ]]; then
+      echo
+      while [[ $REPLY =~ ^[Nn]$ ]]
+      do
+        echo
+        echo "Normalizing screen rotation..."
+        xrandr -o 0
+        echo "Now the screen is in normal position. Follow the instructions:"
+        echo
+        echo "  [1]:^     [2]:<-       [3]:v       [4]:->"
+        echo
+        echo "  ██╗                   ██████╗               "
+        echo " ███║     ████╗  ██╗   ██╔════╝      ███████╗ "
+        echo " ╚██║    ██╔═██╗ ██║   ╚█████╗       ██╔════╝ "
+        echo "  ██║    ██║ ██║ ██║   ██╔═══╝       ██║      "
+        echo "  ██║    ██║ ╚█████║   ╚██████╗  ███████████╗ "
+        echo "  ╚═╝    ╚═╝  ╚════╝    ╚═════╝  ╚══════════╝ "
+        echo
+        read -p "Which of these numbers has the correct rotation? [1-4] " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[1-4]$ ]]; then
+          xrandr -o $(( $REPLY - 1 ))
+          read -p "Is the screen rotation correct now? [Y/n] " -n 1 -r
+          echo
+        elif [[ $REPLY =~ ^[Nn]$ ]]; then
+          echo "Skipping screen rotation setup."
+        else
+          echo "You need to input either 1, 2, 3 or 4. Trying again."
+          REPLY=N
+        fi
+      done
+    fi
+  fi
+}
+
+function click_mouse() {
+  if command -v xdotool > /dev/null 2>&1; then
+    DISPLAY=:0 xdotool click 1
+  else
+    echo "xdotool is missing. Install using `apt install xdotool`"
+  fi
+}
+
+function move_mouse() {
+  if command -v xdotool > /dev/null 2>&1; then
+    DISPLAY=:0 xdotool mousemove $1 $2
+  else
+    echo "xdotool is missing. Install using `apt install xdotool`"
+  fi
+}
+
+function notiwall_install() {
+  if [[ ! -f $ENV_FILE ]]; then
+    if [[ ! -z $1 ]]; then
+      mkdir -p $CONFIG_DIR
+      echo "INFOSCREEN_NAME=$1" > $ENV_FILE
+    fi
+    if [[ ! -z $2 ]]; then
+      echo "INFOSCREEN_TOKEN=$2" >> $ENV_FILE
+    fi
+    if [[ ! -z $3 ]]; then
+      echo "STATUS_SERVER=$3" >> $ENV_FILE
+      STATUS_SERVER="$3"
+    else
+      STATUS_SERVER=$DEFAULT_STATUS_SERVER
+    fi
+  else
+    if [[ ! -z $1 ]]; then
+      grep -Ev "^INFOSCREEN_NAME=" $ENV_FILE > $TEMP_DIR/envfile
+      cat $TEMP_DIR/envfile > $ENV_FILE
+      echo "INFOSCREEN_NAME=$1" >> $ENV_FILE
+    fi
+    if [[ ! -z $2 ]]; then
+      grep -Ev "^INFOSCREEN_TOKEN=" $ENV_FILE > $TEMP_DIR/envfile
+      cat $TEMP_DIR/envfile > $ENV_FILE
+      echo "INFOSCREEN_TOKEN=$2" >> $ENV_FILE
+    fi
+    if [[ ! -z $3 ]]; then
+      grep -Ev "^STATUS_SERVER=" $ENV_FILE > $TEMP_DIR/envfile
+      cat $TEMP_DIR/envfile > $ENV_FILE
+      echo "STATUS_SERVER=$3" >> $ENV_FILE
+      STATUS_SERVER="$3"
+    else
+      source $ENV_FILE
+      STATUS_SERVER="${STATUS_SERVER:-$DEFAULT_STATUS_SERVER}"
+    fi
+  fi
+  curl -s $STATUS_SERVER/notiwall.sh -o $TEMP_DIR/notiwall
+  if bash $TEMP_DIR/notiwall > /dev/null 2>&1; then
+    sudo cp $TEMP_DIR/notiwall $INSTALL_DIR
+    sudo chmod +x $INSTALL_DIR/notiwall
+  else
+    echo "Installation failed... Contact the creators of notiwall on GitHub about this."
+    echo "Alternative solution is to add content of this file $STATUS_SERVER/notiwall.sh to $INSTALL_DIR/notiwall."
+    exit 1
+  fi
+  rm $TEMP_DIR/notiwall
+}
+
+function check_install() {
+  if command -v notiwall > /dev/null 2>&1; then
+    if [[ $(notiwall -v | awk '{print $3}') != "$VERSION" ]] ; then
+      echo "New Notiwall CLI version detected: $VERSION. Upgrading..."
+      echo
+      notiwall_install "$1" "$2" "$3"
+      echo "Done! Notiwall CLI $VERSION is now installed."
+    else
+      echo "Notiwall CLI $VERSION is already installed."
+      echo
+      help
+    fi
+  else
+    echo "Installing notiwall..."
+    notiwall_install "$1" "$2" "$3"
+    echo "Done! Run \`notiwall\` to check if it worked."
+  fi
+}
+
+function uninstall() {
+  if command -v notiwall > /dev/null 2>&1; then
+    echo "Uninstalling notiwall..."
+    rm $TEMP_DIR/notiwall
+    sudo rm $INSTALL_DIR/notiwall
+    echo "Done!"
+  else
+    echo "Notiwall is already uninstalled"
+  fi
+}
+
+COMMAND=""
+PREV=""
+for arg in "$@"; do
+  PREV="$COMMAND"
+  key="$arg"
+  case $key in
+    configure)     [[ "$PREV" == "" ]] && COMMAND="configure";;
+    send)          [[ "$PREV" == "" ]] && COMMAND="send";;
+    ip)            [[ "$PREV" == "send" ]] && COMMAND="send-ip";;
+    screenshot)    [[ "$PREV" == "send" ]] && COMMAND="send-screenshot"
+                   [[ "$PREV" == "" ]] && COMMAND="screenshot";;
+    mouse)         [[ "$PREV" == "" ]] && COMMAND="mouse";;
+    move)          [[ "$PREV" == "mouse" ]] && COMMAND="mouse-move";;
+    click)         [[ "$PREV" == "mouse" ]] && COMMAND="mouse-click";;
+    open)          [[ "$PREV" == "" ]] && COMMAND="open";;
+    upgrade)       [[ "$PREV" == "" ]] && COMMAND="upgrade";;
+    install)       [[ "$PREV" == "" ]] && COMMAND="install";;
+    reinstall)     [[ "$PREV" == "" ]] && COMMAND="reinstall";;
+    uninstall)     [[ "$PREV" == "" ]] && COMMAND="uninstall";;
+    env)           [[ "$PREV" =~ ^$|^configure$ ]] && COMMAND="configure-env";;
+    cron)          [[ "$PREV" =~ ^$|^configure$ ]] && COMMAND="configure-crontab";;
+    rotate)        [[ "$PREV" =~ ^$|^configure$ ]] && COMMAND="configure-rotation";;
+    start)         [[ "$PREV" == "configure-crontab" ]] && COMMAND="configure-crontab-start";;
+    stop)          [[ "$PREV" == "configure-crontab" ]] && COMMAND="configure-crontab-stop";;
+    -d|--detached) [[ "$PREV" == "open" ]] && COMMAND="open-detached";;
+    -v|--version)  [[ "$PREV" == "" ]] && COMMAND="version";;
+    -h|--help)     [[ "$PREV" == "" ]] && COMMAND="help";;
+    *)
+      if [[ $key =~ ^[0-9]+$ ]]; then
+        if [[ "$PREV" == "configure-crontab-start" ]]; then ARGS+=( $key )
+        elif [[ "$PREV" == "configure-crontab" ]]; then ARGS+=( $key )
+        elif [[ "$PREV" == "configure-rotation" ]]; then ARGS+=( $key )
+        elif [[ "$PREV" == "mouse-move" ]]; then ARGS+=( $key )
+        elif [[ "$PREV" == "install" ]]; then ARGS+=( $key )
+        elif [[ "$PREV" == "upgrade" ]]; then ARGS+=( $key )
+        elif [[ "$PREV" == "reinstall" ]]; then ARGS+=( $key )
+        fi
+      elif [[ "$PREV" == "screenshot" ]]; then ARGS+=( $key )
+      elif [[ "$PREV" == "install" ]]; then ARGS+=( $key )
+      elif [[ "$PREV" == "upgrade" ]]; then ARGS+=( $key )
+      elif [[ "$PREV" == "reinstall" ]]; then ARGS+=( $key )
+      else COMMAND="help"
+      fi
+      ;;
+  esac
+done
+
+case $COMMAND in
+  configure)
+    manage_rotation
+    manage_env
+    manage_crontab
+    ;;
+  configure-env)
+    manage_env "${ARGS[0]}"
+    ;;
+  configure-crontab)
+    if [[ "${ARGS[0]}" =~ ^[1-9][0-9]*$ ]]; then
+      manage_crontab "start" "${ARGS[0]}"
+    else
+      manage_crontab
+    fi
+    ;;
+  configure-crontab-start)
+    manage_crontab "start" "${ARGS[0]}"
+    ;;
+  configure-crontab-stop)
+    manage_crontab "stop"
+    ;;
+  configure-rotation)
+    manage_rotation "${ARGS[0]}"
+    ;;
+  send)
+    echo "Specify either ip or screenshot, example:"
+    echo "$ notiwall send ip"
+    ;;
+  send-ip)
+    push_ip
+    ;;
+  send-screenshot)
+    push_screenshot
+    ;;
+  screenshot)
+    if [[ -z ${ARGS[0]} ]]; then
+      screenshot
+    else
+      remote_screenshot "${ARGS[0]}"
+    fi
+    ;;
+  mouse-move)
+    if [[ -z ${ARGS[0]} ]] && [[ -z ${ARGS[1]} ]]; then
+      echo "Missing both x and y position as arguments"
+    elif [[ -z ${ARGS[1]} ]]; then
+      echo "Missing y position (second argument)"
+    else
+      echo "Moving mouse to: (${ARGS[0]}, ${ARGS[1]})"
+      move_mouse ${ARGS[0]} ${ARGS[1]}
+    fi
+    ;;
+  mouse-click)
+    echo "Clicking left mouse"
+    click_mouse
+    ;;
+  open)
+    open
+    ;;
+  open-detached)
+    open &
+    ;;
+  upgrade)
+    echo "Upgrading Notiwall CLI..."
+    notiwall_install "${ARGS[0]}" "${ARGS[1]}" "${ARGS[2]}"
+    echo "Done! You are now using Notiwall CLI $VERSION"
+    ;;
+  install)
+    check_install "${ARGS[0]}" "${ARGS[1]}" "${ARGS[2]}"
+    ;;
+  reinstall)
+    uninstall
+    check_install "${ARGS[0]}" "${ARGS[1]}" "${ARGS[2]}"
+    ;;
+  uninstall)
+    uninstall
+    ;;
+  version)
+    echo "Notiwall CLI $VERSION"
+    ;;
+  help)
+    help
+    ;;
+  *)
+    help
+    ;;
+esac
