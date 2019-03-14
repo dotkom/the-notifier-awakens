@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This is the Notiwall CLI
-VERSION="v1.0.0"
+VERSION="v1.0.1"
 ARGS=( )
 INSTALL_DIR=/usr/local/bin
 CONFIG_DIR=~/.config/notiwall
@@ -218,16 +218,15 @@ function remote_get_ip() {
 }
 
 function remote_screenshot() {
-  TIME_STAMP=$(date '+%Y-%m-%d_%H:%M:%S')
   IMG_NAME=screenshot
   EXT=png
   REMOTE="$1"
   echo "Taking screenshot on $REMOTE..."
-  ssh $REMOTE "$INSTALL_COMMAND screenshot && ls $TEMP_DIR"
+  ssh $REMOTE "$INSTALL_COMMAND screenshot"
   echo "Fetching screenshot from $REMOTE..."
-  scp $REMOTE:$TEMP_DIR/$IMG_NAME.$EXT $TEMP_DIR/$IMG_NAME\_$TIME_STAMP.$EXT
-  echo "Displaying screenshot from $TIME_STAMP"
-  eog $TEMP_DIR/$IMG_NAME\_$TIME_STAMP.$EXT
+  scp $REMOTE:$TEMP_DIR/$IMG_NAME.$EXT $TEMP_DIR/$IMG_NAME.$EXT
+  echo "Displaying screenshot at $TEMP_DIR/$IMG_NAME.$EXT"
+  eog $TEMP_DIR/$IMG_NAME.$EXT
 }
 
 function manage_crontab() {
