@@ -17,6 +17,16 @@ it strength and power one could
 not even imagine was possible
 in 2014...
 
+# Infoscreen setup
+
+_More information can be found in the [infoscreen folder](infoscreen-setup)._
+
+**3 steps:**
+
+1. Equipment: Get a screen, Raspberry PI (with NOOBS or Raspian), cable, keyboard and mouse.
+2. Internet: Connect Raspberry PI to a WiFi or ethernet cable.
+3. Run `bash <(curl -Ls http://gg.gg/notiwall-cli) install --configure {infoscreen-id} {secret}` in a terminal (Ctrl+Alt+T) and follow the instructions.
+
 # Development
 
 ```bash
