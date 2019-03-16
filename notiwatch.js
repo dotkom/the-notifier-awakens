@@ -114,7 +114,7 @@ const returnResult = (
 ) => {
   res.statusCode = statusCode;
   res.statusMessage = http.STATUS_CODES[statusCode];
-  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
   const type = statusCode >= 200 && statusCode < 400 ? 'result' : 'error';
   const descriptionObj = description ? { description } : {};
   if (typeof message === 'object') {
@@ -278,7 +278,7 @@ const requestHandler = (req, res) => {
         if (err) {
           returnResult(res, 404);
         } else {
-          res.writeHead(200, { 'Content-Type': 'text/plain' });
+          res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
           res.end(
             content
               .toString()
@@ -295,7 +295,7 @@ const requestHandler = (req, res) => {
         if (err) {
           returnResult(res, 404);
         } else {
-          res.writeHead(200, { 'Content-Type': 'text/plain' });
+          res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
           res.end(content.toString());
         }
       });
