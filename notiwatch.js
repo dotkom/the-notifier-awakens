@@ -278,7 +278,7 @@ const requestHandler = (req, res) => {
         if (err) {
           returnResult(res, 404);
         } else {
-          res.writeHead(200, { 'Content-Type': 'plain/text' });
+          res.writeHead(200, { 'Content-Type': 'text/plain' });
           res.end(
             content
               .toString()
@@ -295,7 +295,7 @@ const requestHandler = (req, res) => {
         if (err) {
           returnResult(res, 404);
         } else {
-          res.writeHead(200, { 'Content-Type': 'plain/text' });
+          res.writeHead(200, { 'Content-Type': 'text/plain' });
           res.end(content.toString());
         }
       });
