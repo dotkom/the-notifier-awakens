@@ -358,6 +358,8 @@ function notiwall_install() {
   if bash $TEMP_DIR/notiwall > /dev/null 2>&1; then
     sudo cp $TEMP_DIR/notiwall $INSTALL_DIR
     sudo chmod +x $INSTALL_DIR/notiwall
+    VERSION_NAME=$($INSTALL_DIR/notiwall --version)
+    echo "Done! You are now using $VERSION_NAME"
   else
     echo "Installation failed... Contact the creators of notiwall on GitHub about this."
     echo "Alternative solution is to add content of this file $STATUS_SERVER/notiwall.sh to $INSTALL_DIR/notiwall."
@@ -366,6 +368,7 @@ function notiwall_install() {
   if [ -f $TEMP_DIR/notiwall ]; then
     rm $TEMP_DIR/notiwall
   fi
+  exit 0
 }
 
 function check_install() {
