@@ -10,7 +10,7 @@ ENV_FILE=$CONFIG_DIR/.env.local
 INFOSCREEN_NAME="$1"
 INFOSCREEN_TOKEN="$2"
 DEFAULT_STATUS_SERVER="https://notiwall.online.ntnu.no/api/v1"
-INSTALL_COMMAND="bash <(curl -s $DEFAULT_STATUS_SERVER/notiwall.sh)"
+INSTALL_COMMAND="bash <(curl -Ls http://gg.gg/notiwall-cli)"
 
 function help() {
   echo "Usage: notiwall [options]"
