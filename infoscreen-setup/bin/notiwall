@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This is the Notiwall CLI
-VERSION="v1.0.1"
+VERSION="v1.0.2"
 ARGS=( )
 INSTALL_DIR=/usr/local/bin
 CONFIG_DIR=~/.config/notiwall
@@ -22,10 +22,11 @@ function help() {
   echo
   echo "Commands for infoscreens:"
   echo "  configure                  configure Notiwall settings"
-  echo "  cron                       configure crontab jobs like regular screenshots"
-  echo "  env                        configure environment variables"
+  echo "  cron [-l|--list]           configure crontab jobs like regular screenshots"
+  echo "  env [-l|--list]            configure environment variables"
   echo "  open [-d|--detached]       open browser with https://notiwall.online.ntnu.no in kiosk mode"
-  echo "  install [<name>] [<token>] install Notiwall CLI $VERSION"
+  echo "  install [--configure] [<name>] [<token>]"
+  echo "                             install Notiwall CLI $VERSION"
   echo "  mouse move <x> <y>         move mouse"
   echo "  mouse click                do a mouse click"
   echo "  rotate [0-3]               configure screen rotation. 0 is normal, rest goes counter-clockwise"
@@ -71,14 +72,16 @@ function configureEnv() {
   local DEFAULT_INFOSCREEN_TOKEN=$(( RANDOM % 10000 ))
 
   # Ask for values
-  if [ -z $STATUS_SERVER ]; then
-    echo -n "External server to send IP to (defaults to $DEFAULT_STATUS_SERVER): "
-  else
-    echo -n "External server to send IP to (defaults to $STATUS_SERVER): "
-    DEFAULT_STATUS_SERVER=
+  if [[ "$1" == "server" ]]; then
+    if [ -z $STATUS_SERVER ]; then
+      echo -n "External server to send IP to (defaults to $DEFAULT_STATUS_SERVER): "
+    else
+      echo -n "External server to send IP to (defaults to $STATUS_SERVER): "
+      DEFAULT_STATUS_SERVER=
+    fi
+    read STATUS_SERVER_INPUT
+    STATUS_SERVER_INPUT=${STATUS_SERVER_INPUT:-$DEFAULT_STATUS_SERVER}
   fi
-  read STATUS_SERVER_INPUT
-  STATUS_SERVER_INPUT=${STATUS_SERVER_INPUT:-$DEFAULT_STATUS_SERVER}
 
   if [ -z $INFOSCREEN_NAME ]; then
     echo -n "Unique infoscreen name (defaults to $DEFAULT_INFOSCREEN_NAME): "
@@ -101,11 +104,13 @@ function configureEnv() {
   echo
 
   # Apply changes to env file
-  if [[ $STATUS_SERVER_INPUT != "" ]]; then
-    if cat $ENV_FILE | grep -Eq "^STATUS_SERVER="; then
-      sed -i "s,STATUS_SERVER=.*,STATUS_SERVER=$STATUS_SERVER_INPUT," $ENV_FILE
-    else
-      echo "STATUS_SERVER=$STATUS_SERVER_INPUT" >> $ENV_FILE
+  if [[ "$1" == "server" ]]; then
+    if [[ $STATUS_SERVER_INPUT != "" ]]; then
+      if cat $ENV_FILE | grep -Eq "^STATUS_SERVER="; then
+        sed -i "s,STATUS_SERVER=.*,STATUS_SERVER=$STATUS_SERVER_INPUT," $ENV_FILE
+      else
+        echo "STATUS_SERVER=$STATUS_SERVER_INPUT" >> $ENV_FILE
+      fi
     fi
   fi
   if [[ $INFOSCREEN_NAME_INPUT != "" ]]; then
@@ -137,8 +142,6 @@ function manage_env() {
         echo
         source $ENV_FILE
         configureEnv
-      else
-        echo "Skipping step."
       fi
     else
       echo "Environment variables are not set. Asking how to set them:"
@@ -151,8 +154,10 @@ function command_crontab() {
   local COMMAND="$1"
   if [ ! -z "$COMMAND" ]; then
     if [[ "$2" == "clean" ]]; then
-      echo "Removing lines containing command: $COMMAND"
-      (crontab -l | grep -v "$COMMAND") | crontab -
+      if crontab -l | grep "$COMMAND" > /dev/null 2>&1; then
+        echo "Removing lines containing command: $COMMAND"
+        (crontab -l | grep -v "$COMMAND") | crontab -
+      fi
     else
       DEFAULT_INTERVAL="*/10 * * * *"
       INTERVAL="${2:-$DEFAULT_INTERVAL}"
@@ -242,6 +247,12 @@ function manage_crontab() {
     read -p "Want to continously send screenshots to external server? [Y/n] " -n 1 -r
     echo
   fi
+  local COMMAND=$INSTALL_COMMAND
+  if command -v notiwall > /dev/null 2>&1; then
+    COMMAND="$INSTALL_DIR/notiwall"
+    command_crontab "/bin/bash $INSTALL_COMMAND send ip" "clean"
+    command_crontab "/bin/bash $INSTALL_COMMAND send screenshot" "clean"
+  fi
   if [[ ! $REPLY =~ ^[Nn]$ ]]; then
     if [[ $2 =~ ^[1-9][0-9]*$ ]]; then
       NUMBER=$2
@@ -254,11 +265,11 @@ function manage_crontab() {
     if [[ $NUMBER =~ ^[1-9][0-9]*$ ]]; then
       NUMBER="*/$NUMBER * * * *"
     fi
-    command_crontab "/bin/bash $INSTALL_DIR/notiwall send ip" "$NUMBER"
-    command_crontab "/bin/bash $INSTALL_DIR/notiwall send screenshot" "$NUMBER"
+    command_crontab "/bin/bash $COMMAND send ip" "$NUMBER"
+    command_crontab "/bin/bash $COMMAND send screenshot" "$NUMBER"
   else
-    command_crontab "/bin/bash $INSTALL_DIR/notiwall send ip" "clean"
-    command_crontab "/bin/bash $INSTALL_DIR/notiwall send screenshot" "clean"
+    command_crontab "/bin/bash $COMMAND send ip" "clean"
+    command_crontab "/bin/bash $COMMAND send screenshot" "clean"
   fi
 }
 
@@ -403,33 +414,36 @@ function uninstall() {
   fi
 }
 
-COMMAND=""
+NEXT_COMMAND=""
 PREV=""
 for arg in "$@"; do
-  PREV="$COMMAND"
+  PREV="$NEXT_COMMAND"
   key="$arg"
   case $key in
-    configure)     [[ "$PREV" == "" ]] && COMMAND="configure";;
-    send)          [[ "$PREV" == "" ]] && COMMAND="send";;
-    ip)            [[ "$PREV" == "send" ]] && COMMAND="send-ip";;
-    screenshot)    [[ "$PREV" == "send" ]] && COMMAND="send-screenshot"
-                   [[ "$PREV" == "" ]] && COMMAND="screenshot";;
-    mouse)         [[ "$PREV" == "" ]] && COMMAND="mouse";;
-    move)          [[ "$PREV" == "mouse" ]] && COMMAND="mouse-move";;
-    click)         [[ "$PREV" == "mouse" ]] && COMMAND="mouse-click";;
-    open)          [[ "$PREV" == "" ]] && COMMAND="open";;
-    upgrade)       [[ "$PREV" == "" ]] && COMMAND="upgrade";;
-    install)       [[ "$PREV" == "" ]] && COMMAND="install";;
-    reinstall)     [[ "$PREV" == "" ]] && COMMAND="reinstall";;
-    uninstall)     [[ "$PREV" == "" ]] && COMMAND="uninstall";;
-    env)           [[ "$PREV" =~ ^$|^configure$ ]] && COMMAND="configure-env";;
-    cron)          [[ "$PREV" =~ ^$|^configure$ ]] && COMMAND="configure-crontab";;
-    rotate)        [[ "$PREV" =~ ^$|^configure$ ]] && COMMAND="configure-rotation";;
-    start)         [[ "$PREV" == "configure-crontab" ]] && COMMAND="configure-crontab-start";;
-    stop)          [[ "$PREV" == "configure-crontab" ]] && COMMAND="configure-crontab-stop";;
-    -d|--detached) [[ "$PREV" == "open" ]] && COMMAND="open-detached";;
-    -v|--version)  [[ "$PREV" == "" ]] && COMMAND="version";;
-    -h|--help)     [[ "$PREV" == "" ]] && COMMAND="help";;
+    configure)     [[ "$PREV" == "" ]] && NEXT_COMMAND="configure";;
+    send)          [[ "$PREV" == "" ]] && NEXT_COMMAND="send";;
+    ip)            [[ "$PREV" == "send" ]] && NEXT_COMMAND="send-ip";;
+    screenshot)    [[ "$PREV" == "send" ]] && NEXT_COMMAND="send-screenshot"
+                   [[ "$PREV" == "" ]] && NEXT_COMMAND="screenshot";;
+    mouse)         [[ "$PREV" == "" ]] && NEXT_COMMAND="mouse";;
+    move)          [[ "$PREV" == "mouse" ]] && NEXT_COMMAND="mouse-move";;
+    click)         [[ "$PREV" == "mouse" ]] && NEXT_COMMAND="mouse-click";;
+    open)          [[ "$PREV" == "" ]] && NEXT_COMMAND="open";;
+    -d|--detached) [[ "$PREV" == "open" ]] && NEXT_COMMAND="open-detached";;
+    upgrade)       [[ "$PREV" == "" ]] && NEXT_COMMAND="upgrade";;
+    install)       [[ "$PREV" == "" ]] && NEXT_COMMAND="install";;
+    --configure)   [[ "$PREV" == "install" ]] && NEXT_COMMAND="install-configure";;
+    reinstall)     [[ "$PREV" == "" ]] && NEXT_COMMAND="reinstall";;
+    uninstall)     [[ "$PREV" == "" ]] && NEXT_COMMAND="uninstall";;
+    env)           [[ "$PREV" =~ ^$|^configure$ ]] && NEXT_COMMAND="configure-env";;
+    cron)          [[ "$PREV" =~ ^$|^configure$ ]] && NEXT_COMMAND="configure-crontab";;
+    -l|--list)     [[ "$PREV" == "configure-env" ]] && NEXT_COMMAND="list-env"
+                   [[ "$PREV" == "configure-crontab" ]] && NEXT_COMMAND="list-crontab";;
+    rotate)        [[ "$PREV" =~ ^$|^configure$ ]] && NEXT_COMMAND="configure-rotation";;
+    start)         [[ "$PREV" == "configure-crontab" ]] && NEXT_COMMAND="configure-crontab-start";;
+    stop)          [[ "$PREV" == "configure-crontab" ]] && NEXT_COMMAND="configure-crontab-stop";;
+    -v|--version)  [[ "$PREV" == "" ]] && NEXT_COMMAND="version";;
+    -h|--help)     [[ "$PREV" == "" ]] && NEXT_COMMAND="help";;
     *)
       if [[ $key =~ ^[0-9]+$ ]]; then
         if [[ "$PREV" == "configure-crontab-start" ]]; then ARGS+=( $key )
@@ -437,27 +451,32 @@ for arg in "$@"; do
         elif [[ "$PREV" == "configure-rotation" ]]; then ARGS+=( $key )
         elif [[ "$PREV" == "mouse-move" ]]; then ARGS+=( $key )
         elif [[ "$PREV" == "install" ]]; then ARGS+=( $key )
+        elif [[ "$PREV" == "install-configure" ]]; then ARGS+=( $key )
         elif [[ "$PREV" == "upgrade" ]]; then ARGS+=( $key )
         elif [[ "$PREV" == "reinstall" ]]; then ARGS+=( $key )
         fi
       elif [[ "$PREV" == "screenshot" ]]; then ARGS+=( $key )
       elif [[ "$PREV" == "install" ]]; then ARGS+=( $key )
+      elif [[ "$PREV" == "install-configure" ]]; then ARGS+=( $key )
       elif [[ "$PREV" == "upgrade" ]]; then ARGS+=( $key )
       elif [[ "$PREV" == "reinstall" ]]; then ARGS+=( $key )
-      else COMMAND="help"
+      else NEXT_COMMAND="help"
       fi
       ;;
   esac
 done
 
-case $COMMAND in
+case $NEXT_COMMAND in
   configure)
     manage_rotation
     manage_env
     manage_crontab
     ;;
   configure-env)
-    manage_env "${ARGS[0]}"
+    manage_env "server"
+    ;;
+  list-env)
+    cat $ENV_FILE
     ;;
   configure-crontab)
     if [[ "${ARGS[0]}" =~ ^[1-9][0-9]*$ ]]; then
@@ -471,6 +490,13 @@ case $COMMAND in
     ;;
   configure-crontab-stop)
     manage_crontab "stop"
+    ;;
+  list-crontab)
+    if crontab -l | grep -v "#"; then
+      echo -n
+    else
+      echo "No crontab is configured."
+    fi
     ;;
   configure-rotation)
     manage_rotation "${ARGS[0]}"
@@ -515,7 +541,6 @@ case $COMMAND in
   upgrade)
     echo "Upgrading Notiwall CLI..."
     notiwall_install "${ARGS[0]}" "${ARGS[1]}" "${ARGS[2]}"
-    echo "Done! You are now using Notiwall CLI $VERSION"
     ;;
   install)
     if [ -z $INFOSCREEN_NAME ] || [ -z $INFOSCREEN_TOKEN ]; then
@@ -523,6 +548,16 @@ case $COMMAND in
     else
       check_install "$INFOSCREEN_NAME" "$INFOSCREEN_TOKEN"
     fi
+    ;;
+  install-configure)
+    if [ -z $INFOSCREEN_NAME ] || [ -z $INFOSCREEN_TOKEN ]; then
+      check_install "${ARGS[0]}" "${ARGS[1]}" "${ARGS[2]}"
+    else
+      check_install "$INFOSCREEN_NAME" "$INFOSCREEN_TOKEN"
+    fi
+    manage_rotation
+    manage_env
+    manage_crontab
     ;;
   reinstall)
     uninstall
