@@ -70,10 +70,12 @@
 
 .open-settings {
   order: 9;
+  display: none;
 }
 
 .sync {
   order: 8;
+  display: none;
 }
 
 .auto-update {
@@ -103,6 +105,14 @@
   order: 10;
   position: relative;
   white-space: nowrap;
+}
+
+.zoom-in {
+  order: 4;
+}
+
+.zoom-out {
+  order: 5;
 }
 
 .menu-bar > .space {

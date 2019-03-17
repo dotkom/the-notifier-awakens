@@ -177,6 +177,7 @@ class App extends Component {
       data: {},
       isFullscreen: this.isFullscreen(),
       autoUpdate: 'autoUpdate' in prevState ? prevState.autoUpdate : true,
+      zoom: 'zoom' in prevState ? prevState.zoom : 1,
       affiliation,
       affiliations,
       components: autofilledComponents,
@@ -482,7 +483,7 @@ generateLayoutCSS(layouts) => `
    * 
    * @returns {string} CSS generated for containerClass
    */
-  generateLayoutCSS(layouts, containerClass = 'Components') {
+  generateLayoutCSS(layouts, containerClass = 'Components', zoom = 1) {
     if (typeof layouts === 'undefined') {
       return `
 .${containerClass} {
@@ -535,7 +536,7 @@ generateLayoutCSS(layouts) => `
       }
 
       return `${acc}
-@media (min-width: ${size}px) {
+@media (min-width: ${size * zoom}px) {
   .${containerClass} {
     grid-template:${this.getGridTemplateFromLayoutArray(grid)};
   }
@@ -591,11 +592,25 @@ generateLayoutCSS(layouts) => `
     }
   }
 
+  zoomIn() {
+    this.setState({
+      ...this.state,
+      zoom: this.state.zoom * 1.25,
+    });
+  }
+
+  zoomOut() {
+    this.setState({
+      ...this.state,
+      zoom: this.state.zoom / 1.25,
+    });
+  }
+
   render() {
-    const { data, layouts, color } = this.state;
+    const { data, layouts, color, zoom = 1 } = this.state;
 
     let globalCSS = `
-${this.generateLayoutCSS(layouts)}
+${this.generateLayoutCSS(layouts, 'Components', zoom)}
 `;
     if (this.state.settings.style in styles) {
       globalCSS += styles[this.state.settings.style];
@@ -621,6 +636,10 @@ ${this.generateLayoutCSS(layouts)}
 .Components {
   transition: filter .2s;
   ${this.state.settingsOpen ? `filter: blur(5px) brightness(.5);` : ''}
+  zoom: ${zoom};
+  -moz-transform: scale(${zoom});
+  -moz-transform-origin: 0 0;
+  min-height: calc(100vh / ${zoom});
 }
 
 ${this.state.globalCSS}
@@ -675,6 +694,20 @@ ${this.state.css}`;
                         ) : (
                           <Icon name="Fullscreen" />
                         )}
+                      </div>
+                      <div
+                        className="zoom-in"
+                        onClick={() => this.zoomIn()}
+                        title={this.translate('zoomIn')}
+                      >
+                        <Icon name="ZoomIn" />
+                      </div>
+                      <div
+                        className="zoom-out"
+                        onClick={() => this.zoomOut()}
+                        title={this.translate('zoomOut')}
+                      >
+                        <Icon name="ZoomOut" />
                       </div>
                       <div
                         className="sync"
