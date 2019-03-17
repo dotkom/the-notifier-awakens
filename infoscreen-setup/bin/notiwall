@@ -193,7 +193,7 @@ function push_ip() {
   fi
   IP=$(hostname -I)
   TOKEN=$(echo -n $INFOSCREEN_NAME:$INFOSCREEN_TOKEN | base64)
-  curl -X POST "$STATUS_SERVER/ip/$TOKEN" -d "$IP"
+  curl -X POST "${STATUS_SERVER:-$DEFAULT_STATUS_SERVER}/ip/$TOKEN" -d "$IP"
 }
 
 function screenshot() {
@@ -222,7 +222,7 @@ function push_screenshot() {
   screenshot
   if [[ "$STATUS" == "DONE" ]]; then
     TOKEN=$(echo -n $INFOSCREEN_NAME:$INFOSCREEN_TOKEN | base64)
-    curl "$STATUS_SERVER/screenshot/$TOKEN" -F "image=@$TEMP_DIR/$FILE_NAME"
+    curl "${STATUS_SERVER:-$DEFAULT_STATUS_SERVER}/screenshot/$TOKEN" -F "image=@$TEMP_DIR/$FILE_NAME"
   fi
 }
 
