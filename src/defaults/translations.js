@@ -9,6 +9,8 @@ export const defaultTranslations = {
   affiliation: 'Gruppe',
   settings: 'Instillinger',
   sync: 'Oppdater',
+  zoomIn: 'Zoom inn',
+  zoomOut: 'Zoom ut',
   autoUpdate: 'Auto oppdater',
   autoUpdateCheck:
     'Oppdater oppsett ut ifra globale instillinger med jevne mellomrom',
