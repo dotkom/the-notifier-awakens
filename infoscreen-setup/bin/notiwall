@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This is the Notiwall CLI
-VERSION="v1.0.2"
+VERSION="v1.0.3"
 ARGS=( )
 INSTALL_DIR=/usr/local/bin
 CONFIG_DIR=~/.config/notiwall
@@ -28,7 +28,9 @@ function help() {
   echo "  configure                  configure Notiwall settings"
   echo "  cron [-l|--list]           configure crontab jobs like regular screenshots"
   echo "  env [-l|--list]            configure environment variables"
-  echo "  open [-d|--detached]       open browser with https://notiwall.online.ntnu.no in kiosk mode"
+  echo "  open [-d|--detached] [<affiliation>]"
+  echo "                             open browser with https://notiwall.online.ntnu.no(/<affiliation>)"
+  echo "                             in kiosk mode"
   echo "  install [--configure] [<name>] [<token>]"
   echo "                             install Notiwall CLI $VERSION"
   echo "  mouse move <x> <y>         move mouse"
@@ -52,7 +54,11 @@ function open() {
   # Kiosk mode is not preferred here as it is almost impossible to close
   local CHROME_OPTIONS="--disable-notifications --disable-translate --disable-plugins --disable-extensions --incognito --start-fullscreen --fullscreen"
   local DEFAULT_URL="https://notiwall.online.ntnu.no"
-  local URL="${1:-$DEFAULT_URL}"
+  local AFFILIATION="$1"
+  if [ ! -z $1 ]; then
+    AFFILIATION="/$AFFILIATION"
+  fi
+  local URL="${2:-$DEFAULT_URL}$AFFILIATION"
 
   # Preferring Chromium as it has kiosk mode still available
   if command -v chromium-browser > /dev/null 2>&1; then
@@ -458,12 +464,14 @@ for arg in "$@"; do
         elif [[ "$PREV" == "install-configure" ]]; then ARGS+=( $key )
         elif [[ "$PREV" == "upgrade" ]]; then ARGS+=( $key )
         elif [[ "$PREV" == "reinstall" ]]; then ARGS+=( $key )
+        elif [[ "$PREV" =~ ^open ]]; then ARGS+=( $key )
         fi
       elif [[ "$PREV" == "screenshot" ]]; then ARGS+=( $key )
       elif [[ "$PREV" == "install" ]]; then ARGS+=( $key )
       elif [[ "$PREV" == "install-configure" ]]; then ARGS+=( $key )
       elif [[ "$PREV" == "upgrade" ]]; then ARGS+=( $key )
       elif [[ "$PREV" == "reinstall" ]]; then ARGS+=( $key )
+      elif [[ "$PREV" =~ ^open ]]; then ARGS+=( $key )
       else NEXT_COMMAND="help"
       fi
       ;;
@@ -537,10 +545,10 @@ case $NEXT_COMMAND in
     click_mouse
     ;;
   open)
-    open
+    open "${ARGS[0]}"
     ;;
   open-detached)
-    open &
+    open "${ARGS[0]}" &
     ;;
   upgrade)
     echo "Upgrading Notiwall CLI..."
