@@ -12,6 +12,10 @@ INFOSCREEN_TOKEN="$2"
 DEFAULT_STATUS_SERVER="https://notiwall.online.ntnu.no/api/v1"
 INSTALL_COMMAND="bash <(curl -Ls http://gg.gg/notiwall-cli)"
 
+# TODO:
+# * Remote mouse and rotate
+# * Auto update through cron
+
 function help() {
   echo "Usage: notiwall [options]"
   echo "       notiwall [command]"
@@ -134,18 +138,18 @@ function manage_env() {
   if [ ! -f "$ENV_FILE" ]; then
     echo "File, $ENV_FILE, does not exist. Asking how to set environment variables:"
     echo -n > $ENV_FILE
-    configureEnv
+    configureEnv "$1"
   else
     if cat $ENV_FILE | grep -Eq "^STATUS_SERVER=|^INFOSCREEN_NAME=|^INFOSCREEN_TOKEN="; then
       read -p "Environment variables are already set. Reconfigure? [y/N] " -n 1 -r
       if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo
         source $ENV_FILE
-        configureEnv
+        configureEnv "$1"
       fi
     else
       echo "Environment variables are not set. Asking how to set them:"
-      configureEnv
+      configureEnv "$1"
     fi
   fi
 }
