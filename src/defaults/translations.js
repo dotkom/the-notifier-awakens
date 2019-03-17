@@ -12,6 +12,8 @@ export const defaultTranslations = {
   autoUpdate: 'Auto oppdater',
   autoUpdateCheck:
     'Oppdater oppsett ut ifra globale instillinger med jevne mellomrom',
+  fullscreenCheck: 'Skru av / på fullskjerm',
+  fullscreen: 'Fullskjerm',
   chooseVisibility: 'Velg hva som vises',
   chooseAffiliation: 'Velg oppsett',
   searchAffiliationPlaceholder: 'Søk i oppsett...',

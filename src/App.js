@@ -175,6 +175,7 @@ class App extends Component {
 
     return {
       data: {},
+      isFullscreen: this.isFullscreen(),
       autoUpdate: 'autoUpdate' in prevState ? prevState.autoUpdate : true,
       affiliation,
       affiliations,
@@ -542,6 +543,54 @@ generateLayoutCSS(layouts) => `
     }, '');
   }
 
+  isFullscreen() {
+    return (
+      window.document.webkitIsFullScreen ||
+      window.document.mozFullScreen ||
+      false
+    );
+  }
+
+  fullscreen() {
+    const doc = window.document.documentElement;
+    if (doc.requestFullscreen) {
+      doc.requestFullscreen();
+    } else if (doc.webkitRequestFullscreen) {
+      doc.webkitRequestFullscreen();
+    } else if (doc.mozRequestFullScreen) {
+      doc.mozRequestFullScreen();
+    }
+    this.setState({
+      ...this.state,
+      isFullscreen: true,
+    });
+  }
+
+  exitFullscreen() {
+    const doc = window.document;
+    if (doc.exitFullscreen) {
+      doc.exitFullscreen();
+    } else if (doc.cancelFullScreen) {
+      doc.cancelFullScreen();
+    } else if (doc.webkitCancelFullScreen) {
+      doc.webkitCancelFullScreen();
+    } else if (doc.mozCancelFullScreen) {
+      doc.mozCancelFullScreen();
+    }
+    this.setState({
+      ...this.state,
+      isFullscreen: false,
+    });
+  }
+
+  toggleFullscreen() {
+    if (this.state.isFullscreen) {
+      this.exitFullscreen();
+    } else {
+      this.fullscreen();
+    }
+  }
+
   render() {
     const { data, layouts, color } = this.state;
 
@@ -613,6 +662,19 @@ ${this.state.css}`;
                         <span className="extra-small">
                           {this.translate('autoUpdate')}
                         </span>
+                      </div>
+                      <div
+                        className={`toggle-fullscreen${
+                          this.state.isFullscreen ? ' checked' : ''
+                        }`}
+                        onClick={() => this.toggleFullscreen()}
+                        title={this.translate('fullscreenCheck')}
+                      >
+                        {this.state.isFullscreen ? (
+                          <Icon name="FullscreenExit" />
+                        ) : (
+                          <Icon name="Fullscreen" />
+                        )}
                       </div>
                       <div
                         className="sync"
