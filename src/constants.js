@@ -4,6 +4,8 @@ export const API_ROOT = process.env.REACT_APP_API_ROOT || 'api';
 export const API_URL = `${API_HOST}/${API_ROOT}`;
 export const DEFAULT_SETTINGS_URL =
   process.env.REACT_APP_DEFAULT_SETTINGS_URL || '';
+export const IS_CHROME_EXTENSION = !!process.env.REACT_APP_IS_CHROME_EXTENSION;
+export const IS_EXTENSION = IS_CHROME_EXTENSION;
 export const DEBUG = (process.env.REACT_APP_DEBUG || 'false') === 'true';
 const targetWhitelist = process.env.REACT_APP_TARGET_WHITELIST
   ? process.env.REACT_APP_TARGET_WHITELIST.split(',')
