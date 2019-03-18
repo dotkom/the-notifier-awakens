@@ -13,7 +13,7 @@ export default class Articles extends Component {
           else={apiName => `Kunne ikke koble til ${apiName}`}
           loading={<Loading />}
         >
-          {articles.map((a, i) => {
+          {(Array.isArray(articles) ? articles : []).map((a, i) => {
             const style = {
               backgroundImage: `url(${a.image})`,
             };
