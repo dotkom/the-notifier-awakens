@@ -18,7 +18,6 @@ export default class Events extends Component {
         EventsUI = EventsFromSplash;
     }
     const now = Date.now();
-    console.log(events);
     const eventsMapped = (Array.isArray(events) ? events : [])
       .filter(
         e =>
