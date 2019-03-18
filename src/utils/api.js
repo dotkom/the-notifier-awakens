@@ -2,13 +2,13 @@ import { API_ROOT } from '../constants';
 import { parseString } from 'xml2js';
 import * as htmlparser from 'fast-xml-parser';
 import Storage from './storage';
-import { whiteList } from '../constants';
+import { whiteList, IS_EXTENSION } from '../constants';
 
 export const cache = new Storage(null, 'cache');
 export const CORS_PROXY = process.env.REACT_APP_CORS_URL + '/';
 export const CORS_PROXY_BACKUP = 'https://cors-anywhere.herokuapp.com/';
 export const addCors = (url, enable = true) => {
-  if (!enable) {
+  if (!enable || IS_EXTENSION) {
     return url;
   }
   const removeScheme = ~url.indexOf('//') ? url.split('//')[1] : url;
