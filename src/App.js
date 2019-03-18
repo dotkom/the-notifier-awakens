@@ -15,7 +15,7 @@ import {
   defaultTranslations,
   styles,
 } from './defaults';
-import { DEBUG, DEFAULT_SETTINGS_URL } from './constants';
+import { DEBUG, DEFAULT_SETTINGS_URL, IS_EXTENSION } from './constants';
 import { injectValuesIntoString, API, Storage } from './utils';
 import { Settings, Icon } from './components';
 
@@ -627,6 +627,7 @@ ${this.generateLayoutCSS(layouts, 'Components', zoom)}
     globalCSS += `
 .App {
   ${color ? `background-color: ${color};` : ''}
+  ${IS_EXTENSION ? 'min-width: 600px;' : ''}
 }
 
 .Component {
