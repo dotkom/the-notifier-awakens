@@ -1,6 +1,10 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "version": "1.0.0",
+  "short_name": "Online Notifier v2",
+  "name": "Online Notifier v2",
+  "description": "Viser linjeforeningsnyheter, AtB sanntidsbuss og mer til Trondheimsstudenter via infoskjermer.",
+  "homepage_url": "https://notiwall.online.ntnu.no",
+  "offline_enabled": false,
   "icons": [
     {
       "src": "favicon.ico",
@@ -11,5 +15,5 @@
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#000000"
 }
