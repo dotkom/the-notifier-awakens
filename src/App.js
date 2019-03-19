@@ -15,7 +15,12 @@ import {
   defaultTranslations,
   styles,
 } from './defaults';
-import { DEBUG, DEFAULT_SETTINGS_URL, IS_EXTENSION } from './constants';
+import {
+  DEBUG,
+  DEFAULT_SETTINGS_URL,
+  IS_EXTENSION,
+  IS_CHROME_EXTENSION,
+} from './constants';
 import { injectValuesIntoString, API, Storage } from './utils';
 import { Settings, Icon } from './components';
 
@@ -66,16 +71,37 @@ class App extends Component {
     this.setTitleFromUrl(this.props.location.pathname);
     this.unlisten = this.props.history.listen(state => {
       this.setTitleFromUrl(state.pathname);
+
+      // Update chrome extension popup URL
+      if (IS_CHROME_EXTENSION) {
+        const affiliation = this.getAffiliationFromUrl(state.pathname);
+        window.chrome.browserAction.setPopup({
+          popup: `index.html#/${affiliation}`,
+        });
+      }
     });
   }
 
-  setTitleFromUrl(url) {
+  getAffiliationFromUrl(url) {
     if (!url || url === '/') {
-      window.document.title = `Notiwall`;
-    } else {
-      const firstLetter = url.charAt(1).toUpperCase();
-      window.document.title = `Notiwall - ${firstLetter + url.slice(2)}`;
+      return '';
     }
+
+    return url.slice(1);
+  }
+
+  setTitleFromUrl(url) {
+    const affiliation = this.getAffiliationFromUrl(url);
+
+    if (affiliation) {
+      const firstLetter = affiliation.charAt(0).toUpperCase();
+      window.document.title = `Notiwall - ${firstLetter +
+        affiliation.slice(1)}`;
+    } else {
+      window.document.title = `Notiwall`;
+    }
+
+    this.storage.set('settings', { ...this.state.settings, affiliation }, true);
   }
 
   componentWillUnmount() {
@@ -166,7 +192,7 @@ class App extends Component {
       style = affiliation,
       css = '',
       color = this.storage.get('settings.color'),
-    } = affiliations[affiliation];
+    } = affiliation in affiliations ? affiliations[affiliation] : {};
 
     const autofilledComponents = this.autofillComponents(
       components,
@@ -177,7 +203,7 @@ class App extends Component {
       data: {},
       isFullscreen: this.isFullscreen(),
       autoUpdate: 'autoUpdate' in prevState ? prevState.autoUpdate : true,
-      zoom: 'zoom' in prevState ? prevState.zoom : 1,
+      zoom: 'zoom' in prevState ? prevState.zoom : IS_EXTENSION ? 0.5 : 1,
       affiliation,
       affiliations,
       components: autofilledComponents,
