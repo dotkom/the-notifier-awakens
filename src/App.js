@@ -640,7 +640,11 @@ generateLayoutCSS(layouts) => `
   }
 
   render() {
-    const { data, layouts, color, zoom = 1 } = this.state;
+    const { data, layouts, color } = this.state;
+    let { zoom = 1 } = this.state;
+    if (IS_EXTENSION && !this.state.affiliation) {
+      zoom = 0.7;
+    }
 
     let globalCSS = `
 ${this.generateLayoutCSS(layouts, 'Components', zoom)}
