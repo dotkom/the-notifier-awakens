@@ -93,12 +93,14 @@ class App extends Component {
   setTitleFromUrl(url) {
     const affiliation = this.getAffiliationFromUrl(url);
 
-    if (affiliation) {
-      const firstLetter = affiliation.charAt(0).toUpperCase();
-      window.document.title = `Notiwall - ${firstLetter +
-        affiliation.slice(1)}`;
-    } else {
-      window.document.title = `Notiwall`;
+    if (!IS_EXTENSION) {
+      if (affiliation) {
+        const firstLetter = affiliation.charAt(0).toUpperCase();
+        window.document.title = `Notiwall - ${firstLetter +
+          affiliation.slice(1)}`;
+      } else {
+        window.document.title = `Notiwall`;
+      }
     }
 
     this.storage.set('settings', { ...this.state.settings, affiliation }, true);
@@ -572,42 +574,47 @@ generateLayoutCSS(layouts) => `
 
   isFullscreen() {
     return (
-      window.document.webkitIsFullScreen ||
-      window.document.mozFullScreen ||
-      false
+      !IS_EXTENSION &&
+      (window.document.webkitIsFullScreen ||
+        window.document.mozFullScreen ||
+        false)
     );
   }
 
   fullscreen() {
-    const doc = window.document.documentElement;
-    if (doc.requestFullscreen) {
-      doc.requestFullscreen();
-    } else if (doc.webkitRequestFullscreen) {
-      doc.webkitRequestFullscreen();
-    } else if (doc.mozRequestFullScreen) {
-      doc.mozRequestFullScreen();
+    if (!IS_EXTENSION) {
+      const doc = window.document.documentElement;
+      if (doc.requestFullscreen) {
+        doc.requestFullscreen();
+      } else if (doc.webkitRequestFullscreen) {
+        doc.webkitRequestFullscreen();
+      } else if (doc.mozRequestFullScreen) {
+        doc.mozRequestFullScreen();
+      }
+      this.setState({
+        ...this.state,
+        isFullscreen: true,
+      });
     }
-    this.setState({
-      ...this.state,
-      isFullscreen: true,
-    });
   }
 
   exitFullscreen() {
-    const doc = window.document;
-    if (doc.exitFullscreen) {
-      doc.exitFullscreen();
-    } else if (doc.cancelFullScreen) {
-      doc.cancelFullScreen();
-    } else if (doc.webkitCancelFullScreen) {
-      doc.webkitCancelFullScreen();
-    } else if (doc.mozCancelFullScreen) {
-      doc.mozCancelFullScreen();
+    if (!IS_EXTENSION) {
+      const doc = window.document;
+      if (doc.exitFullscreen) {
+        doc.exitFullscreen();
+      } else if (doc.cancelFullScreen) {
+        doc.cancelFullScreen();
+      } else if (doc.webkitCancelFullScreen) {
+        doc.webkitCancelFullScreen();
+      } else if (doc.mozCancelFullScreen) {
+        doc.mozCancelFullScreen();
+      }
+      this.setState({
+        ...this.state,
+        isFullscreen: false,
+      });
     }
-    this.setState({
-      ...this.state,
-      isFullscreen: false,
-    });
   }
 
   toggleFullscreen() {
