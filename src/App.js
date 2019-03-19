@@ -653,7 +653,7 @@ ${this.generateLayoutCSS(layouts, 'Components', zoom)}
     globalCSS += `
 .App {
   ${color ? `background-color: ${color};` : ''}
-  ${IS_EXTENSION ? 'min-width: 600px; min-height: 800px;' : ''}
+  ${IS_EXTENSION ? 'min-width: 785px; min-height: 600px;' : ''}
 }
 
 .menu-bar {
