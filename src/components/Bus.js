@@ -26,7 +26,7 @@ class Bus extends Component {
   }
 
   getDepartureList(departures) {
-    if (!departures) {
+    if (!departures || !Array.isArray(departures)) {
       return;
     }
     return (departures || [])

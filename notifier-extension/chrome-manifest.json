@@ -1,0 +1,21 @@
+{
+  "manifest_version": 2,
+  "version": "1.0.0",
+  "short_name": "Online Notifier v2",
+  "name": "Online Notifier v2",
+  "offline_enabled": false,
+  "icons": {
+    "16": "icon-16x16.png",
+    "32": "icon-32x32.png",
+    "64": "icon-64x64.png",
+    "128": "icon-128x128.png"
+  },
+  "homepage_url": "https://notiwall.online.ntnu.no",
+  "description": "Viser linjeforeningsnyheter, AtB sanntidsbuss og mer til Trondheimsstudenter via infoskjermer.",
+  "browser_action": {
+    "default_title": "Online Notifier",
+    "default_popup": "index.html"
+  },
+  "permissions": ["notifications", "<all_urls>"],
+  "content_security_policy": "script-src 'self' 'unsafe-eval' 'sha256-5As4+3YpY62+l38PsxCEkjB1R4YtyktBtRScTJ3fyLU='; object-src 'self'"
+}

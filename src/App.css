@@ -33,7 +33,7 @@
   right: 0;
   background-color: rgba(0, 0, 0, 0.5);
   opacity: 0;
-  height: 50px;
+  height: 1.5em;
   transition-property: opacity, height;
   transition-duration: 0.2s;
   display: flex;
@@ -47,7 +47,7 @@
 
 .menu-bar:hover {
   opacity: 1;
-  height: 100px;
+  height: 3.25em;
 }
 
 .menu-bar > * {
@@ -57,7 +57,7 @@
   color: #ddd;
   cursor: pointer;
   font-size: 2.5em;
-  margin: 1rem;
+  margin: 0.15em;
   display: flex;
   align-items: center;
   text-decoration: none;
@@ -96,7 +96,7 @@
 .auto-update.checked::after {
   content: '✓';
   position: absolute;
-  left: 0.15em;
+  left: 7px;
   font-size: 0.8em;
   color: #0f0;
 }

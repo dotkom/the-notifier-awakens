@@ -34,8 +34,8 @@ export default class Office extends Component {
 
         return (
           <div key={i} style={style}>
-            {e.pretty} - <span style={nameStyle}>{e.summary + ' '}</span>{' '}
-            {arrow}
+            {e.pretty} -{' '}
+            <span style={nameStyle}>{e.summary || 'ingen :/'} </span> {arrow}
           </div>
         );
       });

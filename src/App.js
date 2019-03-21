@@ -15,7 +15,12 @@ import {
   defaultTranslations,
   styles,
 } from './defaults';
-import { DEBUG, DEFAULT_SETTINGS_URL } from './constants';
+import {
+  DEBUG,
+  DEFAULT_SETTINGS_URL,
+  IS_EXTENSION,
+  IS_CHROME_EXTENSION,
+} from './constants';
 import { injectValuesIntoString, API, Storage } from './utils';
 import { Settings, Icon } from './components';
 
@@ -66,16 +71,39 @@ class App extends Component {
     this.setTitleFromUrl(this.props.location.pathname);
     this.unlisten = this.props.history.listen(state => {
       this.setTitleFromUrl(state.pathname);
+
+      // Update chrome extension popup URL
+      if (IS_CHROME_EXTENSION) {
+        const affiliation = this.getAffiliationFromUrl(state.pathname);
+        window.chrome.browserAction.setPopup({
+          popup: `index.html#/${affiliation}`,
+        });
+      }
     });
   }
 
-  setTitleFromUrl(url) {
+  getAffiliationFromUrl(url) {
     if (!url || url === '/') {
-      window.document.title = `Notiwall`;
-    } else {
-      const firstLetter = url.charAt(1).toUpperCase();
-      window.document.title = `Notiwall - ${firstLetter + url.slice(2)}`;
+      return '';
     }
+
+    return url.slice(1);
+  }
+
+  setTitleFromUrl(url) {
+    const affiliation = this.getAffiliationFromUrl(url);
+
+    if (!IS_EXTENSION) {
+      if (affiliation) {
+        const firstLetter = affiliation.charAt(0).toUpperCase();
+        window.document.title = `Notiwall - ${firstLetter +
+          affiliation.slice(1)}`;
+      } else {
+        window.document.title = `Notiwall`;
+      }
+    }
+
+    this.storage.set('settings', { ...this.state.settings, affiliation }, true);
   }
 
   componentWillUnmount() {
@@ -166,7 +194,7 @@ class App extends Component {
       style = affiliation,
       css = '',
       color = this.storage.get('settings.color'),
-    } = affiliations[affiliation];
+    } = affiliation in affiliations ? affiliations[affiliation] : {};
 
     const autofilledComponents = this.autofillComponents(
       components,
@@ -177,7 +205,7 @@ class App extends Component {
       data: {},
       isFullscreen: this.isFullscreen(),
       autoUpdate: 'autoUpdate' in prevState ? prevState.autoUpdate : true,
-      zoom: 'zoom' in prevState ? prevState.zoom : 1,
+      zoom: 'zoom' in prevState ? prevState.zoom : IS_EXTENSION ? 0.5 : 1,
       affiliation,
       affiliations,
       components: autofilledComponents,
@@ -546,42 +574,47 @@ generateLayoutCSS(layouts) => `
 
   isFullscreen() {
     return (
-      window.document.webkitIsFullScreen ||
-      window.document.mozFullScreen ||
-      false
+      !IS_EXTENSION &&
+      (window.document.webkitIsFullScreen ||
+        window.document.mozFullScreen ||
+        false)
     );
   }
 
   fullscreen() {
-    const doc = window.document.documentElement;
-    if (doc.requestFullscreen) {
-      doc.requestFullscreen();
-    } else if (doc.webkitRequestFullscreen) {
-      doc.webkitRequestFullscreen();
-    } else if (doc.mozRequestFullScreen) {
-      doc.mozRequestFullScreen();
+    if (!IS_EXTENSION) {
+      const doc = window.document.documentElement;
+      if (doc.requestFullscreen) {
+        doc.requestFullscreen();
+      } else if (doc.webkitRequestFullscreen) {
+        doc.webkitRequestFullscreen();
+      } else if (doc.mozRequestFullScreen) {
+        doc.mozRequestFullScreen();
+      }
+      this.setState({
+        ...this.state,
+        isFullscreen: true,
+      });
     }
-    this.setState({
-      ...this.state,
-      isFullscreen: true,
-    });
   }
 
   exitFullscreen() {
-    const doc = window.document;
-    if (doc.exitFullscreen) {
-      doc.exitFullscreen();
-    } else if (doc.cancelFullScreen) {
-      doc.cancelFullScreen();
-    } else if (doc.webkitCancelFullScreen) {
-      doc.webkitCancelFullScreen();
-    } else if (doc.mozCancelFullScreen) {
-      doc.mozCancelFullScreen();
+    if (!IS_EXTENSION) {
+      const doc = window.document;
+      if (doc.exitFullscreen) {
+        doc.exitFullscreen();
+      } else if (doc.cancelFullScreen) {
+        doc.cancelFullScreen();
+      } else if (doc.webkitCancelFullScreen) {
+        doc.webkitCancelFullScreen();
+      } else if (doc.mozCancelFullScreen) {
+        doc.mozCancelFullScreen();
+      }
+      this.setState({
+        ...this.state,
+        isFullscreen: false,
+      });
     }
-    this.setState({
-      ...this.state,
-      isFullscreen: false,
-    });
   }
 
   toggleFullscreen() {
@@ -607,7 +640,11 @@ generateLayoutCSS(layouts) => `
   }
 
   render() {
-    const { data, layouts, color, zoom = 1 } = this.state;
+    const { data, layouts, color } = this.state;
+    let { zoom = 1 } = this.state;
+    if (IS_EXTENSION && !this.state.affiliation) {
+      zoom = 0.7;
+    }
 
     let globalCSS = `
 ${this.generateLayoutCSS(layouts, 'Components', zoom)}
@@ -627,6 +664,11 @@ ${this.generateLayoutCSS(layouts, 'Components', zoom)}
     globalCSS += `
 .App {
   ${color ? `background-color: ${color};` : ''}
+  ${IS_EXTENSION ? 'min-width: 785px; min-height: 600px;' : ''}
+}
+
+.menu-bar {
+  ${IS_EXTENSION ? 'font-size: .5em;' : ''}
 }
 
 .Component {

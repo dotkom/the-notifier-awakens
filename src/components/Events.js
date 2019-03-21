@@ -18,7 +18,7 @@ export default class Events extends Component {
         EventsUI = EventsFromSplash;
     }
     const now = Date.now();
-    const eventsMapped = events
+    const eventsMapped = (Array.isArray(events) ? events : [])
       .filter(
         e =>
           startOfToday(now) <=
