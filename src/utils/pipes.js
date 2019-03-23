@@ -107,6 +107,12 @@ export const pipes = {
   back: (input, params) => {
     return input + params.join(' ');
   },
+  btoa: (input, params) => {
+    return btoa(input);
+  },
+  atob: (input, params) => {
+    return atob(input);
+  },
   count: (input, params) => {
     if (params.length > 0) {
       if (params.length > 1) {
@@ -201,6 +207,9 @@ export const pipeAliases = {
   postfix: 'back',
   addstr: 'back',
   chop: 'slice',
+  base64: 'btoa',
+  tobase64: 'btoa',
+  frombase64: 'atob',
   eq: 'ifeq',
   equals: 'ifeq',
   '=?': 'ifeq',
