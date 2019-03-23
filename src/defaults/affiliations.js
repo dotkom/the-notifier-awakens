@@ -150,41 +150,21 @@ affiliationkey: {
  */
 export const defaultAffiliationSettings = {
   debug: {
+    layouts: {
+      0: ['Clock', 'Infoscreens'],
+    },
     components: [
       {
         template: 'Clock',
       },
       {
-        template: 'Clock-2',
-      },
-      {
-        template: 'Bus',
-        name: '{{bus}}',
-        apis: {
-          fromCity: 'tarbus.stops.{{bus:glos}}.fromCity:departures',
-          toCity: 'tarbus.stops.{{bus:glos}}.toCity:departures',
-        },
-      },
-      {
-        template: 'Office',
-        apis: {
-          servants: 'affiliation.org.{{affiliation}}:servant.servants',
-          message: 'affiliation.org.{{affiliation}}:servant.message',
-          status: 'affiliation.org.{{affiliation}}:meeting.message',
-        },
-      },
-      {
-        template: 'Events',
-        type: '{{eventType}}',
-        apis: {
-          events: 'esnEvents:events',
-        },
-      },
-      {
-        template: 'Articles',
-        apis: {
-          articles: 'esnArticles:articles',
-        },
+        template: `
+          {{#each secrets.infoscreens}}
+            <img src="https://notiwall.online.ntnu.no/api/v1/{{this|base64}}/screenshot.png" />
+          {{#end}}
+        `,
+        id: 'Infoscreens',
+        css: 'img { height: 420px; }',
       },
     ],
   },
