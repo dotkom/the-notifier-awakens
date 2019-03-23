@@ -315,7 +315,7 @@ export const renderTemplate = (template, object = {}, options = {}) => {
           loopVariableEndIndex + endDelimiterLength,
           endLoopIndex,
         );
-        const loopContentRepeated = loopVariableValue
+        const loopContentRepeated = (loopVariableValue || [])
           .map((value, i) => {
             const values =
               typeof value === 'string'
