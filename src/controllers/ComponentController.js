@@ -159,10 +159,19 @@ export default class ComponentController extends Component {
         props,
       );
 
+      const { secrets = {}, componentSecrets = {} } = this.props.settings;
+      const settings = {
+        ...this.props.settings,
+        secrets: {
+          ...secrets,
+          ...(template in componentSecrets && componentSecrets[template]),
+        },
+      };
+
       if (directTemplate) {
         dataProps.template = renderTemplate(
           dataProps.template,
-          { ...this.props.settings, ...dataProps },
+          { ...settings, ...dataProps },
           {
             fallbackValue: '',
             pipeFunction: (pipe, params, input) =>
@@ -204,7 +213,7 @@ export default class ComponentController extends Component {
               dark={dark}
               translate={e => this.translate(e)}
               updateSettings={this.props.updateSettings}
-              settings={this.props.settings}
+              settings={settings}
               isPropOffline={prop =>
                 this.isPropOffline(this.props.apiService, component, prop)
               }
