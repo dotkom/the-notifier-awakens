@@ -89,7 +89,7 @@ const checkIfValidToken = (user, callback) => {
         .toString()
         .trim()
         .split('\n');
-      callback(!!~tokens.indexOf(user));
+      callback(!!~tokens.indexOf(user.replace(/:$/, '')));
     }
   });
 };
@@ -100,7 +100,8 @@ const getUserFromUrl = (url, regex) => {
 };
 
 const getUsernameFromUser = user => {
-  return user.slice(0, user.indexOf(':'));
+  const pos = user.indexOf(':');
+  return ~pos ? user.slice(0, pos) : user;
 };
 
 const listInfoscreens = callback => {
@@ -147,7 +148,10 @@ const getInfoscreenScreenshot = (username, callback) => {
 };
 
 const checkIfInfoscreenExists = infoscreenName => {
-  return fs.existsSync(`${settings.folders.ip}/${infoscreenName}.txt`);
+  return (
+    infoscreenName in sensorData ||
+    fs.existsSync(`${settings.folders.ip}/${infoscreenName}.txt`)
+  );
 };
 
 const returnResult = (
