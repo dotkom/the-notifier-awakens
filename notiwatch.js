@@ -352,7 +352,7 @@ const requestHandler = (req, res) => {
     }
 
     // Get sensors only
-    if (settings.validate.getSensorsUrl.test(urlLower)) {
+    else if (settings.validate.getSensorsUrl.test(urlLower)) {
       const user = getUserFromUrl(url, settings.validate.getSensorsUrl);
       const username = getUsernameFromUser(user);
       if (checkIfInfoscreenExists(username)) {
