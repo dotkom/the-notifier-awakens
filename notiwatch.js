@@ -412,16 +412,12 @@ const requestHandler = (req, res) => {
         checkIfValidToken(user, valid => {
           if (valid) {
             getInfoscreenIp(username, content => {
-              if (content) {
-                returnResult(res, 200, {
-                  ip: content,
-                  screenshot: `/${btoa(user)}/screenshot.png`,
-                });
-              } else {
-                returnResult(res, 200, {
-                  screenshot: `/${btoa(user)}/screenshot.png`,
-                });
-              }
+              const sensors = getInfoscreenSensors(username);
+              returnResult(res, 200, {
+                ...(sensors && { sensors }),
+                ...(content && { ip: content }),
+                screenshot: `/${btoa(user)}/screenshot.png`,
+              });
             });
           } else {
             returnResult(res, 401);
