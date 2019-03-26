@@ -137,6 +137,9 @@ export const pipes = {
     }
     return '';
   },
+  else: (input, params) => {
+    return input || params.join(' ');
+  },
   ifcontains: (input, params) => {
     if (params.length > 0) {
       if (~input.indexOf(params[0])) {
