@@ -27,28 +27,57 @@ const settings = {
     screenshots: `${__dirname}/notiwatch/screenshots`,
   },
   files: {
-    tokens: `${__dirname}/notiwatch/tokens.txt`,
     install: `${__dirname}/infoscreen-setup/bin/notiwall`,
+    sensors: `${__dirname}/notiwatch/sensors.json`,
+    tokens: `${__dirname}/notiwatch/tokens.txt`,
   },
   validate: {
     getUrl: /^[0-9\. a-zøæå]*$/,
     user: /[0-9A-Za-z\/+=]+/,
     postScreenshotUrl: /^\/screenshot\/(.+)$/,
     postIpUrl: /^\/ip\/(.+)$/,
+    postSensorUrl: /^\/sensors\/(.+)$/,
+    postSensorFormat: `{
+  "name": "<name>",
+  "type": "door|coffee|light",
+  "value": "<value>",
+  [, "<coords>": "<lat>,<lng>", "description": "<description>"]
+}`,
     postIpData: /^[0-9\. a-zøæå:\[\]]*$/,
     getScreenshotUrl: /^\/(.+)\/screenshot\.png$/,
     getIpUrl: /^\/(.+)\/ip$/,
+    getSensorsUrl: /^\/(.+)\/sensors$/,
     getInfoscreenUrl: /^\/(.+)$/,
     getInstallWithInfoUrl: /^\/(.+)\/notiwall\.sh$/,
     getInstallUrl: /^\/notiwall\.sh$/,
   },
 };
 
+let sensorData = {};
+if (fs.existsSync(settings.files.sensors)) {
+  try {
+    sensorData = JSON.parse(fs.readFileSync(settings.files.sensors));
+  } catch (ex) {
+    sensorData = {};
+  }
+}
+
 const btoa = string => Buffer.from(string).toString('base64');
 const atob = base64 => Buffer.from(base64, 'base64').toString('ascii');
 
 const updateIP = (file, ip) => {
   fs.writeFile(`${settings.folders.ip}/${file}.txt`, ip, () => {});
+};
+
+const updateSensor = (key, data) => {
+  if (!(key in sensorData)) {
+    sensorData[key] = {};
+  }
+  sensorData[key][data.name] = data;
+};
+
+const saveSensorDataToFile = () => {
+  fs.writeFileSync(settings.files.sensors, JSON.stringify(sensorData));
 };
 
 const checkIfValidToken = (user, callback) => {
@@ -89,6 +118,12 @@ const getInfoscreenIp = (username, callback) => {
   });
 };
 
+const getInfoscreenSensors = (username, callback = () => {}) => {
+  const data = username in sensorData && sensorData[username];
+  callback(data);
+  return data;
+};
+
 const getInfoscreenScreenshot = (username, callback) => {
   fs.readFile(
     `${settings.folders.screenshots}/${username}.png`,
@@ -121,7 +156,7 @@ const returnResult = (
     res.end(
       JSON.stringify(
         Object.assign(descriptionObj, {
-          statusCode: res.statusCode,
+          statusCode: statusCode,
           [type]: message,
         }),
       ),
@@ -130,7 +165,7 @@ const returnResult = (
     res.end(
       JSON.stringify(
         Object.assign(descriptionObj, {
-          statusCode: res.statusCode,
+          statusCode: statusCode,
           [type]: message || res.statusMessage,
         }),
       ),
@@ -215,6 +250,52 @@ const requestHandler = (req, res) => {
       });
     }
 
+    // If sensors
+    else if (settings.validate.postSensorUrl.test(urlLower)) {
+      let body = '';
+      req.on('data', chunk => {
+        body += chunk.toString();
+      });
+      req.on('end', () => {
+        // Getting the base64 user credentials from url
+        const user = getUserFromUrl(url, settings.validate.postSensorUrl);
+        try {
+          const sensordata = JSON.parse(body);
+          if (
+            'name' in sensordata &&
+            'type' in sensordata &&
+            'value' in sensordata
+          ) {
+            checkIfValidToken(user, valid => {
+              if (valid) {
+                const username = getUsernameFromUser(user);
+                updateSensor(username, sensordata);
+                returnResult(res, 201);
+              } else {
+                returnResult(res, 401);
+              }
+            });
+          } else {
+            returnResult(
+              res,
+              400,
+              `Missing key in body. Use this format: ${
+                settings.validate.postSensorFormat
+              }`,
+            );
+          }
+        } catch (ex) {
+          returnResult(
+            res,
+            400,
+            `JSON in body is invalid. Use this format: ${
+              settings.validate.postSensorFormat
+            }`,
+          );
+        }
+      });
+    }
+
     // If not IP or screenshot
     else {
       returnResult(res, 400);
@@ -261,6 +342,28 @@ const requestHandler = (req, res) => {
                 returnResult(res, 404);
               }
             });
+          } else {
+            returnResult(res, 401);
+          }
+        });
+      } else {
+        returnResult(res, 400, `Infoscreen "${username}" does not exist`);
+      }
+    }
+
+    // Get sensors only
+    if (settings.validate.getSensorsUrl.test(urlLower)) {
+      const user = getUserFromUrl(url, settings.validate.getSensorsUrl);
+      const username = getUsernameFromUser(user);
+      if (checkIfInfoscreenExists(username)) {
+        checkIfValidToken(user, valid => {
+          if (valid) {
+            const sensors = getInfoscreenSensors(username);
+            if (sensors) {
+              returnResult(res, 200, sensors);
+            } else {
+              returnResult(res, 404);
+            }
           } else {
             returnResult(res, 401);
           }
@@ -358,3 +461,19 @@ server.listen(port, err => {
 
   console.log(`Server is listening on ${port}`);
 });
+
+// Save to file before exit as we want a persistent storage
+process.stdin.resume();
+
+function exitHandler(options, _) {
+  if (options.cleanup) {
+    saveSensorDataToFile();
+  }
+  if (options.exit) process.exit();
+}
+
+process.on('exit', exitHandler.bind(this, { cleanup: true }));
+process.on('SIGINT', exitHandler.bind(this, { exit: true }));
+process.on('SIGUSR1', exitHandler.bind(this, { exit: true }));
+process.on('SIGUSR2', exitHandler.bind(this, { exit: true }));
+process.on('uncaughtException', exitHandler.bind(this, { exit: true }));
