@@ -233,7 +233,7 @@ const requestHandler = (req, res) => {
           checkIfValidToken(user, valid => {
             if (valid) {
               const username = getUsernameFromUser(user);
-              updateIP(username, ip);
+              updateIP(username, `${new Date().toISOString()}: ${ip}`);
               returnResult(res, 201);
             } else {
               returnResult(res, 401);
