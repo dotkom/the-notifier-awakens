@@ -210,7 +210,6 @@ function push_sensor() {
     source $ENV_FILE
   fi
   TOKEN=$(echo -n $INFOSCREEN_NAME:$INFOSCREEN_TOKEN | base64)
-  echo "$1 - $2 - $3"
   curl -X POST "${STATUS_SERVER:-$DEFAULT_STATUS_SERVER}/sensors/$TOKEN" -d "
   {
     \"name\": \"$1\",
