@@ -201,6 +201,16 @@ export const defaultApis = {
       ],
     },
   },
+  infoscreens: {
+    interval: 10,
+    url:
+      'https://notiwall.online.ntnu.no/api/v1/[["{{sensors.*}}"|base64]]/sensors',
+    print: true,
+    cors: true,
+    sensors: {
+      'online-door': 'online-door',
+    },
+  },
   coffeePots: {
     interval: 60,
     url: `${API_URL}/coffee/{{org.*}}`,

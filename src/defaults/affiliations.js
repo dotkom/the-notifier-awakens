@@ -151,11 +151,20 @@ affiliationkey: {
 export const defaultAffiliationSettings = {
   debug: {
     layouts: {
-      0: ['Clock', 'Infoscreens'],
+      0: ['Clock', 'Door', 'Infoscreens'],
     },
     components: [
       {
         template: 'Clock',
+      },
+      {
+        template: `
+            {{status.result.office-door.value|upper|ifeq OPEN The office is open!|else The office is not open}}
+        `,
+        id: 'Door',
+        apis: {
+          status: 'infoscreens.sensors.online-door',
+        },
       },
       {
         template: `
