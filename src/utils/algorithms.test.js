@@ -85,6 +85,8 @@ it('Inject values into placeholders in string', () => {
   expect(injectValuesIntoString('test', obj)).toEqual('test');
   expect(injectValuesIntoString('test{{one}}', obj)).toEqual('test1');
   expect(injectValuesIntoString('{{one}}', obj)).toEqual('1');
+  expect(injectValuesIntoString('{{"one"}}', obj)).toEqual('one');
+  expect(injectValuesIntoString('{{"one"}}', obj, 'nope')).toEqual('one');
   expect(injectValuesIntoString('test{{one}}test', obj)).toEqual('test1test');
   expect(injectValuesIntoString('{{one}}test', obj)).toEqual('1test');
   expect(injectValuesIntoString('{{two}}test{{two}}', obj)).toEqual('2test2');
@@ -160,6 +162,17 @@ it('Inject values into placeholders in string', () => {
       pipe => pipe,
     ),
   ).toEqual('to:thistest');
+  expect(
+    injectValuesIntoString(
+      '{{"four"|test}}test',
+      obj,
+      '',
+      '{{',
+      '}}',
+      ':',
+      (_, __, input) => input,
+    ),
+  ).toEqual('fourtest');
   expect(injectValuesIntoString('{{object.ten}}test', obj)).toEqual('10test');
   expect(injectValuesIntoString('{{object.tvelve:nope}}test', obj)).toEqual(
     'nopetest',

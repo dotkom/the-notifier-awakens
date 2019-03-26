@@ -150,6 +150,7 @@ injectValuesIntoString('{{five:default}} test', obj, '', '{{', '}}') => 'default
 injectValuesIntoString('{{five:def}}test{{five:ault}}', obj, '', '{{', '}}') => 'deftestault'
 injectValuesIntoString('{{five:def}}test{{six:ault}}', obj, '', '{{', '}}') => 'deftestault'
 injectValuesIntoString('{{five:def}}test{{four:ault}}', obj, '', '{{', '}}') => 'deftest4'
+injectValuesIntoString('{{"string"}}test{{four:ault}}', obj, '', '{{', '}}') => 'stringtest4'
  * ```
  * @param {string} string The String to search through
  * @param {object} values An object with all values that can fit the keys
@@ -200,8 +201,11 @@ export const injectValuesIntoString = (
         !~param.indexOf(pipeMatch))
     ) {
       const [extractedParam, defaultVal] = param.split(defaultMatch);
+      const isString = extractedParam.indexOf('"') === 0;
       if (has(values, extractedParam)) {
-        const valueContent = get(values, extractedParam);
+        const valueContent = isString
+          ? extractedParam.slice(1, -1)
+          : get(values, extractedParam);
         value =
           typeof valueContent === 'function' ? valueContent() : valueContent;
         if (pipeFunction !== null && pipeMatch && ~param.indexOf(pipeMatch)) {
@@ -224,8 +228,11 @@ export const injectValuesIntoString = (
       ~param.indexOf(pipeMatch)
     ) {
       const [extractedParam, ...pipes] = param.split(pipeMatch);
-      if (has(values, extractedParam)) {
-        const valueContent = get(values, extractedParam);
+      const isString = extractedParam.indexOf('"') === 0;
+      if (has(values, extractedParam) || isString) {
+        const valueContent = isString
+          ? extractedParam.slice(1, -1)
+          : get(values, extractedParam);
         value =
           typeof valueContent === 'function' ? valueContent() : valueContent;
         value = pipes.reduce((acc, pipe) => {
@@ -236,7 +243,10 @@ export const injectValuesIntoString = (
         value = fallbackValue;
       }
     } else if (fallbackValue !== null) {
-      value = fallbackValue;
+      const isString = param.indexOf('"') === 0;
+      value = isString ? param.slice(1, -1) : fallbackValue;
+    } else if (param.indexOf('"') === 0) {
+      value = param.slice(1, -1);
     } else {
       if (prevPosition === -1) {
         prevPosition = 0;
