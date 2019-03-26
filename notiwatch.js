@@ -94,6 +94,15 @@ const checkIfValidToken = (user, callback) => {
   });
 };
 
+const getUserFromUrl = (url, regex) => {
+  const creds = regex.exec(url)[1] || '';
+  return atob(creds);
+};
+
+const getUsernameFromUser = user => {
+  return user.slice(0, user.indexOf(':'));
+};
+
 const listInfoscreens = callback => {
   fs.readFile(settings.files.tokens, (err, content) => {
     if (err) {
@@ -171,15 +180,6 @@ const returnResult = (
       ),
     );
   }
-};
-
-const getUserFromUrl = (url, regex) => {
-  const creds = regex.exec(url)[1] || '';
-  return atob(creds);
-};
-
-const getUsernameFromUser = user => {
-  return user.slice(0, user.indexOf(':'));
 };
 
 const requestHandler = (req, res) => {
