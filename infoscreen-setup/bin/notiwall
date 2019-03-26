@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This is the Notiwall CLI
-VERSION="v1.0.3"
+VERSION="v1.1.0"
 ARGS=( )
 INSTALL_DIR=/usr/local/bin
 CONFIG_DIR=~/.config/notiwall
@@ -38,6 +38,8 @@ function help() {
   echo "  mouse click                do a mouse click"
   echo "  rotate [0-3]               configure screen rotation. 0 is normal, rest goes counter-clockwise"
   echo "  send ip|screenshot         send screenshot or ip to notiwall server"
+  echo "  send sensor <name> <type> <value>"
+  echo "                             send sensor value to notiwall server"
   echo "  uninstall                  uninstall Notiwall CLI and purge files from system"
   echo "  upgrade                    upgrade Notiwall CLI"
   echo
@@ -201,6 +203,20 @@ function push_ip() {
   IP=$(hostname -I)
   TOKEN=$(echo -n $INFOSCREEN_NAME:$INFOSCREEN_TOKEN | base64)
   curl -X POST "${STATUS_SERVER:-$DEFAULT_STATUS_SERVER}/ip/$TOKEN" -d "$IP"
+}
+
+function push_sensor() {
+  if [ -f $ENV_FILE ]; then
+    source $ENV_FILE
+  fi
+  TOKEN=$(echo -n $INFOSCREEN_NAME:$INFOSCREEN_TOKEN | base64)
+  echo "$1 - $2 - $3"
+  curl -X POST "${STATUS_SERVER:-$DEFAULT_STATUS_SERVER}/sensors/$TOKEN" -d "
+  {
+    \"name\": \"$1\",
+    \"type\": \"$2\",
+    \"value\": \"$3\"
+  }"
 }
 
 function screenshot() {
@@ -425,57 +441,61 @@ function uninstall() {
   fi
 }
 
+function default_cases() {
+  if [[ $1 =~ ^[0-9]+$ ]]; then
+    if [[ "$PREV" == "configure-crontab-start" ]]; then ARGS+=( $1 )
+    elif [[ "$PREV" == "configure-crontab" ]]; then ARGS+=( $1 )
+    elif [[ "$PREV" == "configure-rotation" ]]; then ARGS+=( $1 )
+    elif [[ "$PREV" == "mouse-move" ]]; then ARGS+=( $1 )
+    elif [[ "$PREV" == "install" ]]; then ARGS+=( $1 )
+    elif [[ "$PREV" == "install-configure" ]]; then ARGS+=( $1 )
+    elif [[ "$PREV" == "upgrade" ]]; then ARGS+=( $1 )
+    elif [[ "$PREV" == "reinstall" ]]; then ARGS+=( $1 )
+    elif [[ "$PREV" =~ ^open ]]; then ARGS+=( $1 )
+    fi
+  elif [[ "$PREV" == "screenshot" ]]; then ARGS+=( $1 )
+  elif [[ "$PREV" == "send-sensor" ]]; then ARGS+=( $1 )
+  elif [[ "$PREV" == "install" ]]; then ARGS+=( $1 )
+  elif [[ "$PREV" == "install-configure" ]]; then ARGS+=( $1 )
+  elif [[ "$PREV" == "upgrade" ]]; then ARGS+=( $1 )
+  elif [[ "$PREV" == "reinstall" ]]; then ARGS+=( $1 )
+  elif [[ "$PREV" =~ ^open ]]; then ARGS+=( $1 )
+  else NEXT_COMMAND="help"
+  fi
+}
+
 NEXT_COMMAND=""
 PREV=""
 for arg in "$@"; do
   PREV="$NEXT_COMMAND"
   key="$arg"
   case $key in
-    configure)     [[ "$PREV" == "" ]] && NEXT_COMMAND="configure";;
-    send)          [[ "$PREV" == "" ]] && NEXT_COMMAND="send";;
-    ip)            [[ "$PREV" == "send" ]] && NEXT_COMMAND="send-ip";;
-    screenshot)    [[ "$PREV" == "send" ]] && NEXT_COMMAND="send-screenshot"
-                   [[ "$PREV" == "" ]] && NEXT_COMMAND="screenshot";;
-    mouse)         [[ "$PREV" == "" ]] && NEXT_COMMAND="mouse";;
-    move)          [[ "$PREV" == "mouse" ]] && NEXT_COMMAND="mouse-move";;
-    click)         [[ "$PREV" == "mouse" ]] && NEXT_COMMAND="mouse-click";;
-    open)          [[ "$PREV" == "" ]] && NEXT_COMMAND="open";;
-    -d|--detached) [[ "$PREV" == "open" ]] && NEXT_COMMAND="open-detached";;
-    upgrade)       [[ "$PREV" == "" ]] && NEXT_COMMAND="upgrade";;
-    install)       [[ "$PREV" == "" ]] && NEXT_COMMAND="install";;
-    --configure)   [[ "$PREV" == "install" ]] && NEXT_COMMAND="install-configure";;
-    reinstall)     [[ "$PREV" == "" ]] && NEXT_COMMAND="reinstall";;
-    uninstall)     [[ "$PREV" == "" ]] && NEXT_COMMAND="uninstall";;
-    env)           [[ "$PREV" =~ ^$|^configure$ ]] && NEXT_COMMAND="configure-env";;
-    cron)          [[ "$PREV" =~ ^$|^configure$ ]] && NEXT_COMMAND="configure-crontab";;
-    -l|--list)     [[ "$PREV" == "configure-env" ]] && NEXT_COMMAND="list-env"
-                   [[ "$PREV" == "configure-crontab" ]] && NEXT_COMMAND="list-crontab";;
-    rotate)        [[ "$PREV" =~ ^$|^configure$ ]] && NEXT_COMMAND="configure-rotation";;
-    start)         [[ "$PREV" == "configure-crontab" ]] && NEXT_COMMAND="configure-crontab-start";;
-    stop)          [[ "$PREV" == "configure-crontab" ]] && NEXT_COMMAND="configure-crontab-stop";;
-    -v|--version)  [[ "$PREV" == "" ]] && NEXT_COMMAND="version";;
-    -h|--help)     [[ "$PREV" == "" ]] && NEXT_COMMAND="help";;
-    *)
-      if [[ $key =~ ^[0-9]+$ ]]; then
-        if [[ "$PREV" == "configure-crontab-start" ]]; then ARGS+=( $key )
-        elif [[ "$PREV" == "configure-crontab" ]]; then ARGS+=( $key )
-        elif [[ "$PREV" == "configure-rotation" ]]; then ARGS+=( $key )
-        elif [[ "$PREV" == "mouse-move" ]]; then ARGS+=( $key )
-        elif [[ "$PREV" == "install" ]]; then ARGS+=( $key )
-        elif [[ "$PREV" == "install-configure" ]]; then ARGS+=( $key )
-        elif [[ "$PREV" == "upgrade" ]]; then ARGS+=( $key )
-        elif [[ "$PREV" == "reinstall" ]]; then ARGS+=( $key )
-        elif [[ "$PREV" =~ ^open ]]; then ARGS+=( $key )
-        fi
-      elif [[ "$PREV" == "screenshot" ]]; then ARGS+=( $key )
-      elif [[ "$PREV" == "install" ]]; then ARGS+=( $key )
-      elif [[ "$PREV" == "install-configure" ]]; then ARGS+=( $key )
-      elif [[ "$PREV" == "upgrade" ]]; then ARGS+=( $key )
-      elif [[ "$PREV" == "reinstall" ]]; then ARGS+=( $key )
-      elif [[ "$PREV" =~ ^open ]]; then ARGS+=( $key )
-      else NEXT_COMMAND="help"
-      fi
-      ;;
+    configure)     [[ "$PREV" == "" ]] && NEXT_COMMAND="configure" || default_cases $key;;
+    send)          [[ "$PREV" == "" ]] && NEXT_COMMAND="send" || default_cases $key;;
+    ip)            [[ "$PREV" == "send" ]] && NEXT_COMMAND="send-ip" || default_cases $key;;
+    sensor)        [[ "$PREV" == "send" ]] && NEXT_COMMAND="send-sensor" || default_cases $key;;
+    screenshot)    [[ "$PREV" == "send" ]] && NEXT_COMMAND="send-screenshot" || \
+                   [[ "$PREV" == "" ]] && NEXT_COMMAND="screenshot" || default_cases $key;;
+    mouse)         [[ "$PREV" == "" ]] && NEXT_COMMAND="mouse" || default_cases $key;;
+    move)          [[ "$PREV" == "mouse" ]] && NEXT_COMMAND="mouse-move" || default_cases $key;;
+    click)         [[ "$PREV" == "mouse" ]] && NEXT_COMMAND="mouse-click" || default_cases $key;;
+    open)          [[ "$PREV" == "" ]] && NEXT_COMMAND="open" || default_cases $key;;
+    -d|--detached) [[ "$PREV" == "open" ]] && NEXT_COMMAND="open-detached" || default_cases $key;;
+    upgrade)       [[ "$PREV" == "" ]] && NEXT_COMMAND="upgrade" || default_cases $key;;
+    install)       [[ "$PREV" == "" ]] && NEXT_COMMAND="install" || default_cases $key;;
+    --configure)   [[ "$PREV" == "install" ]] && NEXT_COMMAND="install-configure" || default_cases $key;;
+    reinstall)     [[ "$PREV" == "" ]] && NEXT_COMMAND="reinstall" || default_cases $key;;
+    uninstall)     [[ "$PREV" == "" ]] && NEXT_COMMAND="uninstall" || default_cases $key;;
+    env)           [[ "$PREV" =~ ^$|^configure$ ]] && NEXT_COMMAND="configure-env" || default_cases $key;;
+    cron)          [[ "$PREV" =~ ^$|^configure$ ]] && NEXT_COMMAND="configure-crontab" || default_cases $key;;
+    -l|--list)     [[ "$PREV" == "configure-env" ]] && NEXT_COMMAND="list-env" || \
+                   [[ "$PREV" == "configure-crontab" ]] && NEXT_COMMAND="list-crontab" || default_cases $key;;
+    rotate)        [[ "$PREV" =~ ^$|^configure$ ]] && NEXT_COMMAND="configure-rotation" || default_cases $key;;
+    start)         [[ "$PREV" == "configure-crontab" ]] && NEXT_COMMAND="configure-crontab-start" || default_cases $key;;
+    stop)          [[ "$PREV" == "configure-crontab" ]] && NEXT_COMMAND="configure-crontab-stop" || default_cases $key;;
+    -v|--version)  [[ "$PREV" == "" ]] && NEXT_COMMAND="version" || default_cases $key;;
+    -h|--help)     [[ "$PREV" == "" ]] && NEXT_COMMAND="help" || default_cases $key;;
+    *) default_cases $key;;
   esac
 done
 
@@ -520,6 +540,9 @@ case $NEXT_COMMAND in
     ;;
   send-ip)
     push_ip
+    ;;
+  send-sensor)
+    push_sensor "${ARGS[0]}" "${ARGS[1]}" "${ARGS[2]}"
     ;;
   send-screenshot)
     push_screenshot
