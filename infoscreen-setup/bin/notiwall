@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This is the Notiwall CLI
-VERSION="v1.1.0"
+VERSION="v1.1.1"
 ARGS=( )
 INSTALL_DIR=/usr/local/bin
 CONFIG_DIR=~/.config/notiwall
@@ -474,8 +474,10 @@ for arg in "$@"; do
     send)          [[ "$PREV" == "" ]] && NEXT_COMMAND="send" || default_cases $key;;
     ip)            [[ "$PREV" == "send" ]] && NEXT_COMMAND="send-ip" || default_cases $key;;
     sensor)        [[ "$PREV" == "send" ]] && NEXT_COMMAND="send-sensor" || default_cases $key;;
-    screenshot)    [[ "$PREV" == "send" ]] && NEXT_COMMAND="send-screenshot" || \
-                   [[ "$PREV" == "" ]] && NEXT_COMMAND="screenshot" || default_cases $key;;
+    screenshot)    if [[ "$PREV" == "send" ]]; then NEXT_COMMAND="send-screenshot"
+                   elif [[ "$PREV" == "" ]]; then NEXT_COMMAND="screenshot"
+                   else default_cases $key
+                   fi;;
     mouse)         [[ "$PREV" == "" ]] && NEXT_COMMAND="mouse" || default_cases $key;;
     move)          [[ "$PREV" == "mouse" ]] && NEXT_COMMAND="mouse-move" || default_cases $key;;
     click)         [[ "$PREV" == "mouse" ]] && NEXT_COMMAND="mouse-click" || default_cases $key;;
@@ -488,8 +490,10 @@ for arg in "$@"; do
     uninstall)     [[ "$PREV" == "" ]] && NEXT_COMMAND="uninstall" || default_cases $key;;
     env)           [[ "$PREV" =~ ^$|^configure$ ]] && NEXT_COMMAND="configure-env" || default_cases $key;;
     cron)          [[ "$PREV" =~ ^$|^configure$ ]] && NEXT_COMMAND="configure-crontab" || default_cases $key;;
-    -l|--list)     [[ "$PREV" == "configure-env" ]] && NEXT_COMMAND="list-env" || \
-                   [[ "$PREV" == "configure-crontab" ]] && NEXT_COMMAND="list-crontab" || default_cases $key;;
+    -l|--list)     if [[ "$PREV" == "configure-env" ]]; then NEXT_COMMAND="list-env"
+                   elif [[ "$PREV" == "configure-crontab" ]]; then NEXT_COMMAND="list-crontab"
+                   else default_cases $key
+                   fi;;
     rotate)        [[ "$PREV" =~ ^$|^configure$ ]] && NEXT_COMMAND="configure-rotation" || default_cases $key;;
     start)         [[ "$PREV" == "configure-crontab" ]] && NEXT_COMMAND="configure-crontab-start" || default_cases $key;;
     stop)          [[ "$PREV" == "configure-crontab" ]] && NEXT_COMMAND="configure-crontab-stop" || default_cases $key;;
