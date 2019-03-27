@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './Office.css';
-import { isBefore, isAfter } from 'date-fns';
+import { isBefore, isAfter, isWeekend, getHours } from 'date-fns';
 
 export default class Office extends Component {
   constructor() {
@@ -12,8 +12,8 @@ export default class Office extends Component {
 
   render() {
     let list = null;
+    const timeNow = new Date();
     if (this.props.servants) {
-      const timeNow = new Date();
       list = this.props.servants.map((e, i) => {
         let style = {
           whiteSpace: 'nowrap',
@@ -47,14 +47,40 @@ export default class Office extends Component {
       );
     }
 
+    let officeIsOpen = true;
+    const hour = getHours(timeNow);
+    if (isWeekend(timeNow)) {
+      officeIsOpen = false;
+    } else if (hour < 10 || hour > 16) {
+      officeIsOpen = false;
+    }
+
+    let isDoorOpen = null;
+    if ('doorStatus' in this.props) {
+      isDoorOpen = this.props.doorStatus === 'OPEN';
+    }
+
+    const isOpen = isDoorOpen || officeIsOpen;
+    const isOpenText =
+      isDoorOpen === null ? '' : isOpen ? ' er åpent' : ' er stengt!';
+    const title = (this.props.title || 'Kontoret') + isOpenText;
+
     return (
       <>
-        <h1>{this.props.title || 'Kontoret'}</h1>
-        <div className="kontor">
-          <h2 className="kontor-heading">Kontoransvarlig</h2>
-          <div className="kontor-liste">{list}</div>
-          {this.props.status}
-        </div>
+        <h1
+          className={
+            isDoorOpen === null ? '' : isOpen ? 'is-open' : 'is-closed'
+          }
+        >
+          {title}
+        </h1>
+        {isOpen && this.props.hasServants ? (
+          <div className="kontor">
+            <h2 className="kontor-heading">Kontoransvarlig</h2>
+            <div className="kontor-liste">{list}</div>
+            {this.props.status}
+          </div>
+        ) : null}
       </>
     );
   }

@@ -205,7 +205,6 @@ export const defaultApis = {
     interval: 10,
     url:
       'https://notiwall.online.ntnu.no/api/v1/[["{{sensors.*}}"|base64]]/sensors',
-    print: true,
     cors: true,
     sensors: {
       'online-door': 'online-door',
