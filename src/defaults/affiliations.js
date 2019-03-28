@@ -543,7 +543,7 @@ export const defaultAffiliationSettings = {
       },
       {
         template: 'Office',
-        title: 'Onlinekontoret',
+        hasServants: true,
         apis: {
           servants: 'affiliation.org.{{affiliation}}:servant.servants',
           message: 'affiliation.org.{{affiliation}}:servant.message',

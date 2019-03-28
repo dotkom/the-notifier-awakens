@@ -56,11 +56,14 @@ export default class Office extends Component {
     }
 
     let isDoorOpen = null;
-    if ('doorStatus' in this.props) {
+    if (
+      'doorStatus' in this.props &&
+      /^OPEN$|^CLOSED$/.test(this.props.doorStatus)
+    ) {
       isDoorOpen = this.props.doorStatus === 'OPEN';
     }
 
-    const isOpen = isDoorOpen || officeIsOpen;
+    const isOpen = !!isDoorOpen || officeIsOpen;
     const isOpenText =
       isDoorOpen === null ? '' : isOpen ? ' er åpent' : ' er stengt!';
     const title = (this.props.title || 'Kontoret') + isOpenText;
