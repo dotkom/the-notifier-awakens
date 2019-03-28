@@ -66,24 +66,21 @@ export default class Office extends Component {
     const isOpen = !!isDoorOpen || officeIsOpen;
     const isOpenText =
       isDoorOpen === null ? '' : isOpen ? ' er åpent' : ' er stengt!';
+
     const title = (this.props.title || 'Kontoret') + isOpenText;
+    const titleClass =
+      isDoorOpen === null ? '' : isOpen ? 'is-open' : 'is-closed';
 
     return (
       <>
-        <h1
-          className={
-            isDoorOpen === null ? '' : isOpen ? 'is-open' : 'is-closed'
-          }
-        >
-          {title}
-        </h1>
+        <h1 className={titleClass}>{title}</h1>
         {isOpen && this.props.hasServants ? (
           <div className="kontor">
             <h2 className="kontor-heading">Kontoransvarlig</h2>
             <div className="kontor-liste">{list}</div>
-            {this.props.status}
           </div>
         ) : null}
+        {this.props.status}
       </>
     );
   }
