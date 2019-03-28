@@ -485,18 +485,18 @@ export const defaultAffiliationSettings = {
   online: {
     name: 'Online',
     layouts: {
-      0: ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events'],
+      0: ['Logo', 'Date', 'Office', 'Bus', 'Bus2', 'Events'],
       720: [
         '/ 200px . . 200px',
         'Logo Logo Logo',
-        'Office Office Clock Clock',
+        'Office Office Date Date',
         '. . . .',
         'Bus Bus Bus2 Bus2',
         '. . . .',
         'Events Events Events .',
       ],
       1400: [
-        'Logo Logo Office Clock',
+        'Logo Logo Office Date',
         '. . . .',
         '. . Events Events / 1',
         'Bus Bus Events Events',
@@ -505,7 +505,7 @@ export const defaultAffiliationSettings = {
         '. . . .',
       ],
       2000: [
-        'Logo Logo Office Clock',
+        'Logo Logo Office Date',
         '. . .',
         'Bus Bus2 Events Events',
         '. . .',
@@ -517,7 +517,7 @@ export const defaultAffiliationSettings = {
         url: 'https://online.ntnu.no/static/img/online_logo.svg',
       },
       {
-        template: 'Clock',
+        template: 'Date',
         apis: { time: 'seconds' },
       },
       {
@@ -560,18 +560,18 @@ export const defaultAffiliationSettings = {
   'online-kontoret': {
     name: 'Online Kontoret',
     layouts: {
-      0: ['Logo', 'Clock', 'Office', 'Bus', 'Bus2', 'Events'],
+      0: ['Logo', 'Date', 'Office', 'Bus', 'Bus2', 'Events'],
       720: [
         '/ 200px . . 200px',
         'Logo Logo Logo',
-        'Office Office Clock Clock',
+        'Office Office Date Date',
         '. . . .',
         'Bus Bus Bus2 Bus2',
         '. . . .',
         'Events Events Events .',
       ],
       1400: [
-        'Logo Logo Office Clock',
+        'Logo Logo Office Date',
         '. . . .',
         '. . Events Events / 1',
         'Bus Bus Events Events',
@@ -580,7 +580,7 @@ export const defaultAffiliationSettings = {
         '. . . .',
       ],
       2000: [
-        'Logo Logo Office Clock',
+        'Logo Logo Office Date',
         '. . .',
         'Bus Bus2 Events Events',
         '. . .',
@@ -592,7 +592,7 @@ export const defaultAffiliationSettings = {
         url: 'https://online.ntnu.no/static/img/online_logo.svg',
       },
       {
-        template: 'Clock',
+        template: 'Date',
         apis: { time: 'seconds' },
       },
       {
