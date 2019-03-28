@@ -168,7 +168,7 @@ export const defaultAffiliationSettings = {
       },
       {
         template: `
-          {{#each secrets.infoscreens}}
+          {{#each ['online', 'online-kontoret']}}
             <img src="https://notiwall.online.ntnu.no/api/v1/{{this|base64}}/screenshot.png" />
           {{#end}}
         `,
