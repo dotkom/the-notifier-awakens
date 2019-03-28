@@ -72,7 +72,17 @@ const updateIP = (file, ip) => {
 const updateSensor = (key, data) => {
   if (!(key in sensorData)) {
     sensorData[key] = {};
+    data['log'] = [];
+  } else if (data.name in sensorData[key]) {
+    if ('log' in sensorData[key][data.name]) {
+      data['log'] = sensorData[key][data.name]['log'].slice(0, 49);
+    } else {
+      data['log'] = [];
+    }
+  } else {
+    data['log'] = [];
   }
+  data['log'] = [{ date: data.updated, value: data.value }].concat(data['log']);
   sensorData[key][data.name] = data;
 };
 
@@ -288,6 +298,7 @@ const requestHandler = (req, res) => {
             checkIfValidToken(user, valid => {
               if (valid) {
                 const username = getUsernameFromUser(user);
+                sensordata['updated'] = new Date().toISOString();
                 updateSensor(username, sensordata);
                 returnResult(res, 201);
               } else {
