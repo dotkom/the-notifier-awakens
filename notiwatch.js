@@ -94,6 +94,21 @@ const checkIfValidToken = (user, callback) => {
   });
 };
 
+const checkIfUserExists = (user, callback) => {
+  fs.readFile(settings.files.tokens, (err, content) => {
+    if (err) {
+      callback(false);
+    } else {
+      const tokens = content
+        .toString()
+        .trim()
+        .split('\n')
+        .map(t => t.split(':')[0]);
+      callback(!!~tokens.indexOf(user.split(':')[0]));
+    }
+  });
+};
+
 const getUserFromUrl = (url, regex) => {
   const creds = regex.exec(url)[1] || '';
   return atob(creds);
@@ -336,7 +351,7 @@ const requestHandler = (req, res) => {
       const user = getUserFromUrl(url, settings.validate.getScreenshotUrl);
       const username = getUsernameFromUser(user);
       if (checkIfInfoscreenExists(username)) {
-        checkIfValidToken(user, valid => {
+        checkIfUserExists(user, valid => {
           if (valid) {
             getInfoscreenScreenshot(username, screenshot => {
               if (screenshot) {
@@ -360,7 +375,7 @@ const requestHandler = (req, res) => {
       const user = getUserFromUrl(url, settings.validate.getSensorsUrl);
       const username = getUsernameFromUser(user);
       if (checkIfInfoscreenExists(username)) {
-        checkIfValidToken(user, valid => {
+        checkIfUserExists(user, valid => {
           if (valid) {
             const sensors = getInfoscreenSensors(username);
             if (sensors) {
