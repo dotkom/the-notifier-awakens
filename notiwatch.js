@@ -475,7 +475,6 @@ function exitHandler(options, _) {
 process.on('exit', exitHandler.bind(this, { cleanup: true }));
 process.on('SIGINT', exitHandler.bind(this, { exit: true }));
 process.on('SIGTERM', exitHandler.bind(this, { exit: true }));
-process.on('SIGKILL', exitHandler.bind(this, { exit: true }));
 process.on('SIGUSR1', exitHandler.bind(this, { exit: true }));
 process.on('SIGUSR2', exitHandler.bind(this, { exit: true }));
 process.on('uncaughtException', exitHandler.bind(this, { exit: true }));
