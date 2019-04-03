@@ -321,6 +321,12 @@ class App extends Component {
     this.startAPIs(time);
   }
 
+  cleanRefresh() {
+    this.restartAPIs();
+    localStorage.clear();
+    window.location.reload();
+  }
+
   /**
    * Get a CSS grid-template value from layout array.
    * 
@@ -753,7 +759,7 @@ ${this.state.css}`;
                       </div>
                       <div
                         className="sync"
-                        onClick={() => this.restartAPIs()}
+                        onClick={() => this.cleanRefresh()}
                         title={this.translate('sync')}
                       >
                         <Icon name="GoSync" />

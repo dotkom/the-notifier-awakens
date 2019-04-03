@@ -1,18 +1,18 @@
 .Bike {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    justify-content: space-evenly;
-    flex-direction: row;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  justify-content: space-evenly;
+  flex-direction: row;
 }
 
 .Bike > div {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    margin: 10px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin: 10px;
 }
 
 .icon {
-    margin: 10px;
+  margin: 10px;
 }
