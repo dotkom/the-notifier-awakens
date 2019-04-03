@@ -485,19 +485,19 @@ export const defaultAffiliationSettings = {
   online: {
     name: 'Online',
     layouts: {
-      0: ['Logo', 'Date', 'Office', 'Bus', 'Bus2', 'Events'],
+      0: ['Logo', 'Date', 'Bike', 'Office', 'Bus', 'Bus2', 'Events'],
       720: [
         '/ 200px . . 200px',
         'Logo Logo Logo',
         'Office Office Date Date',
-        '. . . .',
+        'Office Office Bike Bike',
         'Bus Bus Bus2 Bus2',
         '. . . .',
         'Events Events Events .',
       ],
       1400: [
         'Logo Logo Office Date',
-        '. . . .',
+        'Logo Logo Office Bike',
         '. . Events Events / 1',
         'Bus Bus Events Events',
         'Bus2 Bus2 Events Events',
@@ -506,7 +506,8 @@ export const defaultAffiliationSettings = {
       ],
       2000: [
         'Logo Logo Office Date',
-        '. . .',
+        'Logo Logo Office Bike',
+        'Bike Bike .',
         'Bus Bus2 Events Events',
         '. . .',
       ],
@@ -539,6 +540,15 @@ export const defaultAffiliationSettings = {
           fromCity:
             '{{busApi:enturbus}}.stops.{{bus2:prof}}.fromCity:departures',
           toCity: '{{busApi:enturbus}}.stops.{{bus2:prof}}.toCity:departures',
+        },
+      },
+      {
+        template: 'Bike',
+        id: 'Bike',
+        name: 'Gløshaugen Sykkelstativ',
+        apis: {
+          bikes: 'trondheimCityBike:stations.0.bikes',
+          docks: 'trondheimCityBike:stations.0.docks',
         },
       },
       {
@@ -560,19 +570,19 @@ export const defaultAffiliationSettings = {
   'online-kontoret': {
     name: 'Online Kontoret',
     layouts: {
-      0: ['Logo', 'Date', 'Office', 'Bus', 'Bus2', 'Events'],
+      0: ['Logo', 'Date', 'Bike', 'Office', 'Bus', 'Bus2', 'Events'],
       720: [
         '/ 200px . . 200px',
         'Logo Logo Logo',
         'Office Office Date Date',
-        '. . . .',
+        'Office Office Bike Bike',
         'Bus Bus Bus2 Bus2',
         '. . . .',
         'Events Events Events .',
       ],
       1400: [
         'Logo Logo Office Date',
-        '. . . .',
+        'Logo Logo Office Bike',
         '. . Events Events / 1',
         'Bus Bus Events Events',
         'Bus2 Bus2 Events Events',
@@ -581,7 +591,8 @@ export const defaultAffiliationSettings = {
       ],
       2000: [
         'Logo Logo Office Date',
-        '. . .',
+        'Logo Logo Office Bike',
+        'Bike Bike .',
         'Bus Bus2 Events Events',
         '. . .',
       ],
@@ -614,6 +625,15 @@ export const defaultAffiliationSettings = {
           fromCity:
             '{{busApi:enturbus}}.stops.{{bus2:prof}}.fromCity:departures',
           toCity: '{{busApi:enturbus}}.stops.{{bus2:prof}}.toCity:departures',
+        },
+      },
+      {
+        template: 'Bike',
+        id: 'Bike',
+        name: 'Gløshaugen Sykkelstativ',
+        apis: {
+          bikes: 'trondheimCityBike:stations.0.bikes',
+          docks: 'trondheimCityBike:stations.0.docks',
         },
       },
       {
