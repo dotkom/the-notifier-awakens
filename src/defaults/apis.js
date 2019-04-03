@@ -388,6 +388,7 @@ export const defaultApis = {
     interval: 60,
     url:
       'https://gbfs.urbansharing.com/trondheimbysykkel.no/station_status.json',
+    cors: true,
     request: {
       headers: {
         'Client-Identifier': 'onlinentnu-notifier-dev',
