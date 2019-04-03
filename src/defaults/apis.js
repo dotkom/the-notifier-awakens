@@ -392,7 +392,6 @@ export const defaultApis = {
       headers: {
         'Client-Identifier': 'onlinentnu-notifier-dev',
       },
-      mode: 'cors',
     },
     transform: {
       stations: {
