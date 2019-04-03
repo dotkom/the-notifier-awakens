@@ -386,9 +386,14 @@ export const defaultApis = {
   },
   trondheimCityBike: {
     interval: 60,
-    url: 'http://gbfs.urbansharing.com/trondheimbysykkel.no/station_status.json',
-    print: true,
-    printTransform: true,
+    url:
+      'https://gbfs.urbansharing.com/trondheimbysykkel.no/station_status.json',
+    request: {
+      headers: {
+        'Client-Identifier': 'onlinentnu-notifier-dev',
+      },
+      mode: 'cors',
+    },
     transform: {
       stations: {
         '{{#each data.stations.filter(a => a.station_id === "94")}}': {

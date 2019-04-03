@@ -22,4 +22,5 @@ export const whiteList = [
   'ntnu.no',
   'online.ntnu.no',
   'teamup.com',
+  'urbansharing.com',
 ].concat(targetWhitelist);
