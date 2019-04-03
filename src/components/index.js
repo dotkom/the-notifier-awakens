@@ -14,3 +14,4 @@ export { default as Timetable } from './Timetable';
 export { default as ChooseAffiliation } from './ChooseAffiliation';
 export { default as HTML } from './HTML';
 export { default as CustomComponent } from './CustomComponent';
+export {default as Bike } from './Bike';
