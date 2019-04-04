@@ -113,6 +113,12 @@ export const pipes = {
   atob: (input, params) => {
     return atob(input);
   },
+  stringify: (input, params) => {
+    if (params && params.length) {
+      return JSON.stringify(input, null, params[0]);
+    }
+    return JSON.stringify(input);
+  },
   count: (input, params) => {
     if (params.length > 0) {
       if (params.length > 1) {
