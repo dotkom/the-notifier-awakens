@@ -648,6 +648,8 @@ export const defaultAffiliationSettings = {
           status: 'affiliation.org.{{affiliationGroup:online}}:meeting.message',
           doorStatus:
             'infoscreens.sensors.online-door:result.office-door.value',
+          lastDoorStatus:
+            'infoscreens.sensors.online-door:result.office-door.updated',
         },
       },
       {

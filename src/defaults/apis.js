@@ -408,7 +408,6 @@ export const defaultApis = {
     interval: 60,
     url: 'https://core.urbansharing.com/public/api/v1/graphql#POST',
     cors: true,
-    print: true,
     request: {
       headers: {
         'Client-Identifier': 'onlinentnu-notifier-dev',

@@ -1,6 +1,14 @@
 import React, { Component } from 'react';
 import './Office.css';
-import { isBefore, isAfter, isWeekend, getHours } from 'date-fns';
+import {
+  isBefore,
+  isAfter,
+  isWeekend,
+  getHours,
+  distanceInWordsToNow,
+  format,
+} from 'date-fns';
+import * as locale from 'date-fns/locale/nb';
 
 export default class Office extends Component {
   constructor() {
@@ -74,6 +82,13 @@ export default class Office extends Component {
     return (
       <>
         <h1 className={titleClass}>{title}</h1>
+        {isDoorOpen === null ? null : (
+          <p className="small">
+            {isOpen ? 'Åpnet' : 'Stengte'} for{' '}
+            {distanceInWordsToNow(this.props.lastDoorStatus, { locale })} siden
+            ({format(this.props.lastDoorStatus, 'HH:mm', { locale })})
+          </p>
+        )}
         {isOpen && this.props.hasServants ? (
           <div className="kontor">
             <h2 className="kontor-heading">Kontoransvarlig</h2>
