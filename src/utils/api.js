@@ -123,6 +123,9 @@ export const API = {
     req.body =
       typeof req.body === 'object' ? JSON.stringify(req.body || {}) : req.body;
 
+    const enableCors = !!req.cors;
+    delete req.cors;
+
     if (useCache) {
       (async function() {
         const hash = await API.sha256(req.body);
@@ -133,7 +136,7 @@ export const API = {
           return;
         }
 
-        return fetch(API.transformURL(url), req)
+        return fetch(API.transformURL(addCors(url, enableCors)), req)
           .then(res => res.json())
           .then(data => {
             callback(data);
@@ -142,7 +145,7 @@ export const API = {
           .catch(error);
       })();
     } else {
-      return fetch(API.transformURL(url), req)
+      return fetch(API.transformURL(addCors(url, enableCors)), req)
         .then(res => res.json())
         .then(data => {
           callback(data);
