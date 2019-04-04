@@ -119,6 +119,9 @@ export const pipes = {
     }
     return JSON.stringify(input);
   },
+  json: (input, params) => {
+    return JSON.parse(input);
+  },
   count: (input, params) => {
     if (params.length > 0) {
       if (params.length > 1) {
@@ -219,6 +222,8 @@ export const pipeAliases = {
   base64: 'btoa',
   tobase64: 'btoa',
   frombase64: 'atob',
+  parsejson: 'json',
+  jsonparse: 'json',
   eq: 'ifeq',
   equals: 'ifeq',
   '=?': 'ifeq',
