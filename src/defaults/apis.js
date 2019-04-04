@@ -404,6 +404,48 @@ export const defaultApis = {
       },
     },
   },
+  trondheimCityBikeGraphQL: {
+    interval: 60,
+    url: 'https://core.urbansharing.com/public/api/v1/graphql#POST',
+    cors: true,
+    print: true,
+    request: {
+      headers: {
+        'Client-Identifier': 'onlinentnu-notifier-dev',
+        systemId: 'trondheim',
+      },
+      cors: true,
+    },
+    body: {
+      operationName: 'dockGroups',
+      query: `query dockGroups {
+        dockGroups {
+          id
+          name
+          title
+          subTitle
+          state
+          coord {
+            lat
+            lng
+          }
+          availabilityInfo {
+            availableDocks
+            availableVehicles
+          }
+        }
+      }`,
+    },
+    transform: {
+      stations: {
+        '{{#each data.dockGroups.filter(a => a.id === "94")}}': {
+          id: '{{id}}',
+          bikes: '{{availabilityInfo.availableVehicles}}',
+          docks: '{{availabilityInfo.availableDocks}}',
+        },
+      },
+    },
+  },
   abakusEvents: {
     interval: 100,
     cors: true,
