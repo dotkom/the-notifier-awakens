@@ -8,6 +8,7 @@ import {
 import { get, set } from 'object-path';
 import ST from 'stjs';
 import fecha from 'fecha';
+import openSocket from 'socket.io-client';
 
 fecha.i18n = {
   ...fecha.i18n,
@@ -40,6 +41,7 @@ export default class APIService {
     this.apis = apis;
     this.callback = callback;
     this.settings = settings;
+    this.components = components;
     this.elapsedClockTime = 0;
     this.oldClockTime = 0;
     this.time = 0;
@@ -48,9 +50,10 @@ export default class APIService {
     this.attemptsUntilFail = 3;
     this.failedApis = {};
     this.workingApis = {};
+    this.wsConnections = {};
 
-    if (components.length) {
-      this.updateUsedApis(components);
+    if (this.components.length) {
+      this.updateUsedApis(this.components);
     }
   }
 
@@ -72,6 +75,8 @@ export default class APIService {
         this.tick(this.time++);
       }
     }, 100);
+
+    this.startWSConnections();
   }
 
   /**
@@ -80,6 +85,8 @@ export default class APIService {
    * @returns {number} Time (in seconds) when the API was stopped.
    */
   stop() {
+    Object.values(this.wsConnections || {}).forEach(socket => socket.close());
+
     clearInterval(this.interval);
 
     return this.time;
@@ -134,7 +141,7 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
         Object.entries(urls).forEach(([key, url]) => {
           if (
             key in this.usedApis &&
-            this.usedApis[key] &&
+            this.usedApis[key] === 'http' &&
             this.hasNotFailed(key)
           ) {
             const { cache: useCache = false } = api;
@@ -209,6 +216,50 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
         });
       }
     });
+  }
+
+  startWSConnections() {
+    Object.keys(this.usedApis)
+      .filter(key => this.usedApis[key] === 'ws')
+      .forEach(key => {
+        const api = this.apis[key];
+        this.wsConnections[key] = openSocket(api.url);
+        this.wsConnections[key].on(api.channel, data => {
+          if ('print' in api && api.print) {
+            console.log(`Fra %c${key}%c:`, 'color: #f80', 'color: unset', data);
+          }
+          const { transformDates } = api;
+          if ('transform' in api) {
+            let transformedData = ST.select(data)
+              .transformWith(api.transform)
+              .root();
+            if (transformDates) {
+              transformedData = this.transformDates(
+                transformedData,
+                transformDates,
+              );
+            }
+            if ('printTransform' in api && api.printTransform) {
+              console.log(
+                `Transformert fra %c${key}%c:`,
+                'color: #f80',
+                'color: unset',
+                transformedData,
+              );
+            }
+            this.callback(key, transformedData);
+          } else {
+            let transformedData = data;
+            if (transformDates) {
+              transformedData = this.transformDates(
+                transformedData,
+                transformDates,
+              );
+            }
+            this.callback(key, transformedData);
+          }
+        });
+      });
   }
 
   hasNotFailed(key) {
@@ -287,7 +338,7 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
         return false;
       }, false);
       return Object.assign({}, acc, {
-        [key]: isUsed,
+        [key]: isUsed ? (/^wss?:\/\//.test(apis[key]) ? 'ws' : 'http') : false,
       });
     }, {});
   }
@@ -523,6 +574,7 @@ generateURLs(api, 'bus') =>
     if (restart) stopTime = this.stop();
 
     this.apis = apis;
+    this.updateUsedApis(this.components);
 
     if (restart) this.start(stopTime);
   }
