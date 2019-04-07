@@ -10,6 +10,8 @@ const dotenv = require('dotenv');
 const http = require('http');
 const formidable = require('formidable');
 const socket = require('socket.io');
+let io = null;
+const sockets = {};
 
 dotenv.config();
 const envConfig = dotenv.parse(fs.readFileSync('.env.local'));
@@ -74,6 +76,9 @@ const updateSensor = (key, data) => {
   if (!(key in sensorData)) {
     sensorData[key] = {};
     data['log'] = [];
+    io.of(`/${key}/${data.name}`).on('connection', socket => {
+      socket.emit('status', data);
+    });
   } else if (data.name in sensorData[key]) {
     if ('log' in sensorData[key][data.name]) {
       data['log'] = sensorData[key][data.name]['log'].slice(0, 49);
@@ -84,6 +89,9 @@ const updateSensor = (key, data) => {
     data['log'] = [];
   }
   data['log'] = [{ date: data.updated, value: data.value }].concat(data['log']);
+  if (data.value !== sensorData[key][data.name].value) {
+    io.of(`/${key}/${data.name}`).emit('status', data);
+  }
   sensorData[key][data.name] = data;
 };
 
@@ -480,15 +488,16 @@ const requestHandler = (req, res) => {
 };
 
 const server = http.createServer(requestHandler);
-const io = socket(server);
+io = socket(server);
 
-io.on('connection', socket => {
-  socket.emit('online/coffee', {
-    status: 'STARTED',
-    eta: new Date(Date.now() + 7 * 60 * 1000).toISOString(),
-  });
-  socket.on('online/coffee', data => {
-    socket.broadcast.emit('online/coffee', data);
+Object.entries(sensorData).forEach(infoscreen => {
+  const infoscreenName = infoscreen[0];
+  Object.entries(infoscreen[1]).forEach(sensor => {
+    sensorName = sensor[0];
+    data = sensor[1];
+    io.of(`/${infoscreenName}/${sensorName}`).on('connection', socket => {
+      socket.emit('status', sensorData[infoscreenName][sensorName]);
+    });
   });
 });
 
