@@ -82,6 +82,11 @@ export default class Office extends Component {
     return (
       <>
         <h1 className={titleClass}>{title}</h1>
+        {/*this.props.coffee && this.props.coffee.eta ? (
+          <p>{`Kaffe klar om ${distanceInWordsToNow(this.props.coffee.eta, {
+            locale,
+          })}. `}</p>
+        ) : null*/}
         {isDoorOpen === null ? null : (
           <p className="small">
             {isOpen ? 'Åpnet' : 'Stengte'} for{' '}
