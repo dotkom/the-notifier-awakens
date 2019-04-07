@@ -224,7 +224,7 @@ const returnResult = (
 };
 
 const requestHandler = (req, res) => {
-  const url = req.url.slice(settings.rootLength);
+  const url = req.url.slice(settings.rootLength).split('?')[0];
   const urlLower = url.toLowerCase();
 
   // POsting data
