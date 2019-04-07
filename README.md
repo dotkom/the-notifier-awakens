@@ -52,7 +52,7 @@ The part in brackets: `{...}`, is encoded in base64 (such that secrets does not 
 - `/api/v1/{infoscreen_name}/sensors` => Get sensor data (if it exists).
 - `/api/v1/{infoscreen_name}/screenshot.png` => Get last screenshot of infoscreen (if it exists).  
   Example:  
-   <img src="https://notiwall.online.ntnu.no/api/v1/b25saW5lLWtvbnRvcmV0/screenshot.png" alt="Infoscreen for online-kontoret" width="200"/>
+   <img src="https://notiwall.online.ntnu.no/api/v1/b25saW5lLWtvbnRvcmV0/screenshot.png?" alt="Infoscreen for online-kontoret" width="200"/>
 
 ## POST
 
