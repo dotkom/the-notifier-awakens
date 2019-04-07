@@ -17,6 +17,16 @@ it strength and power one could
 not even imagine was possible
 in 2014...
 
+# Table of contents
+
+- [Infoscreen setup](#infoscreen-setup)
+- [The Notiwall API (Notiwatch)](#the-notiwall-api-notiwatch)
+- [Development](#development)
+- [How it works](#how-it-works)
+  - [1. Fetch data](#1-fetch-data)
+  - [2. Manage components](#2-manage-components)
+  - [3. Manage layout](#3-manage-layout)
+
 # Infoscreen setup
 
 _More information can be found in the [infoscreen folder](infoscreen-setup)._
@@ -26,6 +36,45 @@ _More information can be found in the [infoscreen folder](infoscreen-setup)._
 1. Equipment: Get a screen, Raspberry PI (with NOOBS or Raspian), cable, keyboard and mouse.
 2. Internet: Connect Raspberry PI to a WiFi or ethernet cable.
 3. Run `bash <(curl -Ls http://gg.gg/notiwall-cli) install --configure {infoscreen-id} {secret}` in a terminal (Ctrl+Alt+T) and follow the instructions.
+
+# The Notiwall API (Notiwatch)
+
+Notiwatch keeps track of infoscreens and sensor data. This is what you can get from the API:
+
+## GET
+
+The part in brackets: `{...}`, is encoded in base64 (such that secrets does not mess with the url).
+
+- `/api/v1` => List all infoscreen names.
+- `/api/v1/{infoscreen_name:secret}` => Get infoscreen info.
+  - This includes IP and sensordata if any of them are present.
+- `/api/v1/{infoscreen_name:secret}/ip` => Get IP only (if it exists).
+- `/api/v1/{infoscreen_name}/sensors` => Get sensordata (if it exists).
+- `/api/v1/{infoscreen_name}/screenshot.png` => Get last screenshot of infoscreen (if it exists).  
+  Example:  
+   <img src="https://notiwall.online.ntnu.no/api/v1/b25saW5lLWtvbnRvcmV0/screenshot.png" alt="Infoscreen for online-kontoret" width="200"/>
+
+## POST
+
+The part in brackets: `{...}`, is encoded in base64 (such that secrets does not mess with the url).
+
+- `/api/v1/sensors/{infoscreen_name:secret}` => Update a sensor (this also triggers websockets to all clients listening for this sensor).
+- `/api/v1/ip/{infoscreen_name:secret}` => Update IP of infoscreen.
+- `/api/v1/screenshot/{infoscreen_name:secret}` => Upload screenshot to infoscreen.
+
+## WebSockets (socket.io)
+
+We currently use `socket.io` in both client and server. It is probably easiest if you use that too if you want to listen for sensor data (like the office door or coffee machine). This is how it can be used:
+
+```javascript
+import io from 'socket.io-client';
+
+// Url format: wss://notiwall.online.ntnu.no/{machine}/{sensor_name}
+socket = io('wss://notiwall.online.ntnu.no/online-door/office-door');
+socket.on('status', sensor => {
+  console.log(`Sensor ${sensor.name} is updated to: ${sensor.value}`);
+});
+```
 
 # Development
 

@@ -472,7 +472,7 @@ const requestHandler = (req, res) => {
 
     // Get list of infoscreens available
     else {
-      if (url === '/') {
+      if (url === '/' || url === '') {
         listInfoscreens(infoscreens => {
           returnResult(
             res,
