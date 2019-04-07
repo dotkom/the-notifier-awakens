@@ -558,6 +558,7 @@ export const defaultAffiliationSettings = {
           servants: 'affiliation.org.{{affiliation}}:servant.servants',
           message: 'affiliation.org.{{affiliation}}:servant.message',
           status: 'affiliation.org.{{affiliation}}:meeting.message',
+          coffee: '{{affiliationGroup}}CoffeeWS',
         },
       },
       {
