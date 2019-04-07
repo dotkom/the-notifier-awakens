@@ -210,15 +210,14 @@ export const defaultApis = {
       'online-door': 'online-door',
     },
   },
-  infoscreensWS: {
-    url: 'wss://notiwall.online.ntnu.no/{{infoscreens.*}}/{{sensors.*}}',
+  sensorsWS: {
+    url: 'wss://notiwall.online.ntnu.no/{{affiliations.*}}/{{sensors.*}}',
     event: 'status',
-    print: true,
-    infoscreens: {
-      'online-door': 'online-door',
+    affiliations: {
+      online: 'online-door',
     },
     sensors: {
-      'office-door': 'office-door',
+      door: 'office-door',
     },
   },
   coffeePots: {

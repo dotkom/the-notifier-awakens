@@ -170,7 +170,7 @@ export const defaultAffiliationSettings = {
         template: 'WS Door: {{status|stringify}}',
         id: 'WSDoor',
         apis: {
-          status: 'infoscreensWS.infoscreens.online-door.sensors.office-door',
+          status: 'sensorsWS.affiliations.online.sensors.door',
         },
       },
       {
