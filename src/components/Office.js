@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './Office.css';
+//import { Icon } from './';
 import {
   isBefore,
   isAfter,
@@ -83,10 +84,27 @@ export default class Office extends Component {
       <>
         <h1 className={titleClass}>{title}</h1>
         {/*this.props.coffee && this.props.coffee.eta ? (
-          <p>{`Kaffe klar om ${distanceInWordsToNow(this.props.coffee.eta, {
-            locale,
-          })}. `}</p>
-        ) : null*/}
+          <p>
+            <Icon
+              name="Coffee"
+              color="white"
+              size="32px"
+              style={{ verticalAlign: 'middle' }}
+            />
+            {` Kaffe ${
+              isBefore(Date.now(), this.props.coffee.eta)
+                ? 'klar om ' +
+                  distanceInWordsToNow(this.props.coffee.eta, {
+                    locale,
+                  })
+                : 'var klar for ' +
+                  distanceInWordsToNow(this.props.coffee.eta, {
+                    locale,
+                  }) +
+                  ' siden'
+            }.`}
+          </p>
+          ) : null*/}
         {isDoorOpen === null ? null : (
           <p className="small">
             {isOpen ? 'Åpnet' : 'Stengte'} for{' '}

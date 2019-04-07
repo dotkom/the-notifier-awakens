@@ -9,7 +9,7 @@ import { IconContext } from 'react-icons';
 
 export default class Icon extends Component {
   render() {
-    const { name, color, className, style } = this.props;
+    const { name, color, className, style, size } = this.props;
     if (name) {
       let IconFound = null;
       if (`Fa${name}` in Fa) IconFound = Fa[`Fa${name}`];
@@ -27,7 +27,13 @@ export default class Icon extends Component {
 
       if (IconFound !== null) {
         return (
-          <IconContext.Provider value={{ color, className, style }}>
+          <IconContext.Provider
+            value={{
+              color,
+              className,
+              style: { ...style, ...(size && { fontSize: size }) },
+            }}
+          >
             <IconFound />
           </IconContext.Provider>
         );
