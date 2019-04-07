@@ -133,24 +133,117 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
    * @param {number} time Time (in seconds) of the tick.
    */
   tick(time = 0) {
-    Object.keys(this.apis).forEach(apiName => {
-      const api = this.apis[apiName];
-      const { interval, delay = 0, offline = false } = api;
-      if (!offline && (time - delay) % interval === 0 && time >= delay) {
-        const urls = APIService.generateURLs(api, apiName);
-        Object.entries(urls).forEach(([key, url]) => {
-          if (
-            key in this.usedApis &&
-            this.usedApis[key] === 'http' &&
-            this.hasNotFailed(key)
-          ) {
-            const { cache: useCache = false } = api;
-            const callback = data => {
-              if (typeof data === 'object' && 'error' in data) {
+    Object.keys(this.apis)
+      .filter(
+        apiName =>
+          !this.apis[apiName].offline &&
+          this.apis[apiName].url.indexOf('http') === 0,
+      )
+      .forEach(apiName => {
+        const api = this.apis[apiName];
+        const { interval, delay = 0, offline = false } = api;
+        if (!offline && (time - delay) % interval === 0 && time >= delay) {
+          const urls = APIService.generateURLs(api, apiName);
+          Object.entries(urls).forEach(([key, url]) => {
+            if (
+              key in this.usedApis &&
+              this.usedApis[key] === 'http' &&
+              this.hasNotFailed(key)
+            ) {
+              const { cache: useCache = false } = api;
+              const callback = data => {
+                if (typeof data === 'object' && 'error' in data) {
+                  this.handleFail(key, apiName);
+                  this.workingApis[key] = false;
+                } else {
+                  this.workingApis[key] = true;
+                  if ('print' in api && api.print) {
+                    console.log(
+                      `Fra %c${key}%c:`,
+                      'color: #f80',
+                      'color: unset',
+                      data,
+                    );
+                  }
+                  const { scrape, transformDates } = api;
+                  if ('transform' in api) {
+                    let transformedData = ST.select(data)
+                      .transformWith(api.transform)
+                      .root();
+                    if (transformDates) {
+                      transformedData = this.transformDates(
+                        transformedData,
+                        transformDates,
+                      );
+                    }
+                    if ('printTransform' in api && api.printTransform) {
+                      console.log(
+                        `Transformert fra %c${key}%c:`,
+                        'color: #f80',
+                        'color: unset',
+                        transformedData,
+                      );
+                    }
+                    this.callback(key, transformedData, useCache, scrape);
+                  } else {
+                    let transformedData = data;
+                    if (transformDates) {
+                      transformedData = this.transformDates(
+                        transformedData,
+                        transformDates,
+                      );
+                    }
+                    this.callback(key, transformedData, useCache);
+                  }
+                }
+              };
+              const error = () => {
                 this.handleFail(key, apiName);
-                this.workingApis[key] = false;
-              } else {
-                this.workingApis[key] = true;
+              };
+              const urlTransformed = this.transform(url);
+              const browserHeaders = {
+                'User-Agent': navigator.userAgent,
+              };
+              this.request(
+                urlTransformed,
+                {
+                  cors: api.cors,
+                  ...api.request,
+                  headers: {
+                    ...((api.request || {}).headers || {}),
+                    ...(api.browser ? browserHeaders : {}),
+                  },
+                },
+                callback,
+                error,
+                useCache,
+              );
+            }
+          });
+        }
+      });
+  }
+
+  startWSConnections() {
+    Object.keys(this.apis)
+      .filter(
+        apiName =>
+          !this.apis[apiName].offline &&
+          this.apis[apiName].url.indexOf('ws') === 0,
+      )
+      .forEach(apiName => {
+        const api = this.apis[apiName];
+        const { offline = false } = api;
+        if (!offline) {
+          const urls = APIService.generateURLs(api, apiName);
+          Object.entries(urls).forEach(([key, url]) => {
+            if (
+              key in this.usedApis &&
+              this.usedApis[key] === 'ws' &&
+              this.hasNotFailed(key)
+            ) {
+              this.wsConnections[key] = openSocket(url);
+              this.wsConnections[key].on(api.event, data => {
                 if ('print' in api && api.print) {
                   console.log(
                     `Fra %c${key}%c:`,
@@ -159,7 +252,7 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
                     data,
                   );
                 }
-                const { scrape, transformDates } = api;
+                const { transformDates } = api;
                 if ('transform' in api) {
                   let transformedData = ST.select(data)
                     .transformWith(api.transform)
@@ -178,7 +271,7 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
                       transformedData,
                     );
                   }
-                  this.callback(key, transformedData, useCache, scrape);
+                  this.callback(key, transformedData);
                 } else {
                   let transformedData = data;
                   if (transformDates) {
@@ -187,78 +280,12 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
                       transformDates,
                     );
                   }
-                  this.callback(key, transformedData, useCache);
+                  this.callback(key, transformedData);
                 }
-              }
-            };
-            const error = () => {
-              this.handleFail(key, apiName);
-            };
-            const urlTransformed = this.transform(url);
-            const browserHeaders = {
-              'User-Agent': navigator.userAgent,
-            };
-            this.request(
-              urlTransformed,
-              {
-                cors: api.cors,
-                ...api.request,
-                headers: {
-                  ...((api.request || {}).headers || {}),
-                  ...(api.browser ? browserHeaders : {}),
-                },
-              },
-              callback,
-              error,
-              useCache,
-            );
-          }
-        });
-      }
-    });
-  }
-
-  startWSConnections() {
-    Object.keys(this.usedApis)
-      .filter(key => this.usedApis[key] === 'ws')
-      .forEach(key => {
-        const api = this.apis[key];
-        this.wsConnections[key] = openSocket(api.url);
-        this.wsConnections[key].on(api.channel, data => {
-          if ('print' in api && api.print) {
-            console.log(`Fra %c${key}%c:`, 'color: #f80', 'color: unset', data);
-          }
-          const { transformDates } = api;
-          if ('transform' in api) {
-            let transformedData = ST.select(data)
-              .transformWith(api.transform)
-              .root();
-            if (transformDates) {
-              transformedData = this.transformDates(
-                transformedData,
-                transformDates,
-              );
+              });
             }
-            if ('printTransform' in api && api.printTransform) {
-              console.log(
-                `Transformert fra %c${key}%c:`,
-                'color: #f80',
-                'color: unset',
-                transformedData,
-              );
-            }
-            this.callback(key, transformedData);
-          } else {
-            let transformedData = data;
-            if (transformDates) {
-              transformedData = this.transformDates(
-                transformedData,
-                transformDates,
-              );
-            }
-            this.callback(key, transformedData);
-          }
-        });
+          });
+        }
       });
   }
 
