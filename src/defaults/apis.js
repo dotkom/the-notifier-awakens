@@ -371,6 +371,14 @@ export const defaultApis = {
       },
     },
   },
+  onlineCoffeeWS: {
+    url: 'wss://notiwall.online.ntnu.no',
+    channel: 'online/coffee',
+    transform: {
+      status: '{{status}}',
+      eta: '{{eta}}',
+    },
+  },
   onlineArticles: {
     interval: 1000,
     url: 'https://online.ntnu.no/api/v1/articles/',
