@@ -211,11 +211,14 @@ export const defaultApis = {
     },
   },
   infoscreensWS: {
-    url: 'wss://notiwall.online.ntnu.no/online/{{sensors.*}}',
+    url: 'wss://notiwall.online.ntnu.no/{{infoscreens.*}}/{{sensors.*}}',
     event: 'status',
     print: true,
-    sensors: {
+    infoscreens: {
       'online-door': 'online-door',
+    },
+    sensors: {
+      'office-door': 'office-door',
     },
   },
   coffeePots: {
