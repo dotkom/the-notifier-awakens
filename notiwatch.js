@@ -527,7 +527,7 @@ function exitHandler(options, _) {
   if (options.exit) process.exit();
 }
 
-if (!process.env.REACT_APP_DEBUG) {
+if (process.env.REACT_APP_DEBUG !== 'true') {
   process.on('exit', exitHandler.bind(this, { cleanup: true }));
   process.on('SIGINT', exitHandler.bind(this, { exit: true }));
   process.on('SIGTERM', exitHandler.bind(this, { exit: true }));
