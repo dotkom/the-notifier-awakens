@@ -76,7 +76,9 @@ const updateSensor = (key, data) => {
     sensorData[key] = {};
     data['log'] = [];
     io.of(`/${key}/${data.name}`).on('connection', socket => {
-      socket.emit('status', data);
+      const dataCopy = Object.assign({}, data);
+      delete dataCopy.log;
+      socket.emit('status', dataCopy);
     });
   } else if (data.name in sensorData[key]) {
     if ('log' in sensorData[key][data.name]) {
@@ -88,12 +90,12 @@ const updateSensor = (key, data) => {
     data['log'] = [];
   }
   data['log'] = [{ date: data.updated, value: data.value }].concat(data['log']);
-  const oldValue = sensorData[key][data.name].value;
-  sensorData[key][data.name] = data;
-  if (data.value !== oldValue) {
-    delete data.log;
-    io.of(`/${key}/${data.name}`).emit('status', data);
+  if (data.value !== sensorData[key][data.name].value) {
+    const dataCopy = Object.assign({}, data);
+    delete dataCopy.log;
+    io.of(`/${key}/${data.name}`).emit('status', dataCopy);
   }
+  sensorData[key][data.name] = data;
 };
 
 const saveSensorDataToFile = () => {
@@ -497,7 +499,12 @@ Object.entries(sensorData).forEach(infoscreen => {
     sensorName = sensor[0];
     data = sensor[1];
     io.of(`/${infoscreenName}/${sensorName}`).on('connection', socket => {
-      socket.emit('status', sensorData[infoscreenName][sensorName]);
+      const dataCopy = Object.assign(
+        {},
+        sensorData[infoscreenName][sensorName],
+      );
+      delete dataCopy.log;
+      socket.emit('status', dataCopy);
     });
   });
 });
