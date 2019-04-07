@@ -210,6 +210,14 @@ export const defaultApis = {
       'online-door': 'online-door',
     },
   },
+  infoscreensWS: {
+    url: 'wss://notiwall.online.ntnu.no/online/{{sensors.*}}',
+    event: 'status',
+    print: true,
+    sensors: {
+      'online-door': 'online-door',
+    },
+  },
   coffeePots: {
     interval: 60,
     url: `${API_URL}/coffee/{{org.*}}`,
@@ -372,8 +380,8 @@ export const defaultApis = {
     },
   },
   onlineCoffeeWS: {
-    url: 'wss://notiwall.online.ntnu.no',
-    channel: 'online/coffee',
+    url: 'wss://notiwall.online.ntnu.no/online/coffee',
+    event: 'status',
     transform: {
       status: '{{status}}',
       eta: '{{eta}}',
