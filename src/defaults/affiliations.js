@@ -151,7 +151,7 @@ affiliationkey: {
 export const defaultAffiliationSettings = {
   debug: {
     layouts: {
-      0: ['Clock', 'Door', 'Infoscreens'],
+      0: ['Clock', 'WSDoor', 'Door', 'Infoscreens'],
     },
     components: [
       {
@@ -164,6 +164,15 @@ export const defaultAffiliationSettings = {
         id: 'Door',
         apis: {
           status: 'infoscreens.sensors.online-door',
+        },
+      },
+      {
+        template: `
+            WS Door: {{status|stringify}}
+        `,
+        id: 'WSDoor',
+        apis: {
+          status: 'infoscreensWS.sensors.online-door',
         },
       },
       {
