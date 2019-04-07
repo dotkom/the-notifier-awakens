@@ -9,6 +9,7 @@ const fs = require('fs');
 const dotenv = require('dotenv');
 const http = require('http');
 const formidable = require('formidable');
+const socket = require('socket.io');
 
 dotenv.config();
 const envConfig = dotenv.parse(fs.readFileSync('.env.local'));
@@ -479,6 +480,17 @@ const requestHandler = (req, res) => {
 };
 
 const server = http.createServer(requestHandler);
+const io = socket(server);
+
+io.on('connection', socket => {
+  socket.emit('online/coffee', {
+    status: 'STARTED',
+    eta: new Date(Date.now() + 7 * 60 * 1000).toISOString(),
+  });
+  socket.on('online/coffee', data => {
+    socket.broadcast.emit('online/coffee', data);
+  });
+});
 
 server.listen(port, err => {
   if (err) {
@@ -498,9 +510,11 @@ function exitHandler(options, _) {
   if (options.exit) process.exit();
 }
 
-process.on('exit', exitHandler.bind(this, { cleanup: true }));
-process.on('SIGINT', exitHandler.bind(this, { exit: true }));
-process.on('SIGTERM', exitHandler.bind(this, { exit: true }));
-process.on('SIGUSR1', exitHandler.bind(this, { exit: true }));
-process.on('SIGUSR2', exitHandler.bind(this, { exit: true }));
-process.on('uncaughtException', exitHandler.bind(this, { exit: true }));
+if (!process.env.REACT_APP_DEBUG) {
+  process.on('exit', exitHandler.bind(this, { cleanup: true }));
+  process.on('SIGINT', exitHandler.bind(this, { exit: true }));
+  process.on('SIGTERM', exitHandler.bind(this, { exit: true }));
+  process.on('SIGUSR1', exitHandler.bind(this, { exit: true }));
+  process.on('SIGUSR2', exitHandler.bind(this, { exit: true }));
+  process.on('uncaughtException', exitHandler.bind(this, { exit: true }));
+}
