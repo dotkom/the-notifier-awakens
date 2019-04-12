@@ -654,8 +654,8 @@ export const defaultAffiliationSettings = {
           message:
             'affiliation.org.{{affiliationGroup:online}}:servant.message',
           status: 'affiliation.org.{{affiliationGroup:online}}:meeting.message',
-          doorStatus: 'sensorsWS.affiliations.online.sensors.door.value',
-          lastDoorStatus: 'sensorsWS.affiliations.online.sensors.door.updated',
+          doorStatus: 'sensorsWS.affiliations.online.sensors.door:value',
+          lastDoorStatus: 'sensorsWS.affiliations.online.sensors.door:updated',
         },
       },
       {
