@@ -1,4 +1,14 @@
 pipeline:
+  restore-cache:
+    image: drillster/drone-volume-cache
+    when:
+      event: [push, pull_request]
+      branch: master
+    restore: true
+    mount:
+      - ./node_modules
+    volumes:
+      - /tmp/cache:/cache
   test:
     image: node:carbon
     when:
@@ -22,3 +32,13 @@ pipeline:
       status: success
     script:
       - /srv/www/notiwall/deploy.sh
+  rebuild-cache:
+    image: drillster/drone-volume-cache
+    when:
+      event: [push, pull_request]
+      branch: master
+    rebuild: true
+    mount:
+      - ./node_modules
+    volumes:
+      - /tmp/cache:/cache
