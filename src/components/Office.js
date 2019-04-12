@@ -60,7 +60,7 @@ export default class Office extends Component {
     const hour = getHours(timeNow);
     if (isWeekend(timeNow)) {
       officeIsOpen = false;
-    } else if (hour < 10 || hour > 16) {
+    } else if (hour < 10 || hour >= 16) {
       officeIsOpen = false;
     }
 
