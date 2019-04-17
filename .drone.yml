@@ -1,15 +1,19 @@
-pipeline:
-  restore-cache:
+kind: pipeline
+name: default
+
+steps:
+  - name: restore-cache
     image: drillster/drone-volume-cache
     when:
       event: [push, pull_request]
-      branch: master
-    restore: true
     mount:
       - ./node_modules
     volumes:
       - /tmp/cache:/cache
-  test:
+    settings:
+      restore: true
+
+  - name: test
     image: node:carbon
     when:
       event: [push, pull_request]
@@ -17,28 +21,30 @@ pipeline:
     commands:
       - yarn
       - yarn test
-  deploy:
+
+  - name: deploy
     image: appleboy/drone-ssh
     pull: true
     secrets: [ssh_key]
-    host: nansen.online.ntnu.no
-    port: 22
-    username: root
-    key: ${SSH_KEY}
-    command_timeout: 2m
     when:
       event: push
       branch: master
       status: success
-    script:
-      - /srv/www/notiwall/deploy.sh
-  rebuild-cache:
+    settings:
+      host: nansen.online.ntnu.no
+      key:
+        from_secret: ssh_key
+      command_timeout: 2m
+      script:
+        - /srv/www/notiwall/deploy.sh
+
+  - name: rebuild-cache
     image: drillster/drone-volume-cache
     when:
       event: [push, pull_request]
-      branch: master
-    rebuild: true
     mount:
       - ./node_modules
     volumes:
       - /tmp/cache:/cache
+    settings:
+      rebuild: true
