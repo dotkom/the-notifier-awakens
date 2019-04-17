@@ -13,13 +13,20 @@ steps:
       volumes:
         - /tmp/cache:/cache
 
-  - name: test
+  - name: install
     image: node:carbon
     when:
       event: [push, pull_request]
       branch: master
     commands:
       - yarn
+
+  - name: test
+    image: node:carbon
+    when:
+      event: [push, pull_request]
+      branch: master
+    commands:
       - yarn test
 
   - name: deploy
@@ -43,8 +50,8 @@ steps:
     when:
       event: [push, pull_request]
     settings:
+      rebuild: true
       mount:
         - ./node_modules
       volumes:
         - /tmp/cache:/cache
-      rebuild: true
