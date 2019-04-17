@@ -6,12 +6,12 @@ steps:
     image: drillster/drone-volume-cache
     when:
       event: [push, pull_request]
-    mount:
-      - ./node_modules
-    volumes:
-      - /tmp/cache:/cache
     settings:
       restore: true
+      mount:
+        - ./node_modules
+      volumes:
+        - /tmp/cache:/cache
 
   - name: test
     image: node:carbon
@@ -42,9 +42,9 @@ steps:
     image: drillster/drone-volume-cache
     when:
       event: [push, pull_request]
-    mount:
-      - ./node_modules
-    volumes:
-      - /tmp/cache:/cache
     settings:
+      mount:
+        - ./node_modules
+      volumes:
+        - /tmp/cache:/cache
       rebuild: true
