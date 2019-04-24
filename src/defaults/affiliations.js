@@ -552,10 +552,9 @@ export const defaultAffiliationSettings = {
       {
         template: 'Bike',
         id: 'Bike',
-        name: 'Gløshaugen Sykkelstativ',
+        names: ['Gløshaugen', 'Rema1000'],
         apis: {
-          bikes: 'trondheimCityBike:stations.0.bikes',
-          docks: 'trondheimCityBike:stations.0.docks',
+          stations: 'trondheimCityBike:stations',
         },
       },
       {
@@ -638,10 +637,9 @@ export const defaultAffiliationSettings = {
       {
         template: 'Bike',
         id: 'Bike',
-        name: 'Gløshaugen Sykkelstativ',
+        names: ['Gløshaugen', 'Rema1000'],
         apis: {
-          bikes: 'trondheimCityBike:stations.0.bikes',
-          docks: 'trondheimCityBike:stations.0.docks',
+          stations: 'trondheimCityBike:stations',
         },
       },
       {
