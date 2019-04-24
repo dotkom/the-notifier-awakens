@@ -415,7 +415,7 @@ export const defaultApis = {
     },
     transform: {
       stations: {
-        '{{#each data.stations.filter(a => a.station_id === "94" || a.station_id === "86")}}': {
+        '{{#each data.stations.filter(a => a.station_id === "94" || a.station_id === "123")}}': {
           id: '{{station_id}}',
           bikes: '{{num_bikes_available}}',
           docks: '{{num_docks_available}}',
