@@ -407,6 +407,7 @@ export const defaultApis = {
     url:
       'https://gbfs.urbansharing.com/trondheimbysykkel.no/station_status.json',
     cors: true,
+    printTransform: true,
     request: {
       headers: {
         'Client-Identifier': 'onlinentnu-notifier-dev',
@@ -414,7 +415,7 @@ export const defaultApis = {
     },
     transform: {
       stations: {
-        '{{#each data.stations.filter(a => a.station_id === "94")}}': {
+        '{{#each data.stations.filter(a => a.station_id === "94" || a.station_id === "123")}}': {
           id: '{{station_id}}',
           bikes: '{{num_bikes_available}}',
           docks: '{{num_docks_available}}',

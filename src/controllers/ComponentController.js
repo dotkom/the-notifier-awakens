@@ -190,7 +190,7 @@ export default class ComponentController extends Component {
   box-sizing: border-box;
 }
 .${templateName}:hover {
-  overflow: auto;
+  /*overflow: auto;*/
 }
 `;
       if ('css' in dataProps) {
