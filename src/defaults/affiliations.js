@@ -492,7 +492,7 @@ export const defaultAffiliationSettings = {
   online: {
     name: 'Online',
     layouts: {
-      0: ['Logo', 'Date', 'Bike', 'Office', 'Bus', 'Bus2', 'Events'],
+      0: ['Logo', 'Date', 'Office', 'Bike', 'Bus', 'Bus2', 'Events'],
       720: [
         '/ 200px . . 200px',
         'Logo Logo Logo',
@@ -504,7 +504,7 @@ export const defaultAffiliationSettings = {
       ],
       1400: [
         'Logo Logo Office Date',
-        'Logo Logo Office Bike',
+        'Logo Logo Office Date',
         '. . Events Events / 1',
         'Bus Bus Events Events',
         'Bus2 Bus2 Events Events',
@@ -578,7 +578,7 @@ export const defaultAffiliationSettings = {
   'online-kontoret': {
     name: 'Online Kontoret',
     layouts: {
-      0: ['Logo', 'Date', 'Bike', 'Office', 'Bus', 'Bus2', 'Events'],
+      0: ['Logo', 'Date', 'Office', 'Bike', 'Bus', 'Bus2', 'Events'],
       720: [
         '/ 200px . . 200px',
         'Logo Logo Logo',
