@@ -5,6 +5,7 @@ import * as Md from 'react-icons/md';
 import * as Ti from 'react-icons/ti';
 import * as Go from 'react-icons/go';
 import * as Fi from 'react-icons/fi';
+import * as Gi from 'react-icons/gi';
 import { IconContext } from 'react-icons';
 
 export default class Icon extends Component {
@@ -18,12 +19,14 @@ export default class Icon extends Component {
       else if (`Ti${name}` in Ti) IconFound = Ti[`Ti${name}`];
       else if (`Go${name}` in Go) IconFound = Go[`Go${name}`];
       else if (`Fi${name}` in Fi) IconFound = Fi[`Fi${name}`];
+      else if (`Gi${name}` in Gi) IconFound = Gi[`Gi${name}`];
       else if (name in Fa) IconFound = Fa[name];
       else if (name in Io) IconFound = Io[name];
       else if (name in Md) IconFound = Md[name];
       else if (name in Ti) IconFound = Ti[name];
       else if (name in Go) IconFound = Go[name];
       else if (name in Fi) IconFound = Fi[name];
+      else if (name in Gi) IconFound = Gi[name];
 
       if (IconFound !== null) {
         return (
