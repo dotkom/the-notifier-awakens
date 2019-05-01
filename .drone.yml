@@ -6,12 +6,12 @@ steps:
     image: drillster/drone-volume-cache
     when:
       event: [push, pull_request]
+    volumes:
+      - /tmp/cache:/cache
     settings:
       restore: true
       mount:
         - ./node_modules
-      volumes:
-        - /tmp/cache:/cache
 
   - name: install
     image: node:carbon
@@ -29,6 +29,17 @@ steps:
     commands:
       - yarn test
 
+  - name: rebuild-cache
+    image: drillster/drone-volume-cache
+    when:
+      event: [push, pull_request]
+    volumes:
+      - /tmp/cache:/cache
+    settings:
+      rebuild: true
+      mount:
+        - ./node_modules
+
   - name: deploy
     image: appleboy/drone-ssh
     pull: true
@@ -41,17 +52,6 @@ steps:
       host: nansen.online.ntnu.no
       key:
         from_secret: ssh_key
-      command_timeout: 2m
+      command_timeout: 4m
       script:
         - /srv/www/notiwall/deploy.sh
-
-  - name: rebuild-cache
-    image: drillster/drone-volume-cache
-    when:
-      event: [push, pull_request]
-    settings:
-      rebuild: true
-      mount:
-        - ./node_modules
-      volumes:
-        - /tmp/cache:/cache
