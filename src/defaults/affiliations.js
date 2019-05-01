@@ -504,7 +504,7 @@ export const defaultAffiliationSettings = {
       ],
       1400: [
         'Logo Logo Office Date',
-        'Logo Logo Office Date',
+        'Logo Logo Office Bike',
         '. . Events Events / 1',
         'Bus Bus Events Events',
         'Bus2 Bus2 Events Events',
