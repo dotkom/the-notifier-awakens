@@ -1,4 +1,5 @@
 export { default as Clock } from './Clock';
+export { default as Coffee } from './Coffee';
 export { default as Date } from './Date';
 export { default as Office } from './Office';
 export { default as Bus } from './Bus';
@@ -14,4 +15,4 @@ export { default as Timetable } from './Timetable';
 export { default as ChooseAffiliation } from './ChooseAffiliation';
 export { default as HTML } from './HTML';
 export { default as CustomComponent } from './CustomComponent';
-export {default as Bike } from './Bike';
+export { default as Bike } from './Bike';
