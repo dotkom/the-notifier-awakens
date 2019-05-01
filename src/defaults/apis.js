@@ -407,7 +407,6 @@ export const defaultApis = {
     url:
       'https://gbfs.urbansharing.com/trondheimbysykkel.no/station_status.json',
     cors: true,
-    printTransform: true,
     request: {
       headers: {
         'Client-Identifier': 'onlinentnu-notifier-dev',
@@ -1433,8 +1432,6 @@ XML eller facebook
     url:
       'https://teamup.com/ks3nuenfpbx2y8b78w/events?startDate=[[now|date]]&endDate=[[now|addMonth|date]]',
     cors: true,
-    print: true,
-    printTransform: true,
     transform: {
       events: {
         '{{#each events}}': {
