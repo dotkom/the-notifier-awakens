@@ -18,7 +18,7 @@ export default class Bike extends Component {
               name="Bicycle"
               style={{ fontSize: '200%' }}
             />
-            {station.bikes} / {station.docks}
+            {station.bikes} / {station.bikes + station.docks}
           </div>
         ))}
       </>
