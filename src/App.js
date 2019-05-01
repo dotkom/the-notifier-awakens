@@ -160,7 +160,7 @@ class App extends Component {
       const validateAndRefresh = (key, hash) => {
         if (hash && this.storage.get(`hash.${key}`) !== hash) {
           this.storage.set(`hash.${key}`, hash);
-          window.location.reload();
+          setTimeout(() => window.location.reload(), 1000);
         }
       };
       API.getRequest(
