@@ -35,7 +35,7 @@ _More information can be found in the [infoscreen folder](infoscreen-setup)._
 
 1. Equipment: Get a screen, Raspberry PI (with NOOBS or Raspian), HDMI cable, keyboard and mouse.
 2. Internet: Connect Raspberry PI to a WiFi or ethernet cable.
-3. Run `bash <(curl -Ls http://gg.gg/notiwall-cli) install --configure {infoscreen-id} {secret}` in a terminal (Ctrl+Alt+T) and follow the instructions.
+3. Run `bash <(curl -Ls http://gg.gg/notiwall-cli) install {infoscreen-id} {secret}` in a terminal (Ctrl+Alt+T) and follow the instructions.
 
 # The Notiwall API (Notiwatch)
 
