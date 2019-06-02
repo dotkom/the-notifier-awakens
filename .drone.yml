@@ -52,6 +52,7 @@ steps:
       status: success
     settings:
       host: nansen.online.ntnu.no
+      port: 22
       key:
         from_secret: ssh_key
       command_timeout: 4m
