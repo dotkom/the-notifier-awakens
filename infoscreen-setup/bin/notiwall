@@ -7,9 +7,10 @@ INSTALL_DIR=/usr/local/bin
 CONFIG_DIR=~/.config/notiwall
 TEMP_DIR=/tmp
 ENV_FILE=$CONFIG_DIR/.env.local
-INFOSCREEN_NAME="$1"
-INFOSCREEN_TOKEN="$2"
+INFOSCREEN_NAME="$2"
+INFOSCREEN_TOKEN="$3"
 DEFAULT_STATUS_SERVER="https://notiwall.online.ntnu.no/api/v1"
+IS_INFOSCREEN=0
 INSTALL_COMMAND="bash <(curl -Ls http://gg.gg/notiwall-cli)"
 
 # TODO:
@@ -32,19 +33,20 @@ function help() {
   echo "  open [-d|--detached] [<affiliation>]"
   echo "                             open browser with https://notiwall.online.ntnu.no(/<affiliation>)"
   echo "                             in kiosk mode"
-  echo "  install [--configure] [<name>] [<token>]"
+  echo "  install [<name>] [<token>]"
   echo "                             install Notiwall CLI $VERSION"
   echo "  mouse move <x> <y>         move mouse"
   echo "  mouse click                do a mouse click"
   echo "  rotate [0-3]               configure screen rotation. 0 is normal, rest goes counter-clockwise"
+  echo "  reinstall                  resintall Notiwall CLI, meaning uninstall then install"
   echo "  send ip|screenshot         send screenshot or ip to notiwall server"
   echo "  send sensor <name> <type> <value>"
   echo "                             send sensor value to notiwall server"
   echo "  uninstall                  uninstall Notiwall CLI and purge files from system"
-  echo "  upgrade                    upgrade Notiwall CLI"
+  echo "  upgrade                    upgrade Notiwall CLI if possible"
   echo
   echo "Remote commands (to control infoscreens):"
-  echo "  screenshot <user>@<ip>                get screenshot of screen at notiwall"
+  echo "  screenshot <user>@<ip>                get screenshot of infoscreen"
   #echo "  remote mouse move <user>@<ip> <x> <y> move mouse"
   #echo "  remote mouse click <user>@<ip>        do a mouse click"
   #echo "  remote rotate <user>@<ip> [0-3]       configure screen rotation. 0 is normal, rest goes counter-clockwise"
@@ -270,7 +272,7 @@ function manage_crontab() {
   elif [[ "$1" == "start" ]]; then
     REPLY=Y
   else
-    read -p "Want to continously send screenshots to external server? [Y/n] " -n 1 -r
+    read -p "Want to continously send screenshots and ip to external server (health check)? [Y/n] " -n 1 -r
     echo
   fi
   local COMMAND=$INSTALL_COMMAND
@@ -405,7 +407,6 @@ function notiwall_install() {
   if [ -f $TEMP_DIR/notiwall ]; then
     rm $TEMP_DIR/notiwall
   fi
-  exit 0
 }
 
 function check_install() {
@@ -414,7 +415,7 @@ function check_install() {
       echo "New Notiwall CLI version detected: $VERSION. Upgrading..."
       echo
       notiwall_install "$1" "$2" "$3"
-      echo "Done! Notiwall CLI $VERSION is now installed."
+      echo "Notiwall CLI $VERSION is now installed."
     else
       echo "Notiwall CLI $VERSION is already installed."
       echo
@@ -422,8 +423,15 @@ function check_install() {
     fi
   else
     echo "Installing notiwall..."
+    read -p "Is this an infoscreen? [Y/n] " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Nn]$ ]]; then
+      IS_INFOSCREEN=0
+    else
+      IS_INFOSCREEN=1
+    fi
     notiwall_install "$1" "$2" "$3"
-    echo "Done! Run \`notiwall\` to check if it worked."
+    echo "Run \`notiwall\` to check if it worked."
   fi
 }
 
@@ -447,7 +455,6 @@ function default_cases() {
     elif [[ "$PREV" == "configure-rotation" ]]; then ARGS+=( $1 )
     elif [[ "$PREV" == "mouse-move" ]]; then ARGS+=( $1 )
     elif [[ "$PREV" == "install" ]]; then ARGS+=( $1 )
-    elif [[ "$PREV" == "install-configure" ]]; then ARGS+=( $1 )
     elif [[ "$PREV" == "upgrade" ]]; then ARGS+=( $1 )
     elif [[ "$PREV" == "reinstall" ]]; then ARGS+=( $1 )
     elif [[ "$PREV" =~ ^open ]]; then ARGS+=( $1 )
@@ -455,7 +462,6 @@ function default_cases() {
   elif [[ "$PREV" == "screenshot" ]]; then ARGS+=( $1 )
   elif [[ "$PREV" == "send-sensor" ]]; then ARGS+=( $1 )
   elif [[ "$PREV" == "install" ]]; then ARGS+=( $1 )
-  elif [[ "$PREV" == "install-configure" ]]; then ARGS+=( $1 )
   elif [[ "$PREV" == "upgrade" ]]; then ARGS+=( $1 )
   elif [[ "$PREV" == "reinstall" ]]; then ARGS+=( $1 )
   elif [[ "$PREV" =~ ^open ]]; then ARGS+=( $1 )
@@ -484,7 +490,6 @@ for arg in "$@"; do
     -d|--detached) [[ "$PREV" == "open" ]] && NEXT_COMMAND="open-detached" || default_cases $key;;
     upgrade)       [[ "$PREV" == "" ]] && NEXT_COMMAND="upgrade" || default_cases $key;;
     install)       [[ "$PREV" == "" ]] && NEXT_COMMAND="install" || default_cases $key;;
-    --configure)   [[ "$PREV" == "install" ]] && NEXT_COMMAND="install-configure" || default_cases $key;;
     reinstall)     [[ "$PREV" == "" ]] && NEXT_COMMAND="reinstall" || default_cases $key;;
     uninstall)     [[ "$PREV" == "" ]] && NEXT_COMMAND="uninstall" || default_cases $key;;
     env)           [[ "$PREV" =~ ^$|^configure$ ]] && NEXT_COMMAND="configure-env" || default_cases $key;;
@@ -582,21 +587,14 @@ case $NEXT_COMMAND in
     notiwall_install "${ARGS[0]}" "${ARGS[1]}" "${ARGS[2]}"
     ;;
   install)
-    if [ -z $INFOSCREEN_NAME ] || [ -z $INFOSCREEN_TOKEN ]; then
-      check_install "${ARGS[0]}" "${ARGS[1]}" "${ARGS[2]}"
-    else
-      check_install "$INFOSCREEN_NAME" "$INFOSCREEN_TOKEN"
+    check_install "${ARGS[0]}" "${ARGS[1]}" "${ARGS[2]}"
+    if [[ $IS_INFOSCREEN == 1 ]]; then
+      manage_rotation
+      if [[ -z ${ARGS[0]} ]] && [[ -z ${ARGS[1]} ]]; then
+        manage_env
+      fi
+      manage_crontab
     fi
-    ;;
-  install-configure)
-    if [ -z $INFOSCREEN_NAME ] || [ -z $INFOSCREEN_TOKEN ]; then
-      check_install "${ARGS[0]}" "${ARGS[1]}" "${ARGS[2]}"
-    else
-      check_install "$INFOSCREEN_NAME" "$INFOSCREEN_TOKEN"
-    fi
-    manage_rotation
-    manage_env
-    manage_crontab
     ;;
   reinstall)
     uninstall
