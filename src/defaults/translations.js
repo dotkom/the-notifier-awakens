@@ -4,6 +4,7 @@ export const defaultTranslations = {
   magn: 'M. Berrføtts',
   samf: 'Samfundet',
   prof: 'Professor Brochs gate',
+  hest: 'Hesthagen',
   tarbus: 'Tarbus.no',
   enturbus: 'Entur.no',
   affiliation: 'Gruppe',

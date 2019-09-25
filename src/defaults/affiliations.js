@@ -541,12 +541,12 @@ export const defaultAffiliationSettings = {
       {
         template: 'Bus',
         id: 'Bus2',
-        name: '{{bus2:prof}}',
+        name: '{{bus2:hest}}',
         count: '{{busCount:6}}',
         apis: {
           fromCity:
-            '{{busApi:enturbus}}.stops.{{bus2:prof}}.fromCity:departures',
-          toCity: '{{busApi:enturbus}}.stops.{{bus2:prof}}.toCity:departures',
+            '{{busApi:enturbus}}.stops.{{bus2:hest}}.fromCity:departures',
+          toCity: '{{busApi:enturbus}}.stops.{{bus2:hest}}.toCity:departures',
         },
       },
       {
@@ -626,12 +626,12 @@ export const defaultAffiliationSettings = {
       {
         template: 'Bus',
         id: 'Bus2',
-        name: '{{bus2:prof}}',
+        name: '{{bus2:hest}}',
         count: '{{busCount:6}}',
         apis: {
           fromCity:
-            '{{busApi:enturbus}}.stops.{{bus2:prof}}.fromCity:departures',
-          toCity: '{{busApi:enturbus}}.stops.{{bus2:prof}}.toCity:departures',
+            '{{busApi:enturbus}}.stops.{{bus2:hest}}.fromCity:departures',
+          toCity: '{{busApi:enturbus}}.stops.{{bus2:hest}}.toCity:departures',
         },
       },
       {

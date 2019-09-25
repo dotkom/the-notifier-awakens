@@ -285,7 +285,8 @@ export const defaultApis = {
   },
   enturbus: {
     interval: 10,
-    url: `https://api.entur.org/journeyplanner/2.0/index/graphql#POST`,
+    cors: true,
+    url: `https://api.entur.io/journey-planner/v2/graphql#POST`,
     request: {
       headers: {
         'ET-Client-Name': 'onlinentnu-notifier-dev',
@@ -315,6 +316,7 @@ export const defaultApis = {
     },
     stops: {
       glos: { fromCity: '75708', toCity: '75707' },
+      hest: { fromCity: '71204', toCity: '102719' },
       samf: { fromCity: '73103', toCity: '73101' },
       prof: { fromCity: '71204', toCity: '71195' },
     },
