@@ -175,7 +175,7 @@ export const defaultAffiliationSettings = {
       },
       {
         template: `
-          {{#each ['online-kontoret', 'online-kontoret-four-k']}}
+          {{#each ['online-kontoret', 'online-kontoret4k']}}
             <img src="https://notiwall.online.ntnu.no/api/v1/{{this|base64}}/screenshot.png" />
           {{#end}}
         `,
@@ -663,7 +663,7 @@ export const defaultAffiliationSettings = {
       },
     ],
   },
-  'online-kontoret-four-k': {
+  'online-kontoret4k': {
     name: 'Online Kontoret 4K',
     layouts: {
       0: ['Logo', 'Date', 'Office', 'Bike', 'Bus', 'Bus2', 'Events'],
