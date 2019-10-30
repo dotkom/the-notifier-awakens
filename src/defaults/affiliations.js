@@ -175,7 +175,7 @@ export const defaultAffiliationSettings = {
       },
       {
         template: `
-          {{#each ['online', 'online-kontoret']}}
+          {{#each ['online-kontoret', 'online-kontoret-4k]}}
             <img src="https://notiwall.online.ntnu.no/api/v1/{{this|base64}}/screenshot.png" />
           {{#end}}
         `,
@@ -601,6 +601,95 @@ export const defaultAffiliationSettings = {
         'Logo Logo Office Bike',
         'Bike Bike .',
         'Bus Bus2 Events Events',
+        '. . .',
+      ],
+    },
+    components: [
+      {
+        template: 'Logo',
+        url: 'https://online.ntnu.no/static/img/online_logo.svg',
+      },
+      {
+        template: 'Date',
+        apis: { time: 'seconds' },
+      },
+      {
+        template: 'Bus',
+        name: '{{bus:glos}}',
+        count: '{{busCount:6}}',
+        apis: {
+          fromCity:
+            '{{busApi:enturbus}}.stops.{{bus:glos}}.fromCity:departures',
+          toCity: '{{busApi:enturbus}}.stops.{{bus:glos}}.toCity:departures',
+        },
+      },
+      {
+        template: 'Bus',
+        id: 'Bus2',
+        name: '{{bus2:hest}}',
+        count: '{{busCount:6}}',
+        apis: {
+          fromCity:
+            '{{busApi:enturbus}}.stops.{{bus2:hest}}.fromCity:departures',
+          toCity: '{{busApi:enturbus}}.stops.{{bus2:hest}}.toCity:departures',
+        },
+      },
+      {
+        template: 'Bike',
+        id: 'Bike',
+        names: ['Gløshaugen', 'Rema1000'],
+        apis: {
+          stations: 'trondheimCityBike:stations',
+        },
+      },
+      {
+        template: 'Office',
+        hasServants: true,
+        //title: 'Onlinekontoret',
+        apis: {
+          servants:
+            'affiliation.org.{{affiliationGroup:online}}:servant.servants',
+          message:
+            'affiliation.org.{{affiliationGroup:online}}:servant.message',
+          status: 'affiliation.org.{{affiliationGroup:online}}:meeting.message',
+          doorStatus: 'sensorsWS.affiliations.online.sensors.door:value',
+          lastDoorStatus: 'sensorsWS.affiliations.online.sensors.door:updated',
+        },
+      },
+      {
+        template: 'Events',
+        type: '{{eventType}}',
+        count: '{{eventCount}}',
+      },
+    ],
+  },
+  'online-kontoret-4k': {
+    name: 'Online Kontoret 4K',
+    layouts: {
+      0: ['Logo', 'Date', 'Office', 'Bike', 'Bus', 'Bus2', 'Events'],
+      720: [
+        '/ 200px . . 200px',
+        'Logo Logo Logo',
+        'Office Office Date Date',
+        'Office Office Bike Bike',
+        'Bus Bus Bus2 Bus2',
+        '. . . .',
+        'Events Events Events .',
+      ],
+      1400: [
+        'Logo Logo Office Date',
+        'Logo Logo Office Bike',
+        '. . Events Events / 1',
+        'Bus Bus Events Events',
+        'Bus2 Bus2 Events Events',
+        '. . Events Events / 1',
+        '. . . .',
+      ],
+      2000: [
+        'Logo Logo Office Date',
+        'Logo Logo Office Bike',
+        'Bike Bike .',
+        'Events Events Bus Bus2',
         '. . .',
       ],
     },
