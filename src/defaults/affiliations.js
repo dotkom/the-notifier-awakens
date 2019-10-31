@@ -175,7 +175,7 @@ export const defaultAffiliationSettings = {
       },
       {
         template: `
-          {{#each ['online-kontoret', 'online-kontoret4k']}}
+          {{#each ['online-kontoret', 'online-kontoret-4k']}}
             <img src="https://notiwall.online.ntnu.no/api/v1/{{this|base64}}/screenshot.png" />
           {{#end}}
         `,
