@@ -1,7 +1,25 @@
-.Logo > .logo-container {
+.Logo .logo-container {
   object-fit: contain;
   height: 100%;
   width: 100%;
   box-sizing: border-box;
   padding: 16px;
+}
+
+.Logo .countdown {
+  display: flex;
+  flex-flow: row wrap;
+  text-align: center;
+  justify-content: center;
+}
+
+.Logo .countdown div {
+  flex: 0 1 200px;
+}
+
+.Logo .countdown > div {
+  display: flex;
+  justify-content: center;
+  flex-flow: row wrap;
+  flex: 0 1 400px;
 }
