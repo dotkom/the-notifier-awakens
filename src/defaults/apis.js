@@ -294,21 +294,29 @@ export const defaultApis = {
       mode: 'cors',
     },
     body: {
-      query: `{
-        quay(id: "NSR:Quay:{{stops.*.fromCity,toCity}}") {
-          name
-          estimatedCalls(numberOfDepartures: [[busCount|* 4]]) {
-            aimedDepartureTime
-            expectedDepartureTime
-            realtime
-            forBoarding
-            destinationDisplay {
-              frontText
-            }
-            serviceJourney {
-              line {
-                publicCode
-              }
+      query: `
+      query {
+        to: quay(id: "NSR:Quay:{{stops.*.toCity}}") {
+          ...departures
+        }
+        from: quay(id: "NSR:Quay:{{stops.*.fromCity}}") {
+          ...departures
+        }
+      }
+
+      fragment departures on Quay {
+        name
+        estimatedCalls(numberOfDepartures: [[busCount|* 4]]) {
+          aimedDepartureTime
+          expectedDepartureTime
+          realtime
+          forBoarding
+          destinationDisplay {
+            frontText
+          }
+          serviceJourney {
+            line {
+              publicCode
             }
           }
         }
