@@ -294,21 +294,29 @@ export const defaultApis = {
       mode: 'cors',
     },
     body: {
-      query: `{
-        quay(id: "NSR:Quay:{{stops.*.fromCity,toCity}}") {
-          name
-          estimatedCalls(numberOfDepartures: [[busCount|* 4]]) {
-            aimedDepartureTime
-            expectedDepartureTime
-            realtime
-            forBoarding
-            destinationDisplay {
-              frontText
-            }
-            serviceJourney {
-              line {
-                publicCode
-              }
+      query: `
+      query {
+        to: quay(id: "NSR:Quay:{{stops.*.toCity}}") {
+          ...departures
+        }
+        from: quay(id: "NSR:Quay:{{stops.*.fromCity}}") {
+          ...departures
+        }
+      }
+
+      fragment departures on Quay {
+        name
+        estimatedCalls(numberOfDepartures: [[busCount|* 4]]) {
+          aimedDepartureTime
+          expectedDepartureTime
+          realtime
+          forBoarding
+          destinationDisplay {
+            frontText
+          }
+          serviceJourney {
+            line {
+              publicCode
             }
           }
         }
@@ -321,8 +329,21 @@ export const defaultApis = {
       prof: { fromCity: '71204', toCity: '71195' },
     },
     transform: {
-      departures: {
-        '{{#each data.quay.estimatedCalls}}': [
+      from: {
+        '{{#each data.from.estimatedCalls}}': [
+          {
+            '{{#if forBoarding}}': {
+              name: '{{destinationDisplay.frontText}}',
+              number: '{{serviceJourney.line.publicCode}}',
+              registeredTime: '{{expectedDepartureTime}}',
+              scheduledTime: '{{aimedDepartureTime}}',
+              isRealtime: '{{realtime}}',
+            },
+          },
+        ],
+      },
+      to: {
+        '{{#each data.to.estimatedCalls}}': [
           {
             '{{#if forBoarding}}': {
               name: '{{destinationDisplay.frontText}}',

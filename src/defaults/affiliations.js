@@ -483,7 +483,8 @@ export const defaultAffiliationSettings = {
         id: 'Bus',
         css: '.bus { color: red; }',
         apis: {
-          departures: 'enturbus.stops.{{bus:glos}}.fromCity:departures',
+          departures:
+            'enturbus.stops.{{bus:glos}}.toCity.stops.{{bus:glos}}.fromCity:departures',
         },
       },
       'Clock',
@@ -534,8 +535,9 @@ export const defaultAffiliationSettings = {
         count: '{{busCount:6}}',
         apis: {
           fromCity:
-            '{{busApi:enturbus}}.stops.{{bus:glos}}.fromCity:departures',
-          toCity: '{{busApi:enturbus}}.stops.{{bus:glos}}.toCity:departures',
+            '{{busApi:enturbus}}.stops.{{bus:glos}}.toCity.stops.{{bus:glos}}.fromCity:from',
+          toCity:
+            '{{busApi:enturbus}}.stops.{{bus:glos}}.toCity.stops.{{bus:glos}}.fromCity:to',
         },
       },
       {
@@ -545,8 +547,9 @@ export const defaultAffiliationSettings = {
         count: '{{busCount:6}}',
         apis: {
           fromCity:
-            '{{busApi:enturbus}}.stops.{{bus2:hest}}.fromCity:departures',
-          toCity: '{{busApi:enturbus}}.stops.{{bus2:hest}}.toCity:departures',
+            '{{busApi:enturbus}}.stops.{{bus2:hest}}.toCity.stops.{{bus2:hest}}.fromCity:from',
+          toCity:
+            '{{busApi:enturbus}}.stops.{{bus2:hest}}.toCity.stops.{{bus2:hest}}.fromCity:to',
         },
       },
       {
@@ -619,8 +622,9 @@ export const defaultAffiliationSettings = {
         count: '{{busCount:6}}',
         apis: {
           fromCity:
-            '{{busApi:enturbus}}.stops.{{bus:glos}}.fromCity:departures',
-          toCity: '{{busApi:enturbus}}.stops.{{bus:glos}}.toCity:departures',
+            '{{busApi:enturbus}}.stops.{{bus:glos}}.toCity.stops.{{bus:glos}}.fromCity:from',
+          toCity:
+            '{{busApi:enturbus}}.stops.{{bus:glos}}.toCity.stops.{{bus:glos}}.fromCity:to',
         },
       },
       {
@@ -630,8 +634,9 @@ export const defaultAffiliationSettings = {
         count: '{{busCount:6}}',
         apis: {
           fromCity:
-            '{{busApi:enturbus}}.stops.{{bus2:hest}}.fromCity:departures',
-          toCity: '{{busApi:enturbus}}.stops.{{bus2:hest}}.toCity:departures',
+            '{{busApi:enturbus}}.stops.{{bus2:hest}}.toCity.stops.{{bus2:hest}}.fromCity:from',
+          toCity:
+            '{{busApi:enturbus}}.stops.{{bus2:hest}}.toCity.stops.{{bus2:hest}}.fromCity:to',
         },
       },
       {
@@ -708,8 +713,9 @@ export const defaultAffiliationSettings = {
         count: '{{busCount:6}}',
         apis: {
           fromCity:
-            '{{busApi:enturbus}}.stops.{{bus:glos}}.fromCity:departures',
-          toCity: '{{busApi:enturbus}}.stops.{{bus:glos}}.toCity:departures',
+            '{{busApi:enturbus}}.stops.{{bus:glos}}.toCity.stops.{{bus:glos}}.fromCity:from',
+          toCity:
+            '{{busApi:enturbus}}.stops.{{bus:glos}}.toCity.stops.{{bus:glos}}.fromCity:to',
         },
       },
       {
@@ -719,8 +725,9 @@ export const defaultAffiliationSettings = {
         count: '{{busCount:6}}',
         apis: {
           fromCity:
-            '{{busApi:enturbus}}.stops.{{bus2:hest}}.fromCity:departures',
-          toCity: '{{busApi:enturbus}}.stops.{{bus2:hest}}.toCity:departures',
+            '{{busApi:enturbus}}.stops.{{bus2:hest}}.toCity.stops.{{bus2:hest}}.fromCity:from',
+          toCity:
+            '{{busApi:enturbus}}.stops.{{bus2:hest}}.toCity.stops.{{bus2:hest}}.fromCity:to',
         },
       },
       {
