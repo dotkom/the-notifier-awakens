@@ -11,7 +11,7 @@ const Logo = props => {
   const dd = x => x.toLocaleString(undefined, { minimumIntegerDigits: 2 });
   const formatDate = x => {
     const time = new Date(x);
-    const days = time.getDate() - 1;
+    const days = time.getUTCDate() - 1;
     const hours = (time.getHours() - 1 + 24) % 24;
     const minutes = time.getMinutes();
     const seconds = time.getSeconds();
