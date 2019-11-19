@@ -329,8 +329,21 @@ export const defaultApis = {
       prof: { fromCity: '71204', toCity: '71195' },
     },
     transform: {
-      departures: {
-        '{{#each data.quay.estimatedCalls}}': [
+      from: {
+        '{{#each data.from.estimatedCalls}}': [
+          {
+            '{{#if forBoarding}}': {
+              name: '{{destinationDisplay.frontText}}',
+              number: '{{serviceJourney.line.publicCode}}',
+              registeredTime: '{{expectedDepartureTime}}',
+              scheduledTime: '{{aimedDepartureTime}}',
+              isRealtime: '{{realtime}}',
+            },
+          },
+        ],
+      },
+      to: {
+        '{{#each data.to.estimatedCalls}}': [
           {
             '{{#if forBoarding}}': {
               name: '{{destinationDisplay.frontText}}',
