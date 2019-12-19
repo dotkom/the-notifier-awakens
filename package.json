@@ -8,7 +8,8 @@
     "object-path": "^0.11.4",
     "stjs": "^0.0.5",
     "style-it": "^2.0.0",
-    "xml2js": "^0.4.19"
+    "xml2js": "^0.4.19",
+    "prettier": "1.19.1"
   },
   "dependencies": {
     "@sentry/browser": "^4.5.3",
@@ -29,6 +30,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build && node generate-files.js",
+    "format": "prettier --write '**/*.js'",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "cors-server": "node cors-server",
