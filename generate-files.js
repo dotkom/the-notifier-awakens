@@ -3,10 +3,28 @@ const dotenv = require('dotenv');
 const crypto = require('crypto');
 require = require('esm')(module);
 
+const extension = 'json';
+const generatedFilePaths = {
+  affiliations: `./build/api/affiliations.${extension}`,
+  apis: `./build/api/apis.${extension}`,
+  settings: `./build/api/settings.${extension}`,
+  translations: `./build/api/translations.${extension}`,
+  hash: `./build/api/hash.${extension}`,
+};
+const foldersToWatch = {
+  defaults: './src/defaults',
+  components: './src/components',
+  core: './src',
+};
+
 dotenv.config();
-const envConfig = dotenv.parse(fs.readFileSync('.env.local'));
-for (let k in envConfig) {
-  process.env[k] = envConfig[k];
+try {
+  const envConfig = dotenv.parse(fs.readFileSync('.env.local'));
+  for (let k in envConfig) {
+    process.env[k] = envConfig[k];
+  }
+} catch (e) {
+  // .env.local did not exist, but that does not matter
 }
 
 const mkdir = pathToDir =>
@@ -22,8 +40,7 @@ const mkdir = pathToDir =>
       return newPath;
     }, '.');
 
-const defaults = require('./src/defaults');
-const generateTo = mkdir('./build/api');
+const defaults = require(foldersToWatch.defaults);
 const getHash = str =>
   crypto
     .createHash('md5')
@@ -32,7 +49,13 @@ const getHash = str =>
 
 const writeDataToFile = (data, file) => {
   const json = JSON.stringify(data, null, 2);
-  fs.writeFileSync(`${generateTo}/${file}`, json);
+  mkdir(
+    file
+      .split('/')
+      .slice(0, -1)
+      .join('/'),
+  );
+  fs.writeFileSync(file, json);
   return getHash(json);
 };
 
@@ -46,16 +69,19 @@ const getDirectoryHash = folder =>
 const hashFile = {
   affiliations: writeDataToFile(
     defaults.defaultAffiliationSettings,
-    'affiliations.json',
+    generatedFilePaths.affiliations,
   ),
-  apis: writeDataToFile(defaults.defaultApis, 'apis.json'),
-  settings: writeDataToFile(defaults.defaultSettings, 'settings.json'),
+  apis: writeDataToFile(defaults.defaultApis, generatedFilePaths.apis),
+  settings: writeDataToFile(
+    defaults.defaultSettings,
+    generatedFilePaths.settings,
+  ),
   translations: writeDataToFile(
     defaults.defaultTranslations,
-    'translations.json',
+    generatedFilePaths.translations,
   ),
-  components: getDirectoryHash('src/components'),
-  core: getDirectoryHash('src'),
+  components: getDirectoryHash(foldersToWatch.components),
+  core: getDirectoryHash(foldersToWatch.core),
 };
 
-writeDataToFile(hashFile, 'hash.json');
+writeDataToFile(hashFile, generatedFilePaths.hash);
