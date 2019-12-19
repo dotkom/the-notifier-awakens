@@ -9,11 +9,21 @@ for (let k in envConfig) {
   process.env[k] = envConfig[k];
 }
 
+const mkdir = pathToDir =>
+  pathToDir
+    .slice(1)
+    .split('/')
+    .filter(dir => dir)
+    .reduce((path, dir) => {
+      const newPath = path + '/' + dir;
+      if (!fs.existsSync(newPath)) {
+        fs.mkdirSync(newPath);
+      }
+      return newPath;
+    }, '.');
+
 const defaults = require('./src/defaults');
-const generateTo = './build/api';
-if (!fs.existsSync(generateTo)) {
-  fs.mkdirSync(generateTo);
-}
+const generateTo = mkdir('./build/api');
 const getHash = str =>
   crypto
     .createHash('md5')
