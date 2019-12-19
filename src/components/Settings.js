@@ -45,13 +45,8 @@ export default class Settings extends Component {
         <label>
           <h2>{this.props.translate('group')}</h2>
         </label>
-        <select
-          value={group}
-          onChange={e => this.selectGroup(e.target.value)}
-        >
-          <option value="">
-            {this.props.translate(this.groups[''].name)}
-          </option>
+        <select value={group} onChange={e => this.selectGroup(e.target.value)}>
+          <option value="">{this.props.translate(this.groups[''].name)}</option>
           {Object.entries(this.groups || {})
             .filter(([key]) => key && key !== 'debug')
             .sort(([, a], [, b]) => a.name.localeCompare(b.name))
@@ -72,9 +67,7 @@ export default class Settings extends Component {
         )}
         <div className="section">
           {groupInput}
-          <button
-            onClick={() => this.chooseGroup(this.state.group)}
-          >
+          <button onClick={() => this.chooseGroup(this.state.group)}>
             Lagre
           </button>
           <h2>{this.props.translate('chooseVisibility')}</h2>

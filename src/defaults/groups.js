@@ -652,10 +652,8 @@ export const defaultGroupSettings = {
         hasServants: true,
         //title: 'Onlinekontoret',
         apis: {
-          servants:
-            'group.org.{{groupGroup:online}}:servant.servants',
-          message:
-            'group.org.{{groupGroup:online}}:servant.message',
+          servants: 'group.org.{{groupGroup:online}}:servant.servants',
+          message: 'group.org.{{groupGroup:online}}:servant.message',
           status: 'group.org.{{groupGroup:online}}:meeting.message',
           doorStatus: 'sensorsWS.groups.online.sensors.door:value',
           lastDoorStatus: 'sensorsWS.groups.online.sensors.door:updated',
@@ -743,10 +741,8 @@ export const defaultGroupSettings = {
         hasServants: true,
         //title: 'Onlinekontoret',
         apis: {
-          servants:
-            'group.org.{{groupGroup:online}}:servant.servants',
-          message:
-            'group.org.{{groupGroup:online}}:servant.message',
+          servants: 'group.org.{{groupGroup:online}}:servant.servants',
+          message: 'group.org.{{groupGroup:online}}:servant.message',
           status: 'group.org.{{groupGroup:online}}:meeting.message',
           doorStatus: 'sensorsWS.groups.online.sensors.door:value',
           lastDoorStatus: 'sensorsWS.groups.online.sensors.door:updated',

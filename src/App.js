@@ -47,9 +47,7 @@ class App extends Component {
       );
     }
 
-    const { group = '', css: globalCSS = '' } = this.storage.get(
-      'settings',
-    );
+    const { group = '', css: globalCSS = '' } = this.storage.get('settings');
 
     this.updateData = this.updateData.bind(this);
     this.updateSettings = this.updateSettings.bind(this);
@@ -96,8 +94,7 @@ class App extends Component {
     if (!IS_EXTENSION) {
       if (group) {
         const firstLetter = group.charAt(0).toUpperCase();
-        window.document.title = `Notiwall - ${firstLetter +
-          group.slice(1)}`;
+        window.document.title = `Notiwall - ${firstLetter + group.slice(1)}`;
       } else {
         window.document.title = `Notiwall`;
       }
@@ -196,10 +193,7 @@ class App extends Component {
       color = this.storage.get('settings.color'),
     } = group in groups ? groups[group] : {};
 
-    const autofilledComponents = this.autofillComponents(
-      components,
-      group,
-    );
+    const autofilledComponents = this.autofillComponents(components, group);
 
     return {
       data: {},
@@ -253,11 +247,7 @@ class App extends Component {
   }
 
   updateSettings(settings) {
-    const newState = this.updateState(
-      settings.group,
-      settings.css,
-      this.state,
-    );
+    const newState = this.updateState(settings.group, settings.css, this.state);
     this.APIService.updateSettings({
       apis: this.storage.get('apis'),
       settings,
@@ -701,9 +691,7 @@ ${this.state.css}`;
           <Route
             path="/:group(.*)"
             render={props => {
-              if (
-                !(props.match.params.group in this.state.groups)
-              ) {
+              if (!(props.match.params.group in this.state.groups)) {
                 return <Redirect to="/" />;
               }
               return (
@@ -796,9 +784,7 @@ ${this.state.css}`;
                           closeSettings={() => this.closeSettings()}
                           settings={this.state.settings}
                           group={props.match.params.group}
-                          changeGroup={group =>
-                            props.history.push(group)
-                          }
+                          changeGroup={group => props.history.push(group)}
                         />
                       </div>
                     </Style>

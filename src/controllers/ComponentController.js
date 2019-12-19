@@ -227,9 +227,7 @@ export default class ComponentController extends Component {
               IfPropIsOnline={IfPropIsOnline}
               group={this.props.group}
               groups={this.props.groups}
-              changeGroup={group =>
-                this.changeGroup(group)
-              }
+              changeGroup={group => this.changeGroup(group)}
               {...dataProps}
             />
           </div>

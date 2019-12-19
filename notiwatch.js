@@ -321,18 +321,14 @@ const requestHandler = (req, res) => {
             returnResult(
               res,
               400,
-              `Missing key in body. Use this format: ${
-                settings.validate.postSensorFormat
-              }`,
+              `Missing key in body. Use this format: ${settings.validate.postSensorFormat}`,
             );
           }
         } catch (ex) {
           returnResult(
             res,
             400,
-            `JSON in body is invalid. Use this format: ${
-              settings.validate.postSensorFormat
-            }`,
+            `JSON in body is invalid. Use this format: ${settings.validate.postSensorFormat}`,
           );
         }
       });

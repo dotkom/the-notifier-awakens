@@ -44,20 +44,13 @@ export default class ChooseGroup extends Component {
         isCreateGroupOpen: false,
       }));
     } else {
-      const addGroupName =
-        this.state.addGroupName || this.state.searchFilter;
+      const addGroupName = this.state.addGroupName || this.state.searchFilter;
       const addGroupId =
         this.state.addGroupId || this.transformToSlug(addGroupName);
       this.setState(state => ({
         ...state,
-        formIsEmpty: this.checkIfFormIsEmpty(
-          addGroupName,
-          addGroupId,
-        ),
-        formIsValid: this.checkIfFormIsValid(
-          addGroupName,
-          addGroupId,
-        ),
+        formIsEmpty: this.checkIfFormIsEmpty(addGroupName, addGroupId),
+        formIsValid: this.checkIfFormIsValid(addGroupName, addGroupId),
         searchFilter: state.addGroupName,
         addGroupName,
         addGroupId,
@@ -72,14 +65,8 @@ export default class ChooseGroup extends Component {
       const addGroupId = this.transformToSlug(value);
       this.setState({
         ...this.state,
-        formIsEmpty: this.checkIfFormIsEmpty(
-          addGroupName,
-          addGroupId,
-        ),
-        formIsValid: this.checkIfFormIsValid(
-          addGroupName,
-          addGroupId,
-        ),
+        formIsEmpty: this.checkIfFormIsEmpty(addGroupName, addGroupId),
+        formIsValid: this.checkIfFormIsValid(addGroupName, addGroupId),
         addGroupName,
         searchFilter: addGroupName,
         addGroupId,
@@ -105,14 +92,8 @@ export default class ChooseGroup extends Component {
     const addGroupId = this.transformToSlug(value);
     this.setState({
       ...this.state,
-      formIsEmpty: this.checkIfFormIsEmpty(
-        this.state.addGroupName,
-        addGroupId,
-      ),
-      formIsValid: this.checkIfFormIsValid(
-        this.state.addGroupName,
-        addGroupId,
-      ),
+      formIsEmpty: this.checkIfFormIsEmpty(this.state.addGroupName, addGroupId),
+      formIsValid: this.checkIfFormIsValid(this.state.addGroupName, addGroupId),
       addGroupId,
       addGroupIdDirty: !!value,
     });
@@ -133,14 +114,8 @@ export default class ChooseGroup extends Component {
 
     this.setState({
       ...this.state,
-      formIsEmpty: this.checkIfFormIsEmpty(
-        addGroupName,
-        addGroupId,
-      ),
-      formIsValid: this.checkIfFormIsValid(
-        addGroupName,
-        addGroupId,
-      ),
+      formIsEmpty: this.checkIfFormIsEmpty(addGroupName, addGroupId),
+      formIsValid: this.checkIfFormIsValid(addGroupName, addGroupId),
       addGroupName,
       searchFilter: addGroupName,
       addGroupId,
@@ -297,8 +272,7 @@ export default class ChooseGroup extends Component {
                   <button
                     disabled={this.state.formIsEmpty || !this.state.formIsValid}
                   >
-                    {this.props.translate('create')} "
-                    {this.state.addGroupName}"{' '}
+                    {this.props.translate('create')} "{this.state.addGroupName}"{' '}
                     <Icon name="IosArrowForward" />
                   </button>
                 ) : null}
@@ -307,8 +281,7 @@ export default class ChooseGroup extends Component {
                   <button
                     disabled={this.state.formIsEmpty || this.state.formIsValid}
                   >
-                    {this.props.translate('change')} "
-                    {this.state.addGroupName}"{' '}
+                    {this.props.translate('change')} "{this.state.addGroupName}"{' '}
                     <Icon name="IosArrowForward" />
                   </button>
                 ) : null}
