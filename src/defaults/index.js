@@ -1,11 +1,11 @@
-import { defaultAffiliationSettings } from './affiliations';
+import { defaultGroupSettings } from './groups';
 import { defaultApis } from './apis';
 import { defaultSettings } from './settings';
 import { defaultTranslations } from './translations';
 import * as styles from './styles';
 
 export {
-  defaultAffiliationSettings,
+  defaultGroupSettings,
   defaultApis,
   defaultSettings,
   defaultTranslations,

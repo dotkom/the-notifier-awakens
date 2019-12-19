@@ -1,7 +1,7 @@
 export { default as Articles } from './Articles';
 export { default as Bike } from './Bike';
 export { default as Bus } from './Bus';
-export { default as ChooseAffiliation } from './ChooseAffiliation';
+export { default as ChooseGroup } from './ChooseGroup';
 export { default as CIStatus } from './CIStatus';
 export { default as Clock } from './Clock';
 export { default as Coffee } from './Coffee';

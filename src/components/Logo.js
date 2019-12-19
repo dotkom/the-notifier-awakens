@@ -84,7 +84,7 @@ const Logo = props => {
         <img
           style={{ filter: props.filter || '' }}
           className="logo-container"
-          alt={`Logo for ${props.translate(props.affiliation)}`}
+          alt={`Logo for ${props.translate(props.group)}`}
           src={props.url}
         />
       )}

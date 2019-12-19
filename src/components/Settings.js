@@ -1,21 +1,21 @@
 import React, { Component } from 'react';
 import './Settings.css';
 
-import { defaultAffiliationSettings } from '../defaults/affiliations';
+import { defaultGroupSettings } from '../defaults/groups';
 
 export default class Settings extends Component {
   constructor(props) {
     super(props);
     this.updateSettings = this.updateSettings.bind(this);
-    this.affiliations = defaultAffiliationSettings;
+    this.groups = defaultGroupSettings;
     this.state = {
-      affiliation: props.affiliation,
+      group: props.group,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.affiliation === '' && nextProps.affiliation) {
-      this.setState({ ...this.state, affiliation: nextProps.affiliation });
+    if (this.props.group === '' && nextProps.group) {
+      this.setState({ ...this.state, group: nextProps.group });
     }
   }
 
@@ -24,35 +24,35 @@ export default class Settings extends Component {
     this.props.updateSettings(settings);
   }
 
-  chooseAffiliation(affiliation) {
-    if (affiliation in this.affiliations) {
-      this.props.changeAffiliation(affiliation);
+  chooseGroup(group) {
+    if (group in this.groups) {
+      this.props.changeGroup(group);
       this.props.closeSettings();
     }
   }
 
-  selectAffiliation(affiliation) {
-    if (affiliation in this.affiliations) {
-      this.setState({ ...this.state, affiliation });
+  selectGroup(group) {
+    if (group in this.groups) {
+      this.setState({ ...this.state, group });
     }
   }
 
   render() {
-    const { affiliation = '' } = this.state;
+    const { group = '' } = this.state;
 
-    const affiliationInput = (
+    const groupInput = (
       <div className="input-group">
         <label>
-          <h2>{this.props.translate('affiliation')}</h2>
+          <h2>{this.props.translate('group')}</h2>
         </label>
         <select
-          value={affiliation}
-          onChange={e => this.selectAffiliation(e.target.value)}
+          value={group}
+          onChange={e => this.selectGroup(e.target.value)}
         >
           <option value="">
-            {this.props.translate(this.affiliations[''].name)}
+            {this.props.translate(this.groups[''].name)}
           </option>
-          {Object.entries(this.affiliations || {})
+          {Object.entries(this.groups || {})
             .filter(([key]) => key && key !== 'debug')
             .sort(([, a], [, b]) => a.name.localeCompare(b.name))
             .map(([key, { name = '', components = [] }], i) => (
@@ -71,15 +71,15 @@ export default class Settings extends Component {
           <button onClick={() => this.props.closeSettings()}>Close</button>
         )}
         <div className="section">
-          {affiliationInput}
+          {groupInput}
           <button
-            onClick={() => this.chooseAffiliation(this.state.affiliation)}
+            onClick={() => this.chooseGroup(this.state.group)}
           >
             Lagre
           </button>
           <h2>{this.props.translate('chooseVisibility')}</h2>
           <div className="iframe-wrapper">
-            <iframe src={`/${this.state.affiliation}`} title="Mini display" />
+            <iframe src={`/${this.state.group}`} title="Mini display" />
           </div>
         </div>
       </>

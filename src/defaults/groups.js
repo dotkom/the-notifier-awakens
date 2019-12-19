@@ -1,11 +1,11 @@
 /**
- * List of default settings for each affiliation.
+ * List of default settings for each group.
  * 
- * Each affiliation consists of a set of components, but can also contain
+ * Each group consists of a set of components, but can also contain
  * other properties:
 
   @param {string?} [name=nameofkey]
-    Name of the affiliation. Of not specified, the key is used as name.
+    Name of the group. Of not specified, the key is used as name.
 
   @param {array|object?} layouts
     Describing how the components are placed. This can be done using a single
@@ -95,8 +95,8 @@ layout: [
 
   @param {string?} style
     Choose a style to use from the './styles.js' file. If not specified, the
-    affiliation key determines what style which is used. The style property
-    in the settings can override the style from affiliation. If no key exists,
+    group key determines what style which is used. The style property
+    in the settings can override the style from group. If no key exists,
     the CSS remain empty.
 
   @param {string?} css
@@ -109,8 +109,8 @@ layout: [
 // Most of the components has the same pattern. Therefore
 // it is possible to just write the names and let the
 // application figure it out.
-affiliationkey: {
-  name: 'Name of Affiliation',
+groupkey: {
+  name: 'Name of Group',
   layouts: [
     ['Events', 'Events-2'], // 0 to 719px
     ['Events Events-2'], // 720px to infinite
@@ -122,8 +122,8 @@ affiliationkey: {
   @example
 ```javascript
 // If you want to do more, then just specify more properties.
-affiliationkey: {
-  name: 'Name of Affiliation',
+groupkey: {
+  name: 'Name of Group',
   layouts: {
     0: ['Articles', 'Articles-someotherfeed'], // 0 to 511px
     512: ['Articles Articles-someotherfeed'], // 512px to infinite
@@ -132,23 +132,23 @@ affiliationkey: {
     {
       template: 'Articles',
       apis: {
-        // affiliationkeyArticles should exist in './apis.js'
-        articles: 'affiliationkeyArticles:articles',
+        // groupkeyArticles should exist in './apis.js'
+        articles: 'groupkeyArticles:articles',
       },
     },
     {
       // Using 'Template-id' to make it unique for the layout.
       template: 'Articles-someotherfeed',
       apis: {
-        // '{{affiliation}}Articles' results in the same as 'affiliationkeyArticles'
-        articles: '{{affiliation}}Articles:articles',
+        // '{{group}}Articles' results in the same as 'groupkeyArticles'
+        articles: '{{group}}Articles:articles',
       },
     }
   ]
 },
 ```
  */
-export const defaultAffiliationSettings = {
+export const defaultGroupSettings = {
   debug: {
     layouts: {
       0: ['Clock', 'WSDoor', 'Door', 'Infoscreens'],
@@ -170,7 +170,7 @@ export const defaultAffiliationSettings = {
         template: 'WS Door: {{status|stringify}}',
         id: 'WSDoor',
         apis: {
-          status: 'sensorsWS.affiliations.online.sensors.door',
+          status: 'sensorsWS.groups.online.sensors.door',
         },
       },
       {
@@ -188,10 +188,10 @@ export const defaultAffiliationSettings = {
     name: 'Velg linjeforening',
     color: '#002c7c',
     layouts: {
-      0: ['ChooseAffiliation'],
-      600: ['/ | minmax(600px,1fr) |', 'ChooseAffiliation / 1fr'],
+      0: ['ChooseGroup'],
+      600: ['/ | minmax(600px,1fr) |', 'ChooseGroup / 1fr'],
     },
-    components: ['ChooseAffiliation'],
+    components: ['ChooseGroup'],
   },
   aarhonen: {
     name: 'H.M. Aarhønen',
@@ -218,7 +218,7 @@ export const defaultAffiliationSettings = {
         template: 'Events',
         dark: false,
         count: '{{eventCount:5}}',
-        apis: { events: '{{affiliation}}Events:events' },
+        apis: { events: '{{group}}Events:events' },
       },
     ],
   },
@@ -437,9 +437,9 @@ export const defaultAffiliationSettings = {
     components: [
       //{
       //  template: 'GitHub',
-      //  user: '{{affiliation}}',
+      //  user: '{{group}}',
       //  apis: {
-      //    repos: 'github.users.{{affiliation}}',
+      //    repos: 'github.users.{{group}}',
       //  },
       //},
       //{
@@ -564,10 +564,10 @@ export const defaultAffiliationSettings = {
         template: 'Office',
         hasServants: true,
         apis: {
-          servants: 'affiliation.org.{{affiliation}}:servant.servants',
-          message: 'affiliation.org.{{affiliation}}:servant.message',
-          status: 'affiliation.org.{{affiliation}}:meeting.message',
-          coffee: '{{affiliationGroup}}CoffeeWS',
+          servants: 'group.org.{{group}}:servant.servants',
+          message: 'group.org.{{group}}:servant.message',
+          status: 'group.org.{{group}}:meeting.message',
+          coffee: '{{groupGroup}}CoffeeWS',
         },
       },
       {
@@ -653,12 +653,12 @@ export const defaultAffiliationSettings = {
         //title: 'Onlinekontoret',
         apis: {
           servants:
-            'affiliation.org.{{affiliationGroup:online}}:servant.servants',
+            'group.org.{{groupGroup:online}}:servant.servants',
           message:
-            'affiliation.org.{{affiliationGroup:online}}:servant.message',
-          status: 'affiliation.org.{{affiliationGroup:online}}:meeting.message',
-          doorStatus: 'sensorsWS.affiliations.online.sensors.door:value',
-          lastDoorStatus: 'sensorsWS.affiliations.online.sensors.door:updated',
+            'group.org.{{groupGroup:online}}:servant.message',
+          status: 'group.org.{{groupGroup:online}}:meeting.message',
+          doorStatus: 'sensorsWS.groups.online.sensors.door:value',
+          lastDoorStatus: 'sensorsWS.groups.online.sensors.door:updated',
         },
       },
       {
@@ -744,12 +744,12 @@ export const defaultAffiliationSettings = {
         //title: 'Onlinekontoret',
         apis: {
           servants:
-            'affiliation.org.{{affiliationGroup:online}}:servant.servants',
+            'group.org.{{groupGroup:online}}:servant.servants',
           message:
-            'affiliation.org.{{affiliationGroup:online}}:servant.message',
-          status: 'affiliation.org.{{affiliationGroup:online}}:meeting.message',
-          doorStatus: 'sensorsWS.affiliations.online.sensors.door:value',
-          lastDoorStatus: 'sensorsWS.affiliations.online.sensors.door:updated',
+            'group.org.{{groupGroup:online}}:servant.message',
+          status: 'group.org.{{groupGroup:online}}:meeting.message',
+          doorStatus: 'sensorsWS.groups.online.sensors.door:value',
+          lastDoorStatus: 'sensorsWS.groups.online.sensors.door:updated',
         },
       },
       {

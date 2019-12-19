@@ -1,20 +1,20 @@
 import React, { Component } from 'react';
-import { defaultAffiliationSettings } from '../defaults/affiliations';
-import './ChooseAffiliation.css';
+import { defaultGroupSettings } from '../defaults/groups';
+import './ChooseGroup.css';
 import { Link } from 'react-router-dom';
 import { Icon } from './';
 
-export default class ChooseAffiliation extends Component {
+export default class ChooseGroup extends Component {
   constructor(props) {
     super(props);
     this.updateSettings = this.updateSettings.bind(this);
-    this.affiliations = defaultAffiliationSettings;
+    this.groups = defaultGroupSettings;
     this.state = {
       searchFilter: '',
-      isCreateAffiliationOpen: false,
-      addAffiliationName: '',
-      addAffiliationId: '',
-      addAffiliationIdDirty: false,
+      isCreateGroupOpen: false,
+      addGroupName: '',
+      addGroupId: '',
+      addGroupIdDirty: false,
       formIsValid: false,
       formIsEmpty: true,
     };
@@ -26,9 +26,9 @@ export default class ChooseAffiliation extends Component {
     this.props.updateSettings(settings);
   }
 
-  chooseAffiliation(affiliation) {
-    if (affiliation in this.affiliations) {
-      this.props.changeAffiliation(affiliation);
+  chooseGroup(group) {
+    if (group in this.groups) {
+      this.props.changeGroup(group);
     }
   }
 
@@ -36,85 +36,85 @@ export default class ChooseAffiliation extends Component {
     this.setState({ ...this.state, searchFilter });
   }
 
-  toggleCreateAffiliation() {
-    if (this.state.isCreateAffiliationOpen) {
+  toggleCreateGroup() {
+    if (this.state.isCreateGroupOpen) {
       this.setState(state => ({
         ...state,
         searchFilter: this.searchField.value,
-        isCreateAffiliationOpen: false,
+        isCreateGroupOpen: false,
       }));
     } else {
-      const addAffiliationName =
-        this.state.addAffiliationName || this.state.searchFilter;
-      const addAffiliationId =
-        this.state.addAffiliationId || this.transformToSlug(addAffiliationName);
+      const addGroupName =
+        this.state.addGroupName || this.state.searchFilter;
+      const addGroupId =
+        this.state.addGroupId || this.transformToSlug(addGroupName);
       this.setState(state => ({
         ...state,
         formIsEmpty: this.checkIfFormIsEmpty(
-          addAffiliationName,
-          addAffiliationId,
+          addGroupName,
+          addGroupId,
         ),
         formIsValid: this.checkIfFormIsValid(
-          addAffiliationName,
-          addAffiliationId,
+          addGroupName,
+          addGroupId,
         ),
-        searchFilter: state.addAffiliationName,
-        addAffiliationName,
-        addAffiliationId,
-        isCreateAffiliationOpen: true,
+        searchFilter: state.addGroupName,
+        addGroupName,
+        addGroupId,
+        isCreateGroupOpen: true,
       }));
     }
   }
 
-  changeAddAffiliationName(value) {
-    const addAffiliationName = value;
-    if (!this.state.addAffiliationIdDirty) {
-      const addAffiliationId = this.transformToSlug(value);
+  changeAddGroupName(value) {
+    const addGroupName = value;
+    if (!this.state.addGroupIdDirty) {
+      const addGroupId = this.transformToSlug(value);
       this.setState({
         ...this.state,
         formIsEmpty: this.checkIfFormIsEmpty(
-          addAffiliationName,
-          addAffiliationId,
+          addGroupName,
+          addGroupId,
         ),
         formIsValid: this.checkIfFormIsValid(
-          addAffiliationName,
-          addAffiliationId,
+          addGroupName,
+          addGroupId,
         ),
-        addAffiliationName,
-        searchFilter: addAffiliationName,
-        addAffiliationId,
+        addGroupName,
+        searchFilter: addGroupName,
+        addGroupId,
       });
     } else {
       this.setState({
         ...this.state,
         formIsEmpty: this.checkIfFormIsEmpty(
-          addAffiliationName,
-          this.state.addAffiliationId,
+          addGroupName,
+          this.state.addGroupId,
         ),
         formIsValid: this.checkIfFormIsValid(
-          addAffiliationName,
-          this.state.addAffiliationId,
+          addGroupName,
+          this.state.addGroupId,
         ),
-        addAffiliationName,
-        searchFilter: addAffiliationName,
+        addGroupName,
+        searchFilter: addGroupName,
       });
     }
   }
 
-  changeAddAffiliationId(value) {
-    const addAffiliationId = this.transformToSlug(value);
+  changeAddGroupId(value) {
+    const addGroupId = this.transformToSlug(value);
     this.setState({
       ...this.state,
       formIsEmpty: this.checkIfFormIsEmpty(
-        this.state.addAffiliationName,
-        addAffiliationId,
+        this.state.addGroupName,
+        addGroupId,
       ),
       formIsValid: this.checkIfFormIsValid(
-        this.state.addAffiliationName,
-        addAffiliationId,
+        this.state.addGroupName,
+        addGroupId,
       ),
-      addAffiliationId,
-      addAffiliationIdDirty: !!value,
+      addGroupId,
+      addGroupIdDirty: !!value,
     });
   }
 
@@ -128,24 +128,24 @@ export default class ChooseAffiliation extends Component {
       .replace(/^-|-$/g, '');
   }
 
-  setCreateAffiliationForm(addAffiliationName, addAffiliationId) {
+  setCreateGroupForm(addGroupName, addGroupId) {
     document.documentElement.scrollTop = 0;
 
     this.setState({
       ...this.state,
       formIsEmpty: this.checkIfFormIsEmpty(
-        addAffiliationName,
-        addAffiliationId,
+        addGroupName,
+        addGroupId,
       ),
       formIsValid: this.checkIfFormIsValid(
-        addAffiliationName,
-        addAffiliationId,
+        addGroupName,
+        addGroupId,
       ),
-      addAffiliationName,
-      searchFilter: addAffiliationName,
-      addAffiliationId,
-      addAffiliationIdDirty: true,
-      isCreateAffiliationOpen: true,
+      addGroupName,
+      searchFilter: addGroupName,
+      addGroupId,
+      addGroupIdDirty: true,
+      isCreateGroupOpen: true,
     });
   }
 
@@ -154,17 +154,17 @@ export default class ChooseAffiliation extends Component {
       ...this.state,
       formIsEmpty: true,
       formIsValid: false,
-      addAffiliationName: '',
-      addAffiliationId: '',
+      addGroupName: '',
+      addGroupId: '',
       searchFilter: '',
-      addAffiliationIdDirty: false,
+      addGroupIdDirty: false,
     });
   }
 
   checkIfNameIsTaken(name) {
     if (name) {
       const lowerName = name.toLowerCase();
-      return Object.values(this.affiliations).some(
+      return Object.values(this.groups).some(
         ({ name = '' }) => name.toLowerCase() === lowerName,
       );
     }
@@ -172,7 +172,7 @@ export default class ChooseAffiliation extends Component {
   }
 
   checkIfIdIsTaken(id) {
-    return id && id in this.affiliations;
+    return id && id in this.groups;
   }
 
   checkIfFormIsValid(name, id) {
@@ -185,7 +185,7 @@ export default class ChooseAffiliation extends Component {
   }
 
   render() {
-    const affiliations = Object.entries(this.affiliations)
+    const groups = Object.entries(this.groups)
       .filter(
         ([key, { name }]) =>
           key &&
@@ -197,7 +197,7 @@ export default class ChooseAffiliation extends Component {
       .sort(([, a], [, b]) => a.name.localeCompare(b.name));
 
     const chooseTranslation = this.props.translate('choose');
-    const affiliationsAvailable = affiliations
+    const groupsAvailable = groups
       .filter(([, { components = [] }]) => components.length)
       .map(([key, { name = '' }], i) => (
         <Link
@@ -211,7 +211,7 @@ export default class ChooseAffiliation extends Component {
       ));
 
     const changeTranslation = this.props.translate('change');
-    const affiliationsUnavailable = affiliations
+    const groupsUnavailable = groups
       .filter(([, { components = [] }]) => !components.length)
       .map(([key, { name = '' }], i) => (
         <Link
@@ -226,10 +226,10 @@ export default class ChooseAffiliation extends Component {
 
     return (
       <>
-        <h1>{this.props.translate('chooseAffiliation')}</h1>
+        <h1>{this.props.translate('chooseGroup')}</h1>
         <div className="form-group">
           <input
-            placeholder={this.props.translate('searchAffiliationPlaceholder')}
+            placeholder={this.props.translate('searchGroupPlaceholder')}
             type="text"
             ref={element => (this.searchField = element)}
             onChange={e => this.filterSearch(e.target.value)}
@@ -237,51 +237,51 @@ export default class ChooseAffiliation extends Component {
         </div>
         <div className="form-group">
           <div
-            className="toggle-create-affiliation"
-            onClick={() => this.toggleCreateAffiliation()}
+            className="toggle-create-group"
+            onClick={() => this.toggleCreateGroup()}
           >
-            {this.state.isCreateAffiliationOpen ? '-' : '+'}{' '}
-            {this.props.translate('addAffiliation')}
+            {this.state.isCreateGroupOpen ? '-' : '+'}{' '}
+            {this.props.translate('addGroup')}
           </div>
-          {this.state.isCreateAffiliationOpen ? (
-            <div className="create-affiliation">
+          {this.state.isCreateGroupOpen ? (
+            <div className="create-group">
               <p
                 className="small darken"
                 dangerouslySetInnerHTML={{
-                  __html: this.props.translate('addAffiliationInfo'),
+                  __html: this.props.translate('addGroupInfo'),
                 }}
               />
               <div className="form-group">
-                <label htmlFor="affiliation-name">
+                <label htmlFor="group-name">
                   {this.props.translate('name')}
                 </label>
                 <input
-                  id="affiliation-name"
-                  value={this.state.addAffiliationName}
-                  onChange={e => this.changeAddAffiliationName(e.target.value)}
+                  id="group-name"
+                  value={this.state.addGroupName}
+                  onChange={e => this.changeAddGroupName(e.target.value)}
                   type="text"
-                  placeholder={this.props.translate('affiliationNameExample')}
+                  placeholder={this.props.translate('groupNameExample')}
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="affiliation-name">
+                <label htmlFor="group-name">
                   {this.props.translate('urlPath')}
                 </label>
                 <input
-                  id="affiliation-id"
-                  value={this.state.addAffiliationId}
-                  onChange={e => this.changeAddAffiliationId(e.target.value)}
+                  id="group-id"
+                  value={this.state.addGroupId}
+                  onChange={e => this.changeAddGroupId(e.target.value)}
                   type="text"
                   placeholder={
-                    this.transformToSlug(this.state.addAffiliationName) ||
-                    this.props.translate('affiliationIdExample')
+                    this.transformToSlug(this.state.addGroupName) ||
+                    this.props.translate('groupIdExample')
                   }
                 />
                 <div className="small center grow">
                   <span className="darken">{window.location.origin}/</span>
                   <span className="glow">
-                    {this.state.addAffiliationId ||
-                      this.transformToSlug(this.state.addAffiliationName) ||
+                    {this.state.addGroupId ||
+                      this.transformToSlug(this.state.addGroupName) ||
                       '{URL}'}
                   </span>
                 </div>
@@ -298,7 +298,7 @@ export default class ChooseAffiliation extends Component {
                     disabled={this.state.formIsEmpty || !this.state.formIsValid}
                   >
                     {this.props.translate('create')} "
-                    {this.state.addAffiliationName}"{' '}
+                    {this.state.addGroupName}"{' '}
                     <Icon name="IosArrowForward" />
                   </button>
                 ) : null}
@@ -308,14 +308,14 @@ export default class ChooseAffiliation extends Component {
                     disabled={this.state.formIsEmpty || this.state.formIsValid}
                   >
                     {this.props.translate('change')} "
-                    {this.state.addAffiliationName}"{' '}
+                    {this.state.addGroupName}"{' '}
                     <Icon name="IosArrowForward" />
                   </button>
                 ) : null}
               </div>
               <p
                 warning={
-                  this.checkIfIdIsTaken(this.state.addAffiliationId)
+                  this.checkIfIdIsTaken(this.state.addGroupId)
                     ? this.props.translate('idTakenError')
                     : ''
                 }
@@ -325,12 +325,12 @@ export default class ChooseAffiliation extends Component {
             </div>
           ) : null}
         </div>
-        <div className="affiliation-list">{affiliationsAvailable}</div>
+        <div className="group-list">{groupsAvailable}</div>
         <h2>{this.props.translate('unavailableComponents')}</h2>
         <p className="small darken">
           ({this.props.translate('unavailableComponentsSubComment')}.)
         </p>
-        <div className="affiliation-list">{affiliationsUnavailable}</div>
+        <div className="group-list">{groupsUnavailable}</div>
       </>
     );
   }

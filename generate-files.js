@@ -5,7 +5,7 @@ require = require('esm')(module);
 
 const extension = 'json';
 const generatedFilePaths = {
-  affiliations: `./build/api/affiliations.${extension}`,
+  groups: `./build/api/groups.${extension}`,
   apis: `./build/api/apis.${extension}`,
   settings: `./build/api/settings.${extension}`,
   translations: `./build/api/translations.${extension}`,
@@ -67,9 +67,9 @@ const getDirectoryHash = folder =>
   );
 
 const hashFile = {
-  affiliations: writeDataToFile(
-    defaults.defaultAffiliationSettings,
-    generatedFilePaths.affiliations,
+  groups: writeDataToFile(
+    defaults.defaultGroupSettings,
+    generatedFilePaths.groups,
   ),
   apis: writeDataToFile(defaults.defaultApis, generatedFilePaths.apis),
   settings: writeDataToFile(

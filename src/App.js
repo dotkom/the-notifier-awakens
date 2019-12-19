@@ -10,7 +10,7 @@ import { APIService } from './services';
 import { ComponentController } from './controllers';
 import {
   defaultApis,
-  defaultAffiliationSettings,
+  defaultGroupSettings,
   defaultSettings,
   defaultTranslations,
   styles,
@@ -38,7 +38,7 @@ class App extends Component {
       this.storage.set(
         '',
         {
-          affiliations: defaultAffiliationSettings,
+          groups: defaultGroupSettings,
           apis: defaultApis,
           settings: defaultSettings,
           translations: defaultTranslations,
@@ -47,14 +47,14 @@ class App extends Component {
       );
     }
 
-    const { affiliation = '', css: globalCSS = '' } = this.storage.get(
+    const { group = '', css: globalCSS = '' } = this.storage.get(
       'settings',
     );
 
     this.updateData = this.updateData.bind(this);
     this.updateSettings = this.updateSettings.bind(this);
 
-    this.state = this.updateState(affiliation, globalCSS);
+    this.state = this.updateState(group, globalCSS);
 
     this.APIService = new APIService(
       this.storage.get('apis'),
@@ -74,15 +74,15 @@ class App extends Component {
 
       // Update chrome extension popup URL
       if (IS_CHROME_EXTENSION) {
-        const affiliation = this.getAffiliationFromUrl(state.pathname);
+        const group = this.getGroupFromUrl(state.pathname);
         window.chrome.browserAction.setPopup({
-          popup: `index.html#/${affiliation}`,
+          popup: `index.html#/${group}`,
         });
       }
     });
   }
 
-  getAffiliationFromUrl(url) {
+  getGroupFromUrl(url) {
     if (!url || url === '/') {
       return '';
     }
@@ -91,19 +91,19 @@ class App extends Component {
   }
 
   setTitleFromUrl(url) {
-    const affiliation = this.getAffiliationFromUrl(url);
+    const group = this.getGroupFromUrl(url);
 
     if (!IS_EXTENSION) {
-      if (affiliation) {
-        const firstLetter = affiliation.charAt(0).toUpperCase();
+      if (group) {
+        const firstLetter = group.charAt(0).toUpperCase();
         window.document.title = `Notiwall - ${firstLetter +
-          affiliation.slice(1)}`;
+          group.slice(1)}`;
       } else {
         window.document.title = `Notiwall`;
       }
     }
 
-    this.storage.set('settings', { ...this.state.settings, affiliation }, true);
+    this.storage.set('settings', { ...this.state.settings, group }, true);
   }
 
   componentWillUnmount() {
@@ -141,7 +141,7 @@ class App extends Component {
               this.storage.set(key, data, true);
               this.setState(
                 state =>
-                  this.updateState(state.affiliation, state.globalCSS, {
+                  this.updateState(state.group, state.globalCSS, {
                     ...state,
                     [key]: data,
                   }),
@@ -167,14 +167,14 @@ class App extends Component {
         `${DEFAULT_SETTINGS_URL}/hash.json`,
         { cors: true },
         ({
-          affiliations = '',
+          groups = '',
           apis = '',
           translations = '',
           settings = '',
           components = '',
           core = '',
         }) => {
-          validateAndFetchKey('affiliations', affiliations);
+          validateAndFetchKey('groups', groups);
           validateAndFetchKey('apis', apis);
           validateAndFetchKey('translations', translations);
           validateAndFetchKey('settings', settings);
@@ -186,19 +186,19 @@ class App extends Component {
     }
   }
 
-  updateState(affiliation, globalCSS = '', prevState = {}) {
-    const affiliations = this.storage.get('affiliations');
+  updateState(group, globalCSS = '', prevState = {}) {
+    const groups = this.storage.get('groups');
     const {
       components = [],
       layouts,
-      style = affiliation,
+      style = group,
       css = '',
       color = this.storage.get('settings.color'),
-    } = affiliation in affiliations ? affiliations[affiliation] : {};
+    } = group in groups ? groups[group] : {};
 
     const autofilledComponents = this.autofillComponents(
       components,
-      affiliation,
+      group,
     );
 
     return {
@@ -206,8 +206,8 @@ class App extends Component {
       isFullscreen: this.isFullscreen(),
       autoUpdate: 'autoUpdate' in prevState ? prevState.autoUpdate : true,
       zoom: 'zoom' in prevState ? prevState.zoom : IS_EXTENSION ? 0.5 : 1,
-      affiliation,
-      affiliations,
+      group,
+      groups,
       components: autofilledComponents,
       layouts,
       style,
@@ -254,7 +254,7 @@ class App extends Component {
 
   updateSettings(settings) {
     const newState = this.updateState(
-      settings.affiliation,
+      settings.group,
       settings.css,
       this.state,
     );
@@ -270,8 +270,8 @@ class App extends Component {
     this.setState({ ...this.state, settingsOpen: false });
   }
 
-  autofillComponents(components, affiliationFullName) {
-    const affiliation = affiliationFullName.split('-')[0];
+  autofillComponents(components, groupFullName) {
+    const group = groupFullName.split('-')[0];
     return components.map(component => {
       if (typeof component === 'string') {
         const type = component.split('-')[0];
@@ -279,7 +279,7 @@ class App extends Component {
         return {
           template: component,
           apis: {
-            [typeToLower]: `${affiliation}${type}:${typeToLower}`,
+            [typeToLower]: `${group}${type}:${typeToLower}`,
           },
         };
       } else if (typeof component === 'object') {
@@ -288,7 +288,7 @@ class App extends Component {
         return {
           ...component,
           apis: {
-            [typeToLower]: `${affiliation}${type}:${typeToLower}`,
+            [typeToLower]: `${group}${type}:${typeToLower}`,
             ...component.apis,
           },
         };
@@ -648,7 +648,7 @@ generateLayoutCSS(layouts) => `
   render() {
     const { data, layouts, color } = this.state;
     let { zoom = 1 } = this.state;
-    if (IS_EXTENSION && !this.state.affiliation) {
+    if (IS_EXTENSION && !this.state.group) {
       zoom = 0.7;
     }
 
@@ -661,8 +661,8 @@ ${this.generateLayoutCSS(layouts, 'Components', zoom)}
       if (this.state.style in styles) {
         globalCSS += styles[this.state.style];
       } else {
-        if (this.state.settings.affiliation.split('-')[0] in styles) {
-          globalCSS += styles[this.state.settings.affiliation.split('-')[0]];
+        if (this.state.settings.group.split('-')[0] in styles) {
+          globalCSS += styles[this.state.settings.group.split('-')[0]];
         }
       }
     }
@@ -699,16 +699,16 @@ ${this.state.css}`;
         {globalCSS}
         <div className="App">
           <Route
-            path="/:affiliation(.*)"
+            path="/:group(.*)"
             render={props => {
               if (
-                !(props.match.params.affiliation in this.state.affiliations)
+                !(props.match.params.group in this.state.groups)
               ) {
                 return <Redirect to="/" />;
               }
               return (
                 <>
-                  {props.match.params.affiliation !== '' ? (
+                  {props.match.params.group !== '' ? (
                     <div className="menu-bar">
                       <div
                         className="open-settings"
@@ -795,9 +795,9 @@ ${this.state.css}`;
                           updateSettings={this.updateSettings}
                           closeSettings={() => this.closeSettings()}
                           settings={this.state.settings}
-                          affiliation={props.match.params.affiliation}
-                          changeAffiliation={affiliation =>
-                            props.history.push(affiliation)
+                          group={props.match.params.group}
+                          changeGroup={group =>
+                            props.history.push(group)
                           }
                         />
                       </div>
@@ -809,8 +809,8 @@ ${this.state.css}`;
                       components={this.state.components}
                       translations={this.state.translations}
                       settings={this.state.settings}
-                      affiliation={props.match.params.affiliation}
-                      affiliations={this.state.affiliations}
+                      group={props.match.params.group}
+                      groups={this.state.groups}
                       updateSettings={this.updateSettings}
                       apiService={this.APIService}
                       data={data}

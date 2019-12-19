@@ -1,8 +1,8 @@
-.ChooseAffiliation {
+.ChooseGroup {
   text-align: center;
 }
 
-.affiliation-list {
+.group-list {
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -26,7 +26,7 @@
   opacity: 0.5;
 }
 
-.toggle-create-affiliation,
+.toggle-create-group,
 .no-components {
   cursor: pointer;
   opacity: 0.5;
@@ -34,7 +34,7 @@
   transition: background-color, padding-left 0.2s;
 }
 
-.toggle-create-affiliation:hover,
+.toggle-create-group:hover,
 .no-components:hover {
   cursor: pointer;
   opacity: 1;
@@ -42,12 +42,12 @@
   transition-duration: 0.05s;
 }
 
-.create-affiliation {
+.create-group {
   background-color: rgba(0, 0, 0, 0.16);
   padding: 0;
   margin: 1em -1em;
 }
 
-.create-affiliation > p {
+.create-group > p {
   margin: 1em;
 }

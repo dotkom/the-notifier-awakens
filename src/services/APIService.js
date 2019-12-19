@@ -375,7 +375,7 @@ transform('https://some.api/api?date=[[now.date]]') => 'https://some.api/api?dat
       value,
       {
         ...this.settings,
-        affiliationGroup: this.settings.affiliation.split('-')[0],
+        groupGroup: this.settings.group.split('-')[0],
       },
       '',
       '{{',

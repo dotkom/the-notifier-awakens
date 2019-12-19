@@ -30,8 +30,8 @@ function help() {
   echo "  configure                  configure Notiwall settings"
   echo "  cron [-l|--list]           configure crontab jobs like regular screenshots"
   echo "  env [-l|--list]            configure environment variables"
-  echo "  open [-d|--detached] [<affiliation>]"
-  echo "                             open browser with https://notiwall.online.ntnu.no(/<affiliation>)"
+  echo "  open [-d|--detached] [<group>]"
+  echo "                             open browser with https://notiwall.online.ntnu.no(/<group>)"
   echo "                             in kiosk mode"
   echo "  install [<name>] [<token>]"
   echo "                             install Notiwall CLI $VERSION"
@@ -59,11 +59,11 @@ function open() {
   # Kiosk mode is not preferred here as it is almost impossible to close
   local CHROME_OPTIONS="--disable-notifications --disable-translate --disable-plugins --disable-extensions --incognito --start-fullscreen --fullscreen"
   local DEFAULT_URL="https://notiwall.online.ntnu.no"
-  local AFFILIATION="$1"
+  local GROUP="$1"
   if [ ! -z $1 ]; then
-    AFFILIATION="/$AFFILIATION"
+    GROUP="/$GROUP"
   fi
-  local URL="${2:-$DEFAULT_URL}$AFFILIATION"
+  local URL="${2:-$DEFAULT_URL}$GROUP"
 
   # Preferring Chromium as it has kiosk mode still available
   if command -v chromium-browser > /dev/null 2>&1; then

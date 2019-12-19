@@ -176,9 +176,9 @@ export const defaultApis = {
     interval: 3600,
     url: '#TIME',
   },
-  affiliation: {
+  group: {
     interval: 60,
-    url: `${API_URL}/affiliation/{{org.*}}`,
+    url: `${API_URL}/group/{{org.*}}`,
     org: {
       debug: 'DEBUG',
       online: 'online',
@@ -211,9 +211,9 @@ export const defaultApis = {
     },
   },
   sensorsWS: {
-    url: 'wss://notiwall.online.ntnu.no/{{affiliations.*}}/{{sensors.*}}',
+    url: 'wss://notiwall.online.ntnu.no/{{groups.*}}/{{sensors.*}}',
     event: 'status',
-    affiliations: {
+    groups: {
       online: 'online-door',
     },
     sensors: {
@@ -704,7 +704,7 @@ export const defaultApis = {
     },
   },
   Scrape?
-    subaffiliation of Omega
+    subgroup of Omega
   omegavEvents: {
     interval: 100,
     url:

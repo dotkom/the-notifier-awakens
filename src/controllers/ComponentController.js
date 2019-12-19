@@ -29,7 +29,7 @@ export default class ComponentController extends Component {
 
     props.updateSettings({
       ...props.settings,
-      affiliation: props.match.params.affiliation,
+      group: props.match.params.group,
     });
   }
 
@@ -37,13 +37,13 @@ export default class ComponentController extends Component {
     if (nextProps.location.pathname !== this.props.location.pathname) {
       this.props.updateSettings({
         ...this.props.settings,
-        affiliation: nextProps.match.params.affiliation,
+        group: nextProps.match.params.group,
       });
     }
   }
 
-  changeAffiliation(affiliation) {
-    this.props.history.push(affiliation);
+  changeGroup(group) {
+    this.props.history.push(group);
   }
 
   translate(word) {
@@ -59,7 +59,7 @@ export default class ComponentController extends Component {
       value,
       {
         ...this.props.settings,
-        affiliationGroup: this.props.settings.affiliation.split('-')[0],
+        groupGroup: this.props.settings.group.split('-')[0],
       },
       fallbackValue,
       '{{',
@@ -202,14 +202,14 @@ export default class ComponentController extends Component {
         className += ` ${component.id}`;
       }
 
-      const { dark = true } = this.props.affiliations[this.props.affiliation];
+      const { dark = true } = this.props.groups[this.props.group];
 
       return (
         <Style key={i}>
           {modularCSS}
           <div className={className}>
             <Component
-              {...this.props.affiliations[this.props.affiliation]}
+              {...this.props.groups[this.props.group]}
               dark={dark}
               translate={e => this.translate(e)}
               updateSettings={this.props.updateSettings}
@@ -225,10 +225,10 @@ export default class ComponentController extends Component {
               }
               getApiName={prop => this.getApiName(component, prop)}
               IfPropIsOnline={IfPropIsOnline}
-              affiliation={this.props.affiliation}
-              affiliations={this.props.affiliations}
-              changeAffiliation={affiliation =>
-                this.changeAffiliation(affiliation)
+              group={this.props.group}
+              groups={this.props.groups}
+              changeGroup={group =>
+                this.changeGroup(group)
               }
               {...dataProps}
             />

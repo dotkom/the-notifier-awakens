@@ -336,11 +336,11 @@ Output:
 
 ![image](https://user-images.githubusercontent.com/8504538/52902678-69f66180-3214-11e9-8a1b-ce2c2fe31037.png)
 
-To use the data from the API's you need a component to pass the data into. Components for each affiliation (linjeforening) is described in `./src/defaults/affiliations.js`. Each affiliation can have a set of components:
+To use the data from the API's you need a component to pass the data into. Components for each group (linjeforening) is described in `./src/defaults/groups.js`. Each group can have a set of components:
 
 ```diff
   ...
-  dotkom: { // Select affiliation in `./src/defaults/settings.js`
+  dotkom: { // Select group in `./src/defaults/settings.js`
     name: 'DotKom',
     components: [
 
@@ -356,7 +356,7 @@ To use the data from the API's you need a component to pass the data into. Compo
 +     },
 
       // Shorthand self made template (with pipe transformation and loop)
-+     '<h1>{{affiliation|upper|back  er kult}}!{{#each [1,3,3,7]}}{{this}}{{#end}}</h1>',
++     '<h1>{{group|upper|back  er kult}}!{{#each [1,3,3,7]}}{{this}}{{#end}}</h1>',
       // Output: <h1>DOTKOM er kult!1337</h1>
 
       // Extended self made template
@@ -388,7 +388,7 @@ This option is most preferred as you can choose between a large variety of templ
   {
     template: 'Events',
     apis: {
-      events: '{{affiliation}}Events:events', // {{affiliation}} is injected from settings
+      events: '{{group}}Events:events', // {{group}} is injected from settings
     },
   },
   ...
@@ -502,7 +502,7 @@ Most times you want to specify a layout. This can either be fixed using plain CS
 </details>
 
 <details>
-<summary>Equivalent example with affiliation CSS</summary>
+<summary>Equivalent example with group CSS</summary>
 
 ```diff
   ...
@@ -607,12 +607,12 @@ You can achieve everything with plain CSS, but The Notifier Grid Systemᵗᵐ is
 
 ### Real layout example
 
-Example of the Online affiliation using four different layouts at specified widths:
+Example of the Online group using four different layouts at specified widths:
 
 ![notifier-gif](https://user-images.githubusercontent.com/8504538/53286596-47fb6280-3771-11e9-9775-ef8f6d161a45.gif)
 
 <details>
-<summary>Example of the Online affiliation</summary>
+<summary>Example of the Online group</summary>
 
 ```diff
   ...
