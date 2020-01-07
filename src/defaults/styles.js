@@ -5,7 +5,7 @@ const online = `
 
   .Components {
     background: #001533;
-    background-image: url(https://online.ntnu.no/static/img/knowit.svg), url(/onlineplanet.svg);
+    background-image: url(https://online.ntnu.no/static/img/hsp.svg), url(/onlineplanet.svg);
     background-repeat: no-repeat;
     background-position: 98% 99%, center calc(100% + 125vw);
     background-size: 200px, 214.58vw;
@@ -20,7 +20,7 @@ const online = `
   }
 
   .Vakter > h1 {
-     margin-top: 0.5em;
+    margin-top: 0.5em;
   }
 
   .Bus {

@@ -3,7 +3,7 @@ import './Logo.css';
 
 const Logo = props => {
   const daysBefore = 3;
-  const toTime = new Date(2019, 10, 22, 12, 0, 0).getTime();
+  const toTime = new Date(2020, 0, 8, 12, 0, 0).getTime();
   const fromTime = toTime - daysBefore * 24 * 60 * 60 * 1000;
   const [initialTime] = useState(Date.now());
   const [time, setTime] = useState(Date.now());
