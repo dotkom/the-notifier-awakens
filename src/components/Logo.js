@@ -31,12 +31,16 @@ const Logo = props => {
           setTime(Date.now());
         }, 1000),
       );
+    } else {
+      const components = document.querySelector('.Components');
       const [a, b, c, d, e, f, g, h, i, j, k, l] = parseInt(
         (('891274' >> 8) + 'DEADBEEF')
           .split('')
+          .reverse()
           .join(''),
         16,
       ).toString(16);
+      const djilahkfbgce = d + j + i + l + a + h + k + f + b + g + c + e;
       const lol =
         `${String.fromCharCode((g + j).charCodeAt(1) + 48)}` +
         String.fromCharCode(a.charCodeAt(0) + 13) +
