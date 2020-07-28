@@ -238,6 +238,7 @@ export const defaultApis = {
       samf: { fromCity: '16010476', toCity: '16011476' },
       prof: { fromCity: '16010376', toCity: '16011376' },
       magn: { fromCity: '16010290', toCity: '16011290' },
+      hogs: { fromCity: '16010197', toCity: '16011197' },
     },
     transform: {
       departures: {
@@ -327,6 +328,7 @@ export const defaultApis = {
       hest: { fromCity: '71204', toCity: '102719' },
       samf: { fromCity: '73103', toCity: '73101' },
       prof: { fromCity: '71204', toCity: '71195' },
+      hogs: { fromCity: '71939', toCity: '71940' },
     },
     transform: {
       from: {
@@ -445,6 +447,26 @@ export const defaultApis = {
       },
     },
   },
+  trondheimCityBikeNTNUI: {
+    interval: 60,
+    url:
+      'https://gbfs.urbansharing.com/trondheimbysykkel.no/station_status.json',
+    cors: true,
+    request: {
+      headers: {
+        'Client-Identifier': 'onlinentnu-notifier-dev',
+      },
+    },
+    transform: {
+      stations: {
+        '{{#each data.stations.filter(a => a.station_id === "1878" || a.station_id === "94")}}': {
+          id: '{{station_id}}',
+          bikes: '{{num_bikes_available}}',
+          docks: '{{num_docks_available}}',
+        },
+      },
+    },
+  },
   trondheimCityBikeGraphQL: {
     interval: 60,
     url: 'https://core.urbansharing.com/public/api/v1/graphql#POST',
@@ -535,6 +557,20 @@ export const defaultApis = {
         title: '{{header["#text"]}}',
       },
     },
+  },
+  ntnuiEvents: {
+    interval: 10,
+    url:
+      'https://ntnui.no/kalender/feed/#RSS',
+      transform: {
+        events: {
+          '{{#each rss.channel[0].item}}': {
+            startDate: '{{pubDate}}',
+            // endDate: '{{end}}',
+            title: '{{title[0]}}',
+          },
+        },
+      },
   },
   smorekoppenEvents: {
     interval: 100,

@@ -417,6 +417,57 @@ export const defaultAffiliationSettings = {
     color: 'blue',
     components: [],
   },
+  ntnui: {
+    name: 'NTNUI',
+    color: '#00843D',
+    layouts: {
+      0: ['Logo Date Bus',
+          'Events Events Bus',
+          'Events Events Bus',
+          'Events Events Bus',
+          'Events Events Bike',
+          'Events Events Bike',
+          'Events Events Bike',
+        ],
+    },
+    components: [
+      {
+        template: 'Logo',
+        url: 'https://photos.smugmug.com/photos/i-DTr3wpH/0/X4/i-DTr3wpH-X4.png',
+      },
+      {
+        template: 'Date',
+        apis: { time: 'seconds' } 
+      },
+      {
+        template: 'Bus',
+        name: '{{bus:hogs}}',
+        count: '10',
+        css: '.Bus > .bus-wrapper {background-color: #00843D;} .Bus {font-size: 30px;}',
+        apis: {
+          fromCity:
+            '{{busApi:enturbus}}.stops.{{bus:hogs}}.toCity.stops.{{bus:hogs}}.fromCity:from',
+          toCity:
+            '{{busApi:enturbus}}.stops.{{bus:hogs}}.toCity.stops.{{bus:hogs}}.fromCity:to',
+        },
+      },
+      {
+        template: 'Bike',
+        id: 'Bike',
+        names: ['Klubbhuset', 'Hovedbygget'],
+        apis: {
+          stations: 'trondheimCityBikeNTNUI:stations',
+        },
+        css: '.Bike {font-size: 30px; font-family: Righteous;}',
+      },
+      {
+      template: 'Events',
+      type: 'timeline',
+      count: '12',
+      css: '.event-list {margin: unset; margin-left: 24.5%; max-width: 900px; font-size: 28px; font-family: Righteous;} .start-date {color: rgb(254, 219, 0);}',
+      }
+    ],
+  },
   nutrix: {
     name: 'Nutrix',
     color: 'green',
