@@ -14,6 +14,9 @@ export default class Events extends Component {
       case 'carousel':
         EventsUI = EventsCarousel;
         break;
+      case 'timeline':
+        EventsUI = EventsTimeline;
+        break;
       default:
         EventsUI = EventsFromSplash;
     }
@@ -277,6 +280,128 @@ class EventsCarousel extends Component {
           </span>
         </div>
         <div className="event-list">{eventList}</div>
+      </>
+    );
+  }
+}
+
+class EventsTimeline extends Component {
+  render() {
+    const { dark = true } = this.props;
+    const {
+      events = [],
+      lineColor = dark ? '#ddd' : '#888',
+      dateColor = dark ? '#f80' : '#f80',
+      timeColor = dark ? 'rgba(160, 160, 160, .8)' : '#888',
+      textColor = dark ? '#ccc' : '#666',
+      IfPropIsOnline,
+    } = this.props;
+    let prevStartDate = '';
+    const eventList = events.slice(0).map((e, i) => {
+      const { startDateFormatted, startTimeFormatted, title, hasTime } = e;
+      const style = {};
+      let skipDate = false;
+      if (prevStartDate !== startDateFormatted || i === 0) {
+        skipDate = true;
+        prevStartDate = startDateFormatted;
+      }
+
+      return (
+        <div key={i} className="event event-splash" style={style}>
+          <span className="start-date">
+            {skipDate ? startDateFormatted : ''}
+          </span>
+          <span className="time-element">
+            <span className="start-time">
+              {hasTime ? startTimeFormatted : ''}
+            </span>
+            <span className="title">{title}</span>
+          </span> 
+        </div>
+      );
+    });
+
+    return (
+      <>
+        <style>
+          {`
+          .event-list {
+            display: flex;
+            flex-direction: column;
+            max-width: 625px;
+            margin: auto;
+            margin-bottom: -32px;
+            color: ${textColor};
+          }
+          .event {
+            display: flex;
+            flex-wrap: nowrap;
+          }
+          @media (max-width: 640px) {
+            .event {
+              flex-wrap: wrap;
+            }
+            .time-element {
+              min-width: 100%;
+            }
+          }
+          .time-element {
+            order: 2;
+            display: flex;
+            flex-flow: row nowrap;
+            flex: 1;
+          }
+          .title {
+            order: 3;
+            flex: 1 1 auto;
+            position: relative;
+            border-left: 3px solid ${lineColor};
+            padding: 10px 0 10px 42px;
+          }
+          .title::before {
+            content: '';
+            position: absolute;
+            right: calc(100% - 5px);
+            top: 18px;
+            background-color: ${lineColor};
+            width: 14px;
+            height: 14px;
+            border-radius: 7px;
+          }
+          .event:last-child .title {
+            padding-bottom: 32px;
+          }
+          .start-date:first-letter {
+            text-transform: capitalize;
+          }
+          .start-date:empty {
+            padding: 0;
+          }
+          .start-date {
+            order: 1;
+            flex: 0 0 215px;
+            text-align: right;
+            color: ${dateColor};
+            padding: 10px 0;
+          }
+          .start-time {
+            order: 2;
+            flex: 0 0 80px;
+            text-align: center;
+            font-size: .75em;
+            color: ${timeColor};
+            padding: 14px 10px 10px 0;
+          }
+          `}
+        </style>
+        <IfPropIsOnline
+          prop="events"
+          props={this.props}
+          else={apiName => `Kunne ikke koble til ${apiName}`}
+          loading={<Loading />}
+        >
+          <div className="event-list">{eventList}</div>
+        </IfPropIsOnline>
       </>
     );
   }
