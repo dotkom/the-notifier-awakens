@@ -5,6 +5,7 @@ export const defaultTranslations = {
   samf: 'Samfundet',
   prof: 'Professor Brochs gate',
   hest: 'Hesthagen',
+  hogs: 'Høgskoleringen',
   tarbus: 'Tarbus.no',
   enturbus: 'Entur.no',
   affiliation: 'Gruppe',
