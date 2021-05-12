@@ -18,7 +18,7 @@
     "fast-xml-parser": "^3.12.13",
     "fecha": "^3.0.2",
     "formidable": "^1.2.1",
-    "merge": "1.2.1",
+    "merge": "2.1.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-icons": "^3.5.0",
