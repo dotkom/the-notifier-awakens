@@ -5,7 +5,7 @@
   "devDependencies": {
     "date-fns": "^1.29.0",
     "object-merge": "^2.5.1",
-    "object-path": "^0.11.4",
+    "object-path": "^0.11.8",
     "stjs": "^0.0.5",
     "style-it": "^2.0.0",
     "xml2js": "^0.4.19"
